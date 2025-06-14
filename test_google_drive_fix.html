@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Drive Image Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-image {
+            max-width: 300px;
+            height: auto;
+            border: 2px solid #ccc;
+            margin: 10px 0;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        .url {
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 5px;
+            border-radius: 3px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Google Drive Image Fix Test</h1>
+    <p>Testing the new Google Drive thumbnail URL format that should work after Google's January 2024 changes.</p>
+
+    <div class="test-section">
+        <h2>❌ Old Format (Broken)</h2>
+        <p>This is the old format that's currently in your database and no longer works:</p>
+        <div class="url">https://drive.google.com/uc?id=1WxiBT2ookkXEniZB514GRjWYHK-o4elL</div>
+        <img src="https://drive.google.com/uc?id=1WxiBT2ookkXEniZB514GRjWYHK-o4elL" 
+             alt="Old format - should not load" 
+             class="test-image"
+             onerror="this.nextElementSibling.innerHTML='<span class=error>❌ Failed to load (expected)</span>'"
+             onload="this.nextElementSibling.innerHTML='<span class=success>✅ Loaded (unexpected!)</span>'">
+        <div>Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ New Format (Fixed)</h2>
+        <p>This is the new thumbnail format that should work:</p>
+        <div class="url">https://drive.google.com/thumbnail?id=1WxiBT2ookkXEniZB514GRjWYHK-o4elL&sz=s4000</div>
+        <img src="https://drive.google.com/thumbnail?id=1WxiBT2ookkXEniZB514GRjWYHK-o4elL&sz=s4000" 
+             alt="New format - should load" 
+             class="test-image"
+             onerror="this.nextElementSibling.innerHTML='<span class=error>❌ Failed to load</span>'"
+             onload="this.nextElementSibling.innerHTML='<span class=success>✅ Loaded successfully!</span>'">
+        <div>Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔄 Conversion Test</h2>
+        <p>Testing the JavaScript conversion function:</p>
+        <button onclick="testConversion()">Test URL Conversion</button>
+        <div id="conversion-results"></div>
+    </div>
+
+    <script>
+        // Copy of the updated conversion function
+        function convertGoogleDriveUrl(url) {
+            if (!url) return url;
+            
+            // Check if it's a Google Drive URL that needs conversion
+            const driveFileMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+            const driveOpenMatch = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+            const driveUcMatch = url.match(/drive\.google\.com\/uc\?.*id=([a-zA-Z0-9_-]+)/);
+            
+            let fileId = null;
+            
+            if (driveFileMatch) {
+                fileId = driveFileMatch[1];
+            } else if (driveOpenMatch) {
+                fileId = driveOpenMatch[1];
+            } else if (driveUcMatch) {
+                fileId = driveUcMatch[1];
+            }
+            
+            if (fileId) {
+                // Use the thumbnail method which still works as of 2024
+                const convertedUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=s4000`;
+                return convertedUrl;
+            }
+            
+            return url;
+        }
+
+        function testConversion() {
+            const testUrls = [
+                'https://drive.google.com/uc?id=1WxiBT2ookkXEniZB514GRjWYHK-o4elL',
+                'https://drive.google.com/file/d/1WxiBT2ookkXEniZB514GRjWYHK-o4elL/view?usp=sharing',
+                'https://drive.google.com/open?id=1WxiBT2ookkXEniZB514GRjWYHK-o4elL',
+                'https://images.unsplash.com/photo-1517022812141-23620dba5c23'
+            ];
+
+            let results = '<h3>Conversion Results:</h3>';
+            testUrls.forEach(url => {
+                const converted = convertGoogleDriveUrl(url);
+                const changed = url !== converted;
+                results += `
+                    <div style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                        <strong>Input:</strong> <span class="url">${url}</span><br>
+                        <strong>Output:</strong> <span class="url">${converted}</span><br>
+                        <strong>Changed:</strong> <span class="${changed ? 'success' : 'error'}">${changed ? '✅ Yes' : '❌ No'}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('conversion-results').innerHTML = results;
+        }
+    </script>
+</body>
+</html> 
