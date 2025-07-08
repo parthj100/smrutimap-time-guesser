@@ -124,11 +124,10 @@ export const Home: React.FC<HomeProps> = ({
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden">
-      {/* Corner Buttons - Desktop-first Layout */}
+      {/* Adjusted for consistent centering */}
       {isMobile ? (
-        // Mobile: Compact layout with touch targets
         <motion.div 
-          className="fixed top-3 left-3 right-3 z-50 flex justify-between items-center"
+          className="fixed top-3 left-1/2 transform -translate-x-1/2 z-50 flex justify-between items-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
@@ -180,11 +179,10 @@ export const Home: React.FC<HomeProps> = ({
           </div>
         </motion.div>
       ) : (
-        // Desktop: Enhanced corner layout with larger, more prominent buttons
         <>
           {/* Top Left - Leaderboard with enhanced design */}
           <motion.div 
-            className="fixed top-8 left-8 z-50"
+            className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
@@ -207,7 +205,7 @@ export const Home: React.FC<HomeProps> = ({
 
           {/* Bottom Left - Submit Photos */}
           <motion.div 
-            className="fixed bottom-8 left-8 z-50"
+            className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
@@ -230,7 +228,7 @@ export const Home: React.FC<HomeProps> = ({
 
           {/* Bottom Right - Feedback */}
           <motion.div 
-            className="fixed bottom-8 right-8 z-50"
+            className="fixed bottom-8 right-1/2 transform translate-x-1/2 z-50"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.6 }}
