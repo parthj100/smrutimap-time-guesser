@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Target, Clock, MapPin, Calendar, Navigation } from 'lucide-react';
+import { Navigation } from 'lucide-react';
 import GameImage from '@/components/GameImage';
 import MapSelector from '@/components/MapSelector';
 import GameHeader from '@/components/GameHeader';
@@ -304,40 +304,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
     };
   }, []);
 
-  const getStepGuidance = () => {
-    switch (currentStep) {
-      case 'observe':
-        return {
-          title: "Observe the Image",
-          description: "Look carefully at the image for clues about the time period and location. Notice clothing, architecture, vehicles, and other details.",
-          icon: <Target className="w-5 h-5" />,
-        };
-      case 'year':
-        return {
-          title: "Guess the Year",
-          description: "Based on what you observed, use the slider below to select when you think this photo was taken.",
-          icon: <Calendar className="w-5 h-5" />,
-        };
-      case 'location':
-        return {
-          title: "Guess the Location",
-          description: "Click on the map to place your guess for where this photo was taken. Look for geographical and architectural clues.",
-          icon: <MapPin className="w-5 h-5" />,
-        };
-      case 'submit':
-        return {
-          title: "Submit Your Guess",
-          description: "Ready to see how you did? Click the button below to submit your guesses and get your score!",
-          icon: <CheckCircle className="w-5 h-5" />,
-        };
-      case 'results':
-        return {
-          title: "Practice Complete!",
-          description: "Great job! See how you did and get ready to play the real game.",
-          icon: <CheckCircle className="w-5 h-5" />,
-        };
-    }
-  };
+
 
   if (loading) {
     return (
@@ -361,7 +328,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
     );
   }
 
-  const guidance = getStepGuidance();
+
   const yearDifference = hasGuessed && yearGuess && practiceImage?.year ? {
     diff: Math.abs(yearGuess - practiceImage.year),
     direction: yearGuess > practiceImage.year ? 'too late' : 'too early'
@@ -412,7 +379,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
           {/* Complete Tutorial button on the right */}
           <div className="flex items-center">
             <Button 
-              onClick={handleGoHome}
+              onClick={handleComplete}
               className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-xl transition-all hover:scale-105"
             >
               Complete Tutorial
@@ -542,32 +509,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
         onTimeUp={() => {}}
       />
 
-      {/* Guidance Panel */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentStep}
-          className="bg-blue-50 border-b border-blue-200 p-4"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="max-w-6xl mx-auto flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-              {guidance.icon}
-            </div>
-            <div>
-              <h2 className="font-semibold text-blue-900">{guidance.title}</h2>
-              <p className="text-blue-700 text-sm">{guidance.description}</p>
-            </div>
-            <div className="ml-auto">
-              <Button variant="outline" size="sm" onClick={onSkip}>
-                Skip Practice
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+
 
       {/* Main Game Content - Exact same layout as actual game */}
       <div className="w-full max-w-full mx-auto h-[calc(100vh-140px)] flex flex-col py-4 px-6">

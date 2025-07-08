@@ -28,18 +28,51 @@ import GameStoryGallery from './GameStoryGallery';
 import { GAME_CONSTANTS } from '@/constants/gameConstants';
 import { LoadingSpinner } from '@/components/ui/LoadingStates';
 import NetworkStatus from '@/components/NetworkStatus';
+import Tutorial from '@/components/Tutorial';
 
-type GameMode = 'home' | 'instructions' | 'playing' | 'daily' | 'multiplayer';
+type GameMode = 'home' | 'instructions' | 'playing' | 'daily' | 'multiplayer' | 'tutorial' | 'simple_multiplayer' | 'multiplayer_game';
 
-const Game: React.FC = () => {
+interface GameProps {
+  // Multiplayer coordination props
+  multiplayerMode?: boolean;
+  multiplayerState?: {
+    roomCode: string;
+    currentRound: number;
+    totalRounds: number;
+    playersReady: number;
+    totalPlayers: number;
+    waitingForPlayers: boolean;
+    gameStarted: boolean;
+    imageSequence?: string[];
+    getMultiplayerImages?: () => Promise<any[]>;
+    timePerRound?: number;
+    isHost?: boolean;
+    getLeaderboard?: () => any[];
+    getRoundLeaderboard?: (roundNumber: number) => any[];
+    currentUserId?: string;
+    gameStatus?: 'waiting' | 'playing' | 'finished';
+    playerNames?: Record<string, string>;
+  };
+  onMultiplayerGuessSubmit?: (yearGuess: number, locationGuess: { lat: number; lng: number }, timeUsed: number) => Promise<void>;
+  onMultiplayerNextRound?: () => Promise<void>;
+  onMultiplayerExit?: () => void;
+}
+
+const Game: React.FC<GameProps> = ({ 
+  multiplayerMode = false, 
+  multiplayerState, 
+  onMultiplayerGuessSubmit,
+  onMultiplayerNextRound,
+  onMultiplayerExit 
+}) => {
   // Performance monitoring
   const { metrics, trackImageLoad } = usePerformanceMonitor('Game');
 
   // Navigation
   const navigate = useNavigate();
 
-  // Authentication and session tracking
-  const { user, profile } = useAuth();
+  // Authentication and session tracking - skip initialization in multiplayer mode
+  const { user, profile } = useAuth({ skipInitialization: multiplayerMode });
   const { currentSession, startGameSession, saveRoundResult, completeGameSession } = useGameSession({
     onProfileUpdate: async (userId: string) => {
       // Profile will be updated automatically by the auth system
@@ -57,10 +90,9 @@ const Game: React.FC = () => {
     isDaily: boolean;
   } | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [gameOverView, setGameOverView] = useState<'story' | 'detailed'>('story');
+  const [gameOverView, setGameOverView] = useState<'story' | 'detailed' | 'leaderboard'>('story');
   const [isMobile, setIsMobile] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialStep, setTutorialStep] = useState<number | null>(null);
+
   const [showResults, setShowResults] = useState(false);
   const [lastResult, setLastResult] = useState<any>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -113,8 +145,8 @@ const Game: React.FC = () => {
       setPendingGameStart(null);
       console.log('✅ Game started successfully');
 
-      // Start game session if user is logged in (profile is optional)
-      if (user) {
+      // Start game session if user is logged in and NOT in multiplayer mode
+      if (user && !multiplayerMode) {
         const gameMode = isDaily ? 'daily' : (isTimedMode ? 'timed' : 'random');
         console.log('👤 User is logged in, starting game session...');
         startGameSession(user.id, gameMode, gameImages.length).then(({ data, error }) => {
@@ -124,6 +156,8 @@ const Game: React.FC = () => {
             console.log('✅ Game session started:', data);
           }
         });
+      } else if (multiplayerMode) {
+        console.log('🎮 Multiplayer mode - skipping individual game session creation');
       } else {
         console.log('👤 No user logged in, playing as guest');
       }
@@ -137,6 +171,73 @@ const Game: React.FC = () => {
     }
   }, [pendingGameStart, isSuccess, gameImages, initializeGame, trackImageLoad, user, startGameSession]);
 
+  // Effect to automatically start multiplayer games
+  useEffect(() => {
+    if (multiplayerMode && multiplayerState?.gameStarted && gameMode === 'home') {
+      console.log('🎮 Multiplayer mode detected, starting game automatically...');
+      
+      // For multiplayer, we need to fetch the predefined images and start the game directly
+      if (multiplayerState.getMultiplayerImages) {
+        console.log('🎮 Fetching multiplayer images...');
+        multiplayerState.getMultiplayerImages().then((images) => {
+          if (images && images.length > 0) {
+            console.log('🎮 Multiplayer images fetched, initializing game:', images);
+            console.log('⏱️ Using custom timer duration:', multiplayerState.timePerRound);
+            
+            // Initialize the game directly with the multiplayer images and custom timer
+            const timePerRound = multiplayerState.timePerRound || 60; // Default to 60 seconds
+            initializeGame(images, timePerRound > 0, 'per-round', timePerRound);
+            setGameMode('playing');
+          } else {
+            console.error('❌ Failed to fetch multiplayer images');
+          }
+        }).catch((error) => {
+          console.error('❌ Error fetching multiplayer images:', error);
+        });
+      } else {
+        // Fallback: start the game with standard settings for multiplayer
+        startGame(true, 'per-round', false);
+      }
+    }
+  }, [multiplayerMode, multiplayerState?.gameStarted, multiplayerState?.getMultiplayerImages, multiplayerState?.timePerRound, gameMode, initializeGame]);
+
+  // Sync local game state with multiplayer round changes
+  useEffect(() => {
+    if (multiplayerMode && multiplayerState?.currentRound && gameState.currentRound) {
+      const multiplayerRound = multiplayerState.currentRound;
+      
+      // If multiplayer round has advanced beyond local round, sync up
+      if (multiplayerRound !== gameState.currentRound) {
+        console.log('🔄 Syncing local game state with multiplayer round change:', {
+          multiplayerRound,
+          localRound: gameState.currentRound,
+          action: 'sync_round'
+        });
+        
+        // Reset guesses for the new round
+        setYearGuess(null);
+        setLocationGuess(null);
+        
+        // Use the local nextRound function to advance to match multiplayer state
+        if (multiplayerState.getMultiplayerImages) {
+          multiplayerState.getMultiplayerImages().then((images) => {
+            if (images && images.length > 0) {
+              // Force the local game state to the correct round
+              const targetImage = images[multiplayerRound - 1]; // rounds are 1-indexed
+              if (targetImage) {
+                console.log('🎮 Setting current image for round', multiplayerRound, ':', targetImage.id);
+                // Manually advance local state to match multiplayer round
+                nextRound(images);
+              }
+            }
+          });
+        }
+      }
+    }
+  }, [multiplayerMode, multiplayerState?.currentRound, gameState.currentRound, gameMode, multiplayerState?.getMultiplayerImages, nextRound, setYearGuess, setLocationGuess]);
+
+
+
   // Handle timer expiration
   function handleTimeUp() {
     if (gameState.isGuessing && !gameState.hasGuessed) {
@@ -149,18 +250,18 @@ const Game: React.FC = () => {
   }
 
   // Auto-submit when timer expires
-  const handleAutoSubmit = () => {
+  const handleAutoSubmit = async () => {
     if (!gameState.currentImage) return;
     const finalYearGuess = yearGuess || Math.floor((1900 + 2025) / 2);
     const finalLocationGuess = locationGuess || { lat: 40, lng: 0 };
-    submitGuessWithScores(finalYearGuess, finalLocationGuess, true);
+    await submitGuessWithScores(finalYearGuess, finalLocationGuess, true);
     if (!locationGuess) {
       setLocationGuess(finalLocationGuess);
     }
   };
 
   // Submit guess function
-  const submitGuessWithScores = (
+  const submitGuessWithScores = async (
     finalYearGuess: number, 
     finalLocationGuess: { lat: number; lng: number }, 
     isAutoSubmit: boolean = false
@@ -180,8 +281,19 @@ const Game: React.FC = () => {
 
     addResult(result);
 
-    // Save round result if user is logged in and session exists
-    if (user && currentSession && gameState.currentImage) {
+    // Handle multiplayer guess submission
+    if (multiplayerMode && onMultiplayerGuessSubmit) {
+      const timeUsed = gameState.isTimedMode ? 
+        (gameState.timerType === 'per-round' ? 
+          (gameState.timeRemaining ? 60 - gameState.timeRemaining : 60) : 
+          (gameState.timeRemaining ? 300 - gameState.timeRemaining : 300)
+        ) : 0;
+      
+      await onMultiplayerGuessSubmit(finalYearGuess, finalLocationGuess, timeUsed);
+    }
+
+    // Save round result if user is logged in and session exists and NOT in multiplayer mode
+    if (user && currentSession && gameState.currentImage && !multiplayerMode) {
       saveRoundResult(
         currentSession.id,
         user.id,
@@ -200,6 +312,8 @@ const Game: React.FC = () => {
           console.log('✅ Round result saved');
         }
       });
+    } else if (multiplayerMode) {
+      console.log('🎮 Multiplayer mode - skipping individual round result save');
     }
   };
 
@@ -218,18 +332,26 @@ const Game: React.FC = () => {
   };
 
   const handleTutorialClick = () => {
-    console.log('🎓 Tutorial button clicked, navigating to tutorial');
-    navigate('/tutorial');
+    console.log('🎓 Tutorial button clicked, showing tutorial');
+    setGameMode('tutorial');
+  };
+
+  const handleTutorialComplete = () => {
+    console.log('🎓 Tutorial completed, returning to home');
+    setGameMode('home');
+    toast.success('Tutorial completed! Ready to play?');
+  };
+
+  const handleTutorialExit = () => {
+    console.log('🎓 Tutorial exited, returning to home');
+    setGameMode('home');
   };
 
   const handleMultiplayerClick = () => {
-    console.log('👥 Multiplayer button clicked, setting mode to multiplayer');
-    // TEMPORARILY DISABLED - Multiplayer functionality hidden from UI
-    // setGameMode('multiplayer');
+    setGameMode('simple_multiplayer');
   };
 
   const handleBackFromMultiplayer = () => {
-    console.log('🏠 Back from multiplayer, returning to home');
     setGameMode('home');
   };
 
@@ -338,20 +460,45 @@ const Game: React.FC = () => {
   };
 
   const handleLocationSelected = (lat: number, lng: number) => {
+    console.log('🗺️ Location selected:', { lat, lng });
     setLocationGuess({ lat, lng });
   };
 
-  const handleSubmitGuess = () => {
-    if (!gameState.currentImage) return;
+  const handleSubmitGuess = async () => {
+    console.log('🎯 Game.tsx handleSubmitGuess called:', {
+      hasCurrentImage: !!gameState.currentImage,
+      hasLocationGuess: !!locationGuess,
+      locationGuess,
+      yearGuess,
+      multiplayerMode
+    });
+    
+    if (!gameState.currentImage) {
+      console.log('❌ No current image, returning');
+      return;
+    }
     if (!locationGuess) {
+      console.log('❌ No location guess, showing error');
       toast.error("Please select a location on the map before submitting your guess!");
       return;
     }
     const finalYearGuess = yearGuess || Math.floor((1900 + 2025) / 2);
-    submitGuessWithScores(finalYearGuess, locationGuess);
+    console.log('✅ Submitting guess:', { finalYearGuess, locationGuess });
+    await submitGuessWithScores(finalYearGuess, locationGuess);
   };
 
-  const handleNextRound = () => {
+  const handleNextRound = async () => {
+    if (multiplayerMode && onMultiplayerNextRound) {
+      // In multiplayer mode, use the multiplayer nextRound function
+      console.log('🎮 Host advancing to next round in multiplayer mode...');
+      try {
+        await onMultiplayerNextRound();
+        console.log('✅ Multiplayer next round completed');
+      } catch (error) {
+        console.error('❌ Error in multiplayer next round:', error);
+      }
+    } else {
+      // In single-player mode, use local game state
     setIsTransitioning(true);
     
     // Brief delay for fade out effect
@@ -371,6 +518,7 @@ const Game: React.FC = () => {
         setIsTransitioning(false);
       }, 300);
     }, 200);
+    }
   };
 
   const handlePlayAgain = () => {
@@ -386,15 +534,6 @@ const Game: React.FC = () => {
 
   // Show carousel on home and instructions pages
   const showCarousel = gameMode === 'home' || gameMode === 'instructions';
-
-  // Handle tutorial navigation
-  const handleTutorialNext = () => {
-    setTutorialStep(prev => prev ? prev + 1 : 1);
-  };
-
-  const handleTutorialSkip = () => {
-    setShowTutorial(false);
-  };
 
   // Handle results modal
   const handleCloseResults = () => {
@@ -465,12 +604,22 @@ const Game: React.FC = () => {
         />
       )}
 
-      {/* Show multiplayer */}
-      {/* TEMPORARILY HIDDEN - Multiplayer functionality kept in codebase but removed from UI
-      {gameMode === 'multiplayer' && (
-        <MultiplayerGame onBack={handleBackFromMultiplayer} />
+      {/* Show tutorial */}
+      {gameMode === 'tutorial' && (
+        <Tutorial
+          onComplete={handleTutorialComplete}
+          onExit={handleTutorialExit}
+          skipIntro={true}
+        />
       )}
-      */}
+
+      {/* Show multiplayer */}
+      {gameMode === 'simple_multiplayer' && (
+        <MultiplayerGame 
+          onBack={handleBackFromMultiplayer} 
+          onHome={() => setGameMode('home')}
+        />
+      )}
 
       {/* Show instructions */}
       {gameMode === 'instructions' && (
@@ -481,7 +630,9 @@ const Game: React.FC = () => {
       )}
 
       {/* Game over screens - Story Gallery first, then Detailed Breakdown */}
-      {gameState.gameOver && gameOverView === 'story' && (
+      {/* Show game over screens for single player or when multiplayer game is finished */}
+      {/* Single player game over screens */}
+      {!multiplayerMode && gameState.gameOver && gameOverView === 'story' && (
         <GameStoryGallery
           results={gameState.results}
           onViewDetailedBreakdown={handleViewDetailedBreakdown}
@@ -491,7 +642,7 @@ const Game: React.FC = () => {
         />
       )}
 
-      {gameState.gameOver && gameOverView === 'detailed' && (
+      {!multiplayerMode && gameState.gameOver && gameOverView === 'detailed' && (
         <GameSummary 
           results={gameState.results} 
           onPlayAgain={handlePlayAgain} 
@@ -499,25 +650,195 @@ const Game: React.FC = () => {
           isTimedMode={gameState.isTimedMode} 
         />
       )}
+      
+      {/* Multiplayer Game Story Gallery */}
+      {multiplayerMode && multiplayerState && gameOverView === 'story' && multiplayerState.gameStatus === 'finished' && (
+        <GameStoryGallery
+          results={gameState.results}
+          onViewDetailedBreakdown={() => setGameOverView('detailed')}
+          onPlayAgain={() => setGameOverView('leaderboard')} // Go to leaderboard
+          onGoHome={onMultiplayerExit || (() => {})}
+          isTimedMode={gameState.isTimedMode}
+          multiplayerMode={true}
+        />
+      )}
+
+      {/* Multiplayer Detailed Breakdown */}
+      {multiplayerMode && multiplayerState && gameOverView === 'detailed' && multiplayerState.gameStatus === 'finished' && (
+        <GameSummary 
+          results={gameState.results} 
+          onPlayAgain={() => setGameOverView('leaderboard')} // Go to leaderboard
+          onGoHome={onMultiplayerExit || (() => {})}
+          isTimedMode={gameState.isTimedMode} 
+          multiplayerMode={true}
+        />
+      )}
+      
+      {/* Multiplayer final leaderboard */}
+      {multiplayerMode && multiplayerState && gameOverView === 'leaderboard' && multiplayerState.gameStatus === 'finished' && (
+        <div className="w-full min-h-screen bg-[#eee9da] p-3 lg:p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6 lg:mb-8">
+            <button 
+              onClick={onMultiplayerExit || (() => {})}
+              className="hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ea384c] focus:ring-opacity-50 rounded-lg"
+              aria-label="Go to home page"
+            >
+              <img 
+                src="/Smruti-map.png" 
+                alt="SMRUTIMAP Logo"
+                className="h-20 lg:h-28 xl:h-32 w-auto cursor-pointer" 
+              />
+            </button>
+            
+            <div className="text-center flex-1 mx-6 lg:mx-12">
+              <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800 mb-3 lg:mb-4 font-manrope">
+                🏆 Final Results
+              </h1>
+              <div className="text-sm lg:text-base text-gray-600 mt-2 font-medium font-poppins">
+                Game Complete! Congratulations to all players!
+              </div>
+            </div>
+
+            <Button 
+              onClick={onMultiplayerExit || (() => {})}
+              className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-poppins"
+            >
+              Back to Menu
+            </Button>
+          </div>
+
+          {/* Final Leaderboard */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-lg border border-[#ea384c]/30">
+              <div className="space-y-4">
+                {(() => {
+                  // Create leaderboard using proper scoring calculation
+                  const playerScores = [];
+                  
+                  // Add current player's score from local game results
+                  const currentPlayerTotal = gameState.results.reduce((sum, result) => {
+                    if (result.scaledScore !== undefined) {
+                      return sum + result.scaledScore;
+                    }
+                    if (result.displayYearScore !== undefined && result.displayLocationScore !== undefined) {
+                      return sum + result.displayYearScore + result.displayLocationScore + (result.timeBonus || 0);
+                    }
+                    return sum + (result.totalScore * 100) + (result.timeBonus || 0);
+                  }, 0);
+                  
+                  // Get current user's display name
+                  const currentUserDisplayName = multiplayerState.playerNames?.[multiplayerState.currentUserId || ''];
+                  const currentUserLabel = currentUserDisplayName ? `You (${currentUserDisplayName})` : 'You';
+                  
+                  playerScores.push({
+                    userId: multiplayerState.currentUserId || 'current',
+                    totalPoints: Math.round(currentPlayerTotal),
+                    isCurrentUser: true,
+                    playerName: currentUserLabel
+                  });
+                  
+                  // Add other players' scores from multiplayer database (now using correct display scores)
+                  const multiplayerLeaderboard = multiplayerState.getLeaderboard?.() || [];
+                  multiplayerLeaderboard.forEach((entry) => {
+                    if (entry.userId !== multiplayerState.currentUserId) {
+                      // Database now stores display scores directly, no scaling needed
+                      const totalPoints = entry.totalPoints;
+                      // Get display name from player names map
+                      const displayName = multiplayerState.playerNames?.[entry.userId] || `Player ${playerScores.length}`;
+                      
+                      playerScores.push({
+                        userId: entry.userId,
+                        totalPoints: totalPoints,
+                        isCurrentUser: false,
+                        playerName: displayName
+                      });
+                    }
+                  });
+                  
+                  // Sort by total points
+                  playerScores.sort((a, b) => b.totalPoints - a.totalPoints);
+                  
+                  const getRankIcon = (rank: number) => {
+                    switch (rank) {
+                      case 1: return '🥇';
+                      case 2: return '🥈';
+                      case 3: return '🥉';
+                      default: return `#${rank}`;
+                    }
+                  };
+                  
+                  return playerScores.map((player, index) => (
+                    <div 
+                      key={player.userId}
+                      className={`p-4 lg:p-6 rounded-xl border-2 ${
+                        player.isCurrentUser ? 'bg-blue-50 border-blue-300 ring-2 ring-blue-200' : 'bg-gray-50 border-gray-200'
+                      } ${index === 0 ? 'ring-2 ring-yellow-400 bg-yellow-50' : ''} transition-all hover:scale-[1.02]`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <span className="text-3xl lg:text-4xl">{getRankIcon(index + 1)}</span>
+                          <div>
+                                                       <div className="text-xl lg:text-2xl font-bold text-gray-800">
+                             {player.playerName}
+                             {player.isCurrentUser && <span className="text-blue-600 ml-2">🎯</span>}
+                             {index === 0 && <span className="text-yellow-600 ml-2">👑</span>}
+                           </div>
+                            <div className="text-sm lg:text-base text-gray-600">
+                              {index === 0 ? 'Winner!' : `${Math.round(player.totalPoints / gameState.totalRounds)} pts/round average`}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl lg:text-3xl font-bold text-[#ea384c]">
+                            {player.totalPoints}
+                          </div>
+                          <div className="text-sm lg:text-base text-gray-600">
+                            total points
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Current result after guessing */}
       {(() => {
         const currentResult = gameState.hasGuessed && gameState.currentImage ? 
           gameState.results.find(r => r.imageId === gameState.currentImage.id) : null;
 
-        // Show round results screen after guessing
+        // Show round results screen after guessing (same component for both single and multiplayer)
         if (gameState.hasGuessed && gameState.currentImage && currentResult) {
           return (
             <AnimatePresence mode="wait">
             <RoundResults 
                 key={`result-${gameState.currentRound}-${currentResult.imageId}`}
               result={currentResult}
-              onNext={handleNextRound}
+              onNext={multiplayerMode && !multiplayerState?.isHost ? undefined : (async () => {
+                if (multiplayerMode && gameState.currentRound >= gameState.totalRounds) {
+                  // Last round in multiplayer - go to final results flow
+                  console.log('🏁 Host completing multiplayer game...');
+                  if (onMultiplayerNextRound) {
+                    await onMultiplayerNextRound();
+                  }
+                  setGameOverView('story');
+                } else {
+                  // Regular next round
+                  await handleNextRound();
+                }
+              })}
               onGoHome={handleGoHome}
               isLastRound={gameState.currentRound === gameState.totalRounds}
               roundNumber={gameState.currentRound}
               totalRounds={gameState.totalRounds}
               imageDescription={gameState.currentImage.description}
+              multiplayerMode={multiplayerMode}
+              isHost={multiplayerState?.isHost}
             />
             </AnimatePresence>
           );
@@ -532,6 +853,44 @@ const Game: React.FC = () => {
           <div className="text-center">
             <div className="text-4xl font-bold text-[#ea384c] mb-4">SMRUTIMAP</div>
             <div className="text-xl">Starting game...</div>
+          </div>
+        </div>
+      )}
+
+      {/* Multiplayer waiting overlay */}
+      {multiplayerMode && multiplayerState?.waitingForPlayers && gameState.hasGuessed && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+            <div className="text-2xl mb-4">⏳</div>
+            <h3 className="text-xl font-bold mb-2">Waiting for Other Players</h3>
+            <p className="text-gray-600 mb-4">
+              {multiplayerState.playersReady} of {multiplayerState.totalPlayers} players have submitted their guesses.
+            </p>
+            <div className="animate-pulse text-blue-600 mb-4">
+              Please wait while others finish their guesses...
+            </div>
+            
+                        {/* Host-only manual controls - show for host when any players have submitted */}
+            {multiplayerState.isHost && multiplayerState.playersReady > 0 && (
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <p className="text-xs text-gray-500 mb-3">Host Controls:</p>
+                <button 
+                  onClick={() => {
+                    console.log('🎮 Host manually triggering next round from waiting dialog...');
+                    handleNextRound();
+                  }}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  Next Round →
+                </button>
+                <p className="text-xs text-gray-400 mt-2">
+                  {multiplayerState.playersReady >= multiplayerState.totalPlayers 
+                    ? "All players ready - you can advance anytime"
+                    : `${multiplayerState.playersReady}/${multiplayerState.totalPlayers} players ready`
+                  }
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -556,8 +915,9 @@ const Game: React.FC = () => {
             currentRound={gameState.currentRound}
             totalRounds={gameState.totalRounds}
             totalGameScore={totalGameScore}
-            onGoHome={handleGoHome}
+            onGoHome={onMultiplayerExit || handleGoHome}
             onTimeUp={handleTimeUp}
+            multiplayerState={multiplayerMode ? multiplayerState : undefined}
           />
           
           <GameContent

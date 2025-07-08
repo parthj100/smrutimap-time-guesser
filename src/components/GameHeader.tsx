@@ -16,6 +16,13 @@ interface GameHeaderProps {
   onGoHome: () => void;
   // onShowSettings: () => void; // Preserved for future use
   onTimeUp: () => void;
+  // Multiplayer props
+  multiplayerState?: {
+    roomCode: string;
+    playersReady: number;
+    totalPlayers: number;
+    waitingForPlayers: boolean;
+  };
 }
 
 const PER_ROUND_TIME = 60;
@@ -31,7 +38,8 @@ const GameHeader: React.FC<GameHeaderProps> = React.memo(({
   totalRounds,
   totalGameScore,
   onGoHome,
-  onTimeUp
+  onTimeUp,
+  multiplayerState
 }) => {
   const { isMobile, isTablet } = useBreakpoint();
 
@@ -70,6 +78,26 @@ const GameHeader: React.FC<GameHeaderProps> = React.memo(({
       </div>
       
       <div className="flex items-center gap-6">
+        {/* Multiplayer Status */}
+        {multiplayerState && (
+          <div className="bg-blue-600 text-white rounded-lg px-4 py-2 text-sm">
+            <div className="font-semibold text-center">
+              Room: {multiplayerState.roomCode}
+            </div>
+            <div className="text-xs text-center mt-1">
+              {multiplayerState.waitingForPlayers ? (
+                <span className="animate-pulse">
+                  Waiting: {multiplayerState.playersReady}/{multiplayerState.totalPlayers}
+                </span>
+              ) : (
+                <span>
+                  Players: {multiplayerState.totalPlayers}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+        
         {/* Timer for timed mode */}
         {isTimedMode && (
           <div>

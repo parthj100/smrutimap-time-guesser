@@ -50,6 +50,7 @@ export interface GameState {
   timerActive: boolean;
   gameStartTime?: number; // timestamp when game started
   roundStartTime?: number; // timestamp when current round started
+  customTimerDuration?: number; // custom timer duration for multiplayer games
 }
 
 // User Profile Types

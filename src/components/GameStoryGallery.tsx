@@ -10,6 +10,7 @@ interface GameStoryGalleryProps {
   onPlayAgain: () => void;
   onGoHome: () => void;
   isTimedMode?: boolean;
+  multiplayerMode?: boolean;
 }
 
 // Photo component with interactive hover and drag effects
@@ -144,7 +145,8 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
   onViewDetailedBreakdown,
   onPlayAgain,
   onGoHome,
-  isTimedMode = false
+  isTimedMode = false,
+  multiplayerMode = false
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -450,9 +452,9 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
           </motion.div>
         </div>
 
-        {/* Action Button - Only View Detailed Map */}
+        {/* Action Buttons */}
         <motion.div 
-          className="flex justify-center mb-8"
+          className={`flex justify-center gap-4 mb-8 ${multiplayerMode ? 'flex-col sm:flex-row' : ''}`}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
           transition={{ duration: 0.8, delay: 1.0 }}
@@ -474,6 +476,22 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
               </motion.div>
             </Button>
           </motion.div>
+          
+          {multiplayerMode && (
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                onClick={onPlayAgain}
+                variant="outline"
+                className="border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 min-w-[200px]"
+              >
+                <Trophy size={20} />
+                View Leaderboard
+              </Button>
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </div>

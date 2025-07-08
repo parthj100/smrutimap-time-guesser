@@ -9,12 +9,14 @@ import { ENV_CONFIG } from '@/constants/gameConstants';
 
 interface RoundResultsProps {
   result: GuessResult;
-  onNext: () => void;
+  onNext?: () => void;
   onGoHome: () => void;
   isLastRound: boolean;
   roundNumber: number;
   totalRounds: number;
   imageDescription?: string;
+  multiplayerMode?: boolean;
+  isHost?: boolean;
 }
 
 const RoundResults: React.FC<RoundResultsProps> = ({ 
@@ -24,7 +26,9 @@ const RoundResults: React.FC<RoundResultsProps> = ({
   isLastRound, 
   roundNumber, 
   totalRounds,
-  imageDescription 
+  imageDescription,
+  multiplayerMode = false,
+  isHost = false
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<google.maps.Map | null>(null);
@@ -287,12 +291,19 @@ const RoundResults: React.FC<RoundResultsProps> = ({
           </div>
         </div>
 
-        <Button 
-          onClick={onNext}
-          className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-poppins"
-        >
-          {isLastRound ? 'Final Results' : 'Next Round'}
-        </Button>
+        {/* Next button - only show for host in multiplayer mode, or always in single player */}
+        {(!multiplayerMode || isHost) && onNext ? (
+          <Button 
+            onClick={onNext}
+            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-poppins"
+          >
+            {isLastRound ? 'Final Results' : (multiplayerMode ? 'Next Round (Host)' : 'Next Round')}
+          </Button>
+        ) : multiplayerMode && !isHost ? (
+          <div className="bg-gray-200 text-gray-600 px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl font-poppins text-center">
+            {isLastRound ? 'Waiting for final results...' : 'Waiting for host to continue...'}
+          </div>
+        ) : null}
       </div>
 
       {/* Full width container for better screen usage */}

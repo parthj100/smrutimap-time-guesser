@@ -61,41 +61,8 @@ const GameControls: React.FC<GameControlsProps> = ({
     );
   }
 
-<<<<<<< HEAD
-  return (
-    <div className="flex-shrink-0">
-      {/* Place your pin message when in guessing mode and no location selected */}
-      {!locationGuess && (
-        <div className="p-3 border border-blue-200 rounded-lg bg-[#ea384c] mb-4">
-          <div className="flex items-center text-blue-700">
-            <span className="font-medium text-slate-50 text-center w-full">
-              Click on the map to place your location guess
-            </span>
-          </div>
-        </div>
-      )}
-      
-      {/* Submit button */}
-      <div>
-        <EnhancedButton 
-          onClick={onSubmitGuess} 
-          disabled={!locationGuess} 
-          animationType="pulse" 
-          className={`px-10 py-4 rounded-md w-full text-xl font-semibold transition-all ${
-            locationGuess 
-              ? "bg-[#ea384c] hover:bg-red-600 text-white" 
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          {locationGuess ? "Submit Guess" : "Select a location on the map"}
-        </EnhancedButton>
-      </div>
-    </div>
-  );
-=======
   // When user hasn't guessed yet, don't show any controls since they're now in GameContent
   return null;
->>>>>>> f1c45d3 (feat: add full SmrutiMap game code and assets)
 };
 
 export default GameControls;

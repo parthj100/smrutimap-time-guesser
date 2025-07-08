@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { User, Trophy, LogOut, Crown, Target, Calendar } from 'lucide-react';
+import { User, Trophy, LogOut, Crown, Target, Calendar, Edit3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from './auth/AuthModal';
+import ProfileView from './ProfileView';
 
 interface UserHeaderProps {
   onShowLeaderboard: () => void;
@@ -12,6 +13,7 @@ interface UserHeaderProps {
 export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => {
   const { user, profile, signOut, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfileEdit, setShowProfileEdit] = useState(false);
 
   const handleSignOut = async () => {
     console.log('🚪 Sign out requested');
@@ -28,7 +30,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
     // Guest user - show login/signup buttons
     return (
       <>
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <Button
             onClick={() => setShowAuthModal(true)}
             className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full px-6 py-2 shadow-lg hover:shadow-xl"
@@ -52,7 +54,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
   const userInitial = displayName.charAt(0).toUpperCase();
 
   return (
-    <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+    <div className="flex items-center gap-3">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -136,6 +138,14 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
           <DropdownMenuSeparator />
 
           <DropdownMenuItem 
+            onClick={() => setShowProfileEdit(true)}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
+          >
+            <User size={18} />
+            <span>View Profile</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem 
             onClick={onShowLeaderboard}
             className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
           >
@@ -154,6 +164,11 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ProfileView 
+        isOpen={showProfileEdit} 
+        onClose={() => setShowProfileEdit(false)}
+      />
     </div>
   );
 }; 

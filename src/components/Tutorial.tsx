@@ -101,11 +101,12 @@ const tutorialSteps: TutorialStep[] = [
 interface TutorialProps {
   onComplete: () => void;
   onExit: () => void;
+  skipIntro?: boolean; // Add prop to skip the intro screen
 }
 
-const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit }) => {
+const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = false }) => {
   const navigate = useNavigate();
-  const [currentPhase, setCurrentPhase] = useState<'intro' | 'steps' | 'practice' | 'completion'>('intro');
+  const [currentPhase, setCurrentPhase] = useState<'intro' | 'steps' | 'practice'>('intro');
   const [practiceScore, setPracticeScore] = useState(0);
   const [tutorialImage, setTutorialImage] = useState<any>(null);
   
@@ -123,6 +124,14 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit }) => {
     isLastStep,
     isFirstStep,
   } = useTutorial(tutorialSteps);
+
+  // Skip intro if requested
+  useEffect(() => {
+    if (skipIntro) {
+      setCurrentPhase('steps');
+      startTutorial();
+    }
+  }, [skipIntro, startTutorial]);
 
   // Fetch a tutorial image (same as practice round)
   useEffect(() => {
@@ -162,16 +171,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit }) => {
     }
   }, [currentPhase]);
 
-  // Handle tutorial completion
-  useEffect(() => {
-    if (currentPhase === 'completion') {
-      const timer = setTimeout(() => {
-        completeTutorial();
-        onComplete();
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentPhase, completeTutorial, onComplete]);
+
 
   const handleStartTutorial = () => {
     setCurrentPhase('steps');
@@ -200,8 +200,9 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit }) => {
   const handlePracticeComplete = (score: number) => {
     setPracticeScore(score);
     endPracticeMode();
-    setCurrentPhase('completion');
+    completeTutorial();
     toast.success('Congratulations! You\'ve completed the tutorial!');
+    onComplete();
   };
 
   const handlePracticeSkip = () => {
@@ -213,9 +214,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit }) => {
     navigate('/');
   };
 
-  const handleStartPlaying = () => {
-    onComplete();
-  };
+
 
   // Intro screen
   if (currentPhase === 'intro') {
@@ -317,72 +316,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit }) => {
     );
   }
 
-  // Completion screen
-  if (currentPhase === 'completion') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] flex items-center justify-center p-6">
-        <motion.div
-          className="max-w-2xl mx-auto text-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Success Animation */}
-          <motion.div
-            className="mb-8"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, type: "spring", bounce: 0.5 }}
-          >
-            <div className="w-32 h-32 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <Trophy className="w-16 h-16 text-white" />
-            </div>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">Tutorial Complete!</h1>
-            <p className="text-xl text-gray-600 mb-6">
-              Congratulations! You're now ready to play SmrutiSnap.
-            </p>
-
-            {practiceScore > 0 && (
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8 inline-block">
-                <h3 className="font-semibold text-gray-800 mb-2">Your Practice Score</h3>
-                <div className="text-3xl font-bold text-[#ea384c]">{practiceScore} points</div>
-                <p className="text-sm text-gray-600 mt-2">
-                  {practiceScore > 700 ? 'Excellent work!' : 
-                   practiceScore > 400 ? 'Good job!' : 
-                   'Great start - you\'ll improve with practice!'}
-                </p>
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={handleStartPlaying}
-                className="bg-[#ea384c] hover:bg-red-600 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                Start Playing Now
-              </Button>
-              
-              <Button
-                variant="outline"
-                onClick={handleGoHome}
-                className="px-8 py-3 text-lg font-semibold rounded-xl border-2 border-gray-300 hover:border-gray-400 transition-all duration-200"
-              >
-                <Home className="w-5 h-5 mr-2" />
-                Back to Home
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-    );
-  }
 
   // Tutorial steps with overlay - using real game components
   if (currentPhase === 'steps') {

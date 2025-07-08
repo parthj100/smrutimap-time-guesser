@@ -254,6 +254,13 @@ export const useMultiplayerGame = () => {
   }, [gameState.room?.id]);
 
   const handleSessionChanges = useCallback((payload: any) => {
+    console.log('🔄 Session change received:', payload.eventType, {
+      sessionId: payload.new?.id,
+      status: payload.new?.status,
+      currentRound: payload.new?.current_round,
+      imageId: payload.new?.current_image_id
+    });
+    
     if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
       setGameState(prev => ({ ...prev, current_session: payload.new }));
     }
@@ -283,17 +290,44 @@ export const useMultiplayerGame = () => {
         // Session will be updated via handleSessionChanges
         break;
       case 'round_started':
+        console.log('📢 Round started broadcast received:', event);
         // Update current round info
-        setGameState(prev => ({
-          ...prev,
-          current_session: prev.current_session ? {
-            ...prev.current_session,
-            current_round: event.round_number,
-            current_image_id: event.image_id,
-            round_start_time: event.start_time,
-            status: 'round_active'
-          } : null
-        }));
+        setGameState(prev => {
+          if (prev.current_session) {
+            // Update existing session
+            return {
+              ...prev,
+              current_session: {
+                ...prev.current_session,
+                current_round: event.round_number,
+                current_image_id: event.image_id,
+                round_start_time: event.start_time,
+                status: 'round_active'
+              }
+            };
+          } else if (prev.room) {
+            // Create minimal session for non-hosts who haven't received the DB update yet
+            console.log('🔄 Creating session from broadcast for non-host');
+            return {
+              ...prev,
+              current_session: {
+                id: `temp-${prev.room.id}`, // Temporary ID
+                room_id: prev.room.id,
+                current_round: event.round_number,
+                current_image_id: event.image_id,
+                round_start_time: event.start_time,
+                status: 'round_active',
+                total_rounds: prev.room.settings.rounds_count,
+                images: [], // Will be populated later
+                created_at: new Date().toISOString(),
+                started_at: new Date().toISOString(),
+                finished_at: null,
+                round_end_time: null
+              }
+            };
+          }
+          return prev;
+        });
         break;
       case 'round_ended':
         setGameState(prev => ({
@@ -612,14 +646,23 @@ export const useMultiplayerGame = () => {
     }
 
     try {
-      // Get random images for the game
-      const { data: imageIds } = await supabase.rpc('get_multiplayer_game_images', { 
-        image_count: gameState.room.settings.rounds_count 
-      });
+      // Get random images for the game (replacing the missing RPC function)
+      const { data: images, error: imagesError } = await supabase
+        .from('game_images')
+        .select('id')
+        .order('created_at', { ascending: false }) // Get recent images first, then shuffle
+        .limit(Math.min(gameState.room.settings.rounds_count * 3, 50)); // Get more than needed for shuffling
       
-      if (!imageIds || imageIds.length === 0) {
+      if (imagesError || !images || images.length === 0) {
+        console.error('Error fetching images:', imagesError);
         return { success: false, error: 'Failed to load game images' };
       }
+
+      // Shuffle the images and take only what we need
+      const shuffledImages = images.sort(() => Math.random() - 0.5);
+      const imageIds = shuffledImages
+        .slice(0, gameState.room.settings.rounds_count)
+        .map(img => img.id);
 
       // Clean up any existing sessions for this room first
       await supabase
@@ -655,20 +698,32 @@ export const useMultiplayerGame = () => {
         return { success: false, error: sessionError?.message || 'Failed to create game session' };
       }
 
+      console.log('✅ Session created successfully:', {
+        sessionId: session.id,
+        roomId: session.room_id,
+        status: session.status,
+        totalRounds: session.total_rounds,
+        imageCount: imageIds.length
+      });
+
       // Broadcast game started event
       if (channelsRef.current.game) {
-        // TODO: Fix broadcast type issue
-        // await channelsRef.current.game.send({
-        //   type: 'broadcast',
-        //   event: 'game_event',
-        //   payload: {
-        //     event: {
-        //       type: 'game_started',
-        //       session_id: session.id,
-        //       first_image_id: imageIds[0] || ''
-        //     }
-        //   }
-        // });
+        try {
+          await channelsRef.current.game.send({
+            type: 'broadcast',
+            event: 'game_event',
+            payload: {
+              event: {
+                type: 'game_started',
+                session_id: session.id,
+                first_image_id: imageIds[0] || ''
+              }
+            }
+          });
+        } catch (broadcastError) {
+          console.error('Failed to broadcast game start:', broadcastError);
+          // Don't fail the game start if broadcast fails
+        }
       }
 
       return { success: true };
@@ -756,15 +811,52 @@ export const useMultiplayerGame = () => {
 
   // Start next round (host only)
   const startRound = useCallback(async (roundNumber: number): Promise<{ success: boolean; error?: string }> => {
-    if (!gameState.current_session || !gameState.is_host) {
+    console.log('🚀 Starting round:', { roundNumber, hasLocalSession: !!gameState.current_session, isHost: gameState.is_host });
+    
+    if (!gameState.is_host) {
       return { success: false, error: 'Only host can start rounds' };
     }
 
+    // If we don't have the session locally, try to get it from the database
+    // This handles the case where the session was just created but real-time updates haven't come through yet
+    let sessionToUse = gameState.current_session;
+    
+    if (!sessionToUse && gameState.room) {
+      console.log('⏳ Local session not available, fetching from database...');
+      try {
+        const { data: dbSession, error: sessionError } = await supabase
+          .from('multiplayer_sessions')
+          .select('*')
+          .eq('room_id', gameState.room.id)
+          .eq('status', 'waiting')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+          
+        if (sessionError || !dbSession) {
+          console.error('❌ Could not find session in database:', sessionError);
+          return { success: false, error: 'No active session found' };
+        }
+        
+        console.log('✅ Found session in database:', dbSession.id);
+        sessionToUse = dbSession as any; // Type assertion for now
+      } catch (error) {
+        console.error('❌ Error fetching session from database:', error);
+        return { success: false, error: 'Failed to find game session' };
+      }
+    }
+
+    if (!sessionToUse) {
+      return { success: false, error: 'No active session available' };
+    }
+
     try {
-      const imageId = gameState.current_session.images[roundNumber - 1];
+      const imageId = sessionToUse.images[roundNumber - 1];
       if (!imageId) {
         return { success: false, error: 'No image available for this round' };
       }
+
+      console.log('🎯 Starting round with image:', imageId);
 
       // Update session
       await supabase
@@ -775,7 +867,7 @@ export const useMultiplayerGame = () => {
           round_start_time: new Date().toISOString(),
           status: 'round_active'
         })
-        .eq('id', gameState.current_session.id);
+        .eq('id', sessionToUse.id);
 
       // Broadcast round start
       if (channelsRef.current.game) {
@@ -794,12 +886,13 @@ export const useMultiplayerGame = () => {
         });
       }
 
+      console.log('✅ Round started successfully');
       return { success: true };
     } catch (error) {
       console.error('Error starting round:', error);
       return { success: false, error: 'Failed to start round' };
     }
-  }, [gameState.current_session, gameState.is_host, gameState.room?.settings.time_per_round]);
+  }, [gameState.current_session, gameState.is_host, gameState.room]);
 
   // End current round and show results (host only)
   const endRound = useCallback(async (): Promise<{ success: boolean; error?: string }> => {

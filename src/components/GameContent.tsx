@@ -89,26 +89,23 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
   );
 
   const handleSubmitGuess = () => {
+    console.log('🎯 handleSubmitGuess called, locationGuess:', locationGuess);
     if (!locationGuess) {
+      console.log('❌ No location selected, showing error');
       toast.error("Please select a location on the map before submitting your guess!");
       announce("Please select a location on the map before submitting your guess!", "assertive");
       return;
     }
+    console.log('✅ Location selected, calling onSubmitGuess');
     onSubmitGuess();
   };
 
-  // Responsive layout classes
-  const containerClasses = isMobile 
-    ? "flex flex-col gap-3 flex-grow h-full" 
-    : "flex gap-8 flex-grow";
+  // Desktop-first responsive layout classes
+  const containerClasses = "flex gap-8 flex-grow lg:gap-6 md:gap-4 md:flex-col sm:flex-col sm:gap-3";
 
-  const leftColumnClasses = isMobile 
-    ? "w-full flex-1 min-h-0" 
-    : "flex-1 relative";
+  const leftColumnClasses = "flex-1 relative md:w-full md:flex-1 md:min-h-0 sm:w-full sm:flex-1 sm:min-h-0";
 
-  const rightColumnClasses = isMobile 
-    ? "w-full flex-1 min-h-0 flex flex-col" 
-    : "flex-1 flex flex-col";
+  const rightColumnClasses = "flex-1 flex flex-col md:w-full md:flex-1 md:min-h-0 md:flex md:flex-col sm:w-full sm:flex-1 sm:min-h-0 sm:flex sm:flex-col";
 
   return (
     <div 
@@ -244,12 +241,6 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
         </AnimatePresence>
       </motion.div>
       
-<<<<<<< HEAD
-      {/* Right Column - Map */}
-      <div className="flex-1 flex flex-col">
-        {/* Map container takes full available space */}
-        <div className="flex-grow">
-=======
       {/* Mobile: Map + Controls, Desktop: Right Column */}
       <motion.div 
         className={rightColumnClasses}
@@ -268,7 +259,6 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
           whileHover={{ scale: isMobile ? 1 : 1.01 }}
         >
->>>>>>> f1c45d3 (feat: add full SmrutiMap game code and assets)
           <MapSelector 
             onLocationSelected={hasGuessed ? () => {} : onLocationSelected} 
             isDisabled={hasGuessed} 
@@ -318,6 +308,34 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
                       <span>{GAME_CONSTANTS.YEAR_RANGE.MIN}</span>
                       <span>{GAME_CONSTANTS.YEAR_RANGE.MAX}</span>
                     </div>
+                    
+                    {/* Mobile Submit Button */}
+                    <motion.div
+                      className="mt-3"
+                      whileHover={{ scale: locationGuess ? 1.02 : 1 }}
+                      whileTap={{ scale: locationGuess ? 0.98 : 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <EnhancedButton 
+                        onClick={handleSubmitGuess} 
+                        disabled={!locationGuess} 
+                        animationType="pulse" 
+                        className={`w-full py-2 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center shadow-lg border-2 focus:ring-4 focus:ring-red-200 focus:outline-none text-lg ${
+                          locationGuess 
+                            ? "bg-[#ea384c] hover:bg-red-600 text-white border-red-600 hover:shadow-xl" 
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400 shadow-sm"
+                        }`}
+                        aria-label={locationGuess ? "Submit your guess" : "Select a location first to submit guess"}
+                      >
+                        <motion.span 
+                          className="drop-shadow-sm"
+                          animate={locationGuess ? { scale: [1, 1.05, 1] } : {}}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                          Make Guess
+                        </motion.span>
+                      </EnhancedButton>
+                    </motion.div>
                   </div>
                 </motion.div>
               </motion.div>

@@ -2,104 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 250 33% 96%;
-    --foreground: 222.2 84% 4.9%;
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 248 82% 58%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 240 54% 76%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 248 82% 58%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 240 54% 76%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  }
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
 }
 
-.game-container {
-  background: #eee9da;
-}
-
-@font-face {
-  font-family: 'TimeguesserFont';
-  src: url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
-}
-
-/* Logo styling */
-.logo-container {
+body {
+  margin: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-/* Text shadow utility for enhanced visibility */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* Game-specific styles */
+.game-container {
+  @apply min-h-screen bg-gradient-to-br from-slate-100 to-slate-200;
+}
+
+/* Logo styles */
+.logo-container {
+  @apply flex justify-center items-center mb-6;
+}
+
+/* Text shadow utilities */
 .text-shadow-lg {
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .text-shadow-sm {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Gradient Button Styles */
@@ -185,6 +174,42 @@
   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
 }
 
+.gradient-button-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #8b5cf6 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  border: none;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-button-purple::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.gradient-button-purple:hover::before {
+  left: 100%;
+}
+
+.gradient-button-purple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+.gradient-button-purple:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+}
+
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -197,275 +222,81 @@
   }
 }
 
-/* Custom slider styling */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 12px;
-  border-radius: 6px;
-  background: #ccc;
-  outline: none;
+/* Desktop-first responsive text utilities */
+.text-responsive-hero {
+  font-size: clamp(3rem, 10vw, 7rem);
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #ea384c;
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+.text-responsive-sm {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
 }
 
-input[type="range"]::-moz-range-thumb {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #ea384c;
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+.text-responsive-base {
+  font-size: clamp(1rem, 2vw, 1.125rem);
 }
 
-/* Map container style */
-.map-container {
-  @apply overflow-hidden rounded-xl;
-  height: 600px;
+.text-responsive-lg {
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
 }
 
-/* Rest of existing CSS */
-.time-slider {
-  @apply appearance-none h-2 rounded-full bg-slate-700;
+.text-responsive-xl {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
 }
 
-.time-slider::-webkit-slider-thumb {
-  @apply appearance-none w-6 h-6 bg-red-500 rounded-full cursor-pointer hover:scale-110 transition-all;
+.text-responsive-2xl {
+  font-size: clamp(1.5rem, 3.5vw, 1.875rem);
 }
 
-.map-container {
-  @apply rounded-lg shadow-lg overflow-hidden;
-  height: 400px;
+.text-responsive-3xl {
+  font-size: clamp(1.875rem, 4vw, 2.25rem);
 }
 
-/* Add new styles for the round results page */
-.results-page {
-  background-color: #ebe8d8;
-  min-height: 100vh;
+.text-responsive-4xl {
+  font-size: clamp(2.25rem, 5vw, 3rem);
 }
 
-.results-image-container {
-  height: 600px;
-  overflow: hidden;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.text-responsive-5xl {
+  font-size: clamp(3rem, 6vw, 4rem);
 }
 
-.results-map-container {
-  height: 600px;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.text-responsive-6xl {
+  font-size: clamp(4rem, 7vw, 5rem);
 }
 
-.score-display {
-  @apply bg-red-600 text-white font-bold px-2 py-1 text-2xl rounded;
+.text-responsive-7xl {
+  font-size: clamp(5rem, 8vw, 6rem);
 }
 
-.next-round-button {
-  @apply border-2 border-[#ea384c] text-[#ea384c] bg-transparent hover:bg-[#ea384c] hover:text-white transition-colors px-5 py-2 rounded;
+/* Button responsive utilities */
+.button-responsive {
+  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
 }
 
-/* Guess line for map */
-.guess-line {
-  @apply border-dashed border-gray-800;
-  position: absolute;
-  transform-origin: 0 0;
-  height: 0;
-  border-width: 2px;
-}
-
-/* Full-screen mode for summary */
-.full-screen-summary {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 50;
-}
-
-/* Round results specific styles */
-.year-box {
-  @apply bg-[#ea384c] text-white px-3 py-1 inline-flex rounded;
-}
-
-.distance-text {
-  @apply text-[#ea384c] font-semibold;
-}
-
-.score-box {
-  @apply bg-[#ea384c] text-white px-4 py-1 text-2xl font-bold rounded;
-}
-
-.next-button {
-  @apply border-[#ea384c] border-2 text-[#ea384c] rounded px-6 py-2 hover:bg-[#ea384c] hover:text-white transition-colors;
-}
-
-/* Fade animations for round transitions */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.animate-fade-out {
-  animation: fadeOut 0.3s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-}
-
-/* Touch-friendly mobile slider styles */
-.touch-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  cursor: pointer;
-  outline: none;
-}
-
-/* Webkit browsers (Chrome, Safari, Edge) */
-.touch-slider::-webkit-slider-track {
-  background: transparent;
-  height: 10px;
-  border-radius: 5px;
-}
-
-.touch-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #ea384c;
-  height: 28px;
-  width: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
-}
-
-.touch-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.touch-slider::-webkit-slider-thumb:active {
-  transform: scale(1.2);
-}
-
-/* Firefox */
-.touch-slider::-moz-range-track {
-  background: transparent;
-  height: 10px;
-  border-radius: 5px;
-}
-
-.touch-slider::-moz-range-thumb {
-  background: #ea384c;
-  height: 28px;
-  width: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
-}
-
-.touch-slider::-moz-range-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.touch-slider::-moz-range-thumb:active {
-  transform: scale(1.2);
-}
-
-/* Safe area support for mobile devices */
-.safe-area-pb {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Enhanced mobile touch targets */
+/* Mobile-first responsive design */
 @media (max-width: 640px) {
   .mobile-touch-target {
     min-height: 44px;
     min-width: 44px;
   }
   
-  /* Better tap targets for small screens */
   .touch-friendly {
-    min-height: 40px;
-    min-width: 40px;
-    padding: 8px;
+    padding: 12px 16px;
+    font-size: 16px; /* Prevents zoom on iOS */
   }
 }
 
-/* Enhanced responsive font scaling utilities */
-.text-responsive-sm {
-  font-size: clamp(0.875rem, 2vw, 1rem);
+/* Safe area for devices with notches */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-.text-responsive-base {
-  font-size: clamp(1rem, 2.5vw, 1.125rem);
+/* Additional game styles */
+.map-container {
+  @apply rounded-lg shadow-lg overflow-hidden;
+  height: 400px;
 }
 
-.text-responsive-lg {
-  font-size: clamp(1.125rem, 3vw, 1.25rem);
-}
-
-.text-responsive-xl {
-  font-size: clamp(1.25rem, 3.5vw, 1.5rem);
-}
-
-.text-responsive-2xl {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-}
-
-.text-responsive-3xl {
-  font-size: clamp(1.875rem, 5vw, 2.5rem);
-}
-
-.text-responsive-4xl {
-  font-size: clamp(2.25rem, 6vw, 3rem);
-}
-
-.text-responsive-hero {
-  font-size: clamp(2rem, 8vw, 10rem);
-  line-height: 0.9;
-}
-
-/* Improved button scaling */
-.button-responsive {
-  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 3vw, 2rem);
-  font-size: clamp(0.875rem, 2vw, 1.125rem);
-}
+.score-display {
+  @apply bg-red-600 text-white font-bold px-2 py-1 text-2xl rounded;
+} 

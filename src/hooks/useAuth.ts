@@ -4,12 +4,24 @@ import { AuthUser, UserProfile } from '@/types/game';
 import { queryWithTimeout, safeQuery } from '@/utils/databaseUtils';
 import { GAME_CONSTANTS, createUserEmail, ENV_CONFIG } from '@/constants/gameConstants';
 
-export const useAuth = () => {
+interface UseAuthOptions {
+  skipInitialization?: boolean;
+}
+
+export const useAuth = (options: UseAuthOptions = {}) => {
+  const { skipInitialization = false } = options;
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Skip initialization if requested (e.g., for multiplayer mode)
+    if (skipInitialization) {
+      console.log('🚫 Skipping auth initialization as requested');
+      setLoading(false);
+      return;
+    }
+
     // Get initial session with timeout
     const initAuth = async () => {
       try {
@@ -62,7 +74,7 @@ export const useAuth = () => {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [skipInitialization]);
 
   const loadUserProfile = async (userId: string) => {
     if (ENV_CONFIG.IS_DEVELOPMENT) {

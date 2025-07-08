@@ -16,7 +16,8 @@ export const useGameState = () => {
     isTimedMode: false,
     timerType: 'per-round',
     timeRemaining: 0,
-    timerActive: false
+    timerActive: false,
+    customTimerDuration: undefined
   });
 
   const [yearGuess, setYearGuess] = useState<number | null>(null);
@@ -54,7 +55,8 @@ export const useGameState = () => {
   const initializeGame = useCallback((
     images: GameImage[], 
     isTimedMode: boolean = false, 
-    timerType: 'per-round' | 'total-game' = 'per-round'
+    timerType: 'per-round' | 'total-game' = 'per-round',
+    customTimerDuration?: number
   ) => {
     if (!images || images.length === 0) {
       console.error('Cannot initialize game: no images provided');
@@ -62,7 +64,7 @@ export const useGameState = () => {
     }
 
     const initialTimeRemaining = isTimedMode 
-      ? (timerType === 'per-round' ? GAME_CONSTANTS.TIMERS.PER_ROUND_TIME : GAME_CONSTANTS.TIMERS.TOTAL_GAME_TIME)
+      ? (customTimerDuration || (timerType === 'per-round' ? GAME_CONSTANTS.TIMERS.PER_ROUND_TIME : GAME_CONSTANTS.TIMERS.TOTAL_GAME_TIME))
       : 0;
 
     setGameState({
@@ -78,7 +80,8 @@ export const useGameState = () => {
       timerType,
       timeRemaining: initialTimeRemaining,
       timerActive: isTimedMode,
-      roundStartTime: Date.now()
+      roundStartTime: Date.now(),
+      customTimerDuration
     });
 
     // Reset guesses
@@ -127,7 +130,7 @@ export const useGameState = () => {
       }
 
       const newTimeRemaining = prev.isTimedMode && prev.timerType === 'per-round' 
-        ? GAME_CONSTANTS.TIMERS.PER_ROUND_TIME 
+        ? (prev.customTimerDuration || GAME_CONSTANTS.TIMERS.PER_ROUND_TIME)
         : prev.timeRemaining;
 
       return {
@@ -174,7 +177,8 @@ export const useGameState = () => {
       isTimedMode: false,
       timerType: 'per-round',
       timeRemaining: 0,
-      timerActive: false
+      timerActive: false,
+      customTimerDuration: undefined
     });
     setYearGuess(null);
     setLocationGuess(null);

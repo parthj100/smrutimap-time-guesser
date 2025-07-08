@@ -14,8 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { UserHeader } from './UserHeader';
-import { Leaderboard } from './Leaderboard';
+
 
 interface GameInstructionsProps {
   onStart: (isTimedMode: boolean, timerType: 'per-round' | 'total-game') => void;
@@ -49,7 +48,6 @@ const itemVariants = {
 const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }) => {
   const [selectedMode, setSelectedMode] = useState<'normal' | 'timed'>('normal');
   const [timerType, setTimerType] = useState<'per-round' | 'total-game'>('per-round');
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   const handleStart = () => {
     onStart(selectedMode === 'timed', timerType);
@@ -57,9 +55,6 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
 
   return (
     <div className="relative flex flex-col min-h-screen w-full">
-      {/* User Header */}
-      <UserHeader onShowLeaderboard={() => setShowLeaderboard(true)} />
-      
       {/* Back button - Enhanced styling */}
       <motion.div 
         className="absolute top-6 left-6 z-20"
@@ -305,6 +300,8 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                   </AnimatePresence>
                 </div>
               </motion.div>
+
+
             </div>
           </Card>
         </motion.div>
@@ -327,21 +324,14 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
               } transition-all duration-300 flex items-center gap-3 rounded-full px-12 py-4 text-white text-xl font-bold shadow-xl hover:shadow-2xl`}
             >
               {selectedMode === 'timed' ? <Timer size={24} /> : <Play size={24} />}
-              {selectedMode === 'timed' 
-                ? `Start ${timerType === 'per-round' ? '60s' : '4min'} Challenge` 
-                : 'Begin Your Journey'
-              }
+              Play Now
             </Button>
           </motion.div>
         </motion.div>
         
       </motion.div>
 
-      {/* Leaderboard Modal */}
-      <Leaderboard 
-        isOpen={showLeaderboard} 
-        onClose={() => setShowLeaderboard(false)} 
-      />
+
     </div>
   );
 };

@@ -11,9 +11,10 @@ interface GameSummaryProps {
   onPlayAgain: () => void;
   onGoHome: () => void;
   isTimedMode?: boolean;
+  multiplayerMode?: boolean;
 }
 
-const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHome, isTimedMode = false }) => {
+const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHome, isTimedMode = false, multiplayerMode = false }) => {
   // Use consistent scoring - prefer display scores when available
   const getScaledScore = (result: GuessResult) => {
     // Use the stored scaled score or calculate from display scores
@@ -360,13 +361,26 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
           ))}
         </motion.div>
         
-        {/* Exit button - now leads to home page */}
+        {/* Action buttons */}
         <motion.div 
-          className="absolute right-8 top-8 z-10"
+          className={`absolute right-8 top-8 z-10 ${multiplayerMode ? 'space-y-3' : ''}`}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
         >
+          {multiplayerMode && (
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button 
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg shadow-lg font-semibold text-lg transition-all duration-200 w-full" 
+                onClick={onPlayAgain}
+              >
+                View Leaderboard
+              </Button>
+            </motion.div>
+          )}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

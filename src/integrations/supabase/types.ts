@@ -30,6 +30,48 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback: {
+        Row: {
+          admin_notes: string | null
+          category: string
+          created_at: string | null
+          email: string | null
+          id: string
+          message: string
+          page_url: string | null
+          status: string | null
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          category: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          message: string
+          page_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          message?: string
+          page_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       game_images: {
         Row: {
           created_at: string
@@ -251,6 +293,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      photo_submissions: {
+        Row: {
+          admin_notes: string | null
+          approval_date: string | null
+          clues_description: string | null
+          created_at: string | null
+          description: string | null
+          email: string
+          id: string
+          location_description: string
+          photo_metadata: Json | null
+          photo_url: string
+          rejection_reason: string | null
+          status: string | null
+          submission_source: string | null
+          submitter_name: string
+          updated_at: string | null
+          user_id: string | null
+          year_confidence: string | null
+          year_taken: number | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          approval_date?: string | null
+          clues_description?: string | null
+          created_at?: string | null
+          description?: string | null
+          email: string
+          id?: string
+          location_description: string
+          photo_metadata?: Json | null
+          photo_url: string
+          rejection_reason?: string | null
+          status?: string | null
+          submission_source?: string | null
+          submitter_name: string
+          updated_at?: string | null
+          user_id?: string | null
+          year_confidence?: string | null
+          year_taken?: number | null
+        }
+        Update: {
+          admin_notes?: string | null
+          approval_date?: string | null
+          clues_description?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string
+          id?: string
+          location_description?: string
+          photo_metadata?: Json | null
+          photo_url?: string
+          rejection_reason?: string | null
+          status?: string | null
+          submission_source?: string | null
+          submitter_name?: string
+          updated_at?: string | null
+          user_id?: string | null
+          year_confidence?: string | null
+          year_taken?: number | null
+        }
+        Relationships: []
       }
       room_participants: {
         Row: {
