@@ -101,11 +101,11 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
   };
 
   // Desktop-first responsive layout classes
-  const containerClasses = "flex gap-8 flex-grow lg:gap-6 md:gap-4 md:flex-col sm:flex-col sm:gap-3";
+  const containerClasses = "flex gap-12 flex-grow justify-center items-start max-w-6xl mx-auto lg:gap-8 md:gap-6 md:flex-col md:max-w-full sm:flex-col sm:gap-4 sm:max-w-full";
 
-  const leftColumnClasses = "flex-1 relative md:w-full md:flex-1 md:min-h-0 sm:w-full sm:flex-1 sm:min-h-0";
+  const leftColumnClasses = "flex-1 relative max-w-2xl md:w-full md:max-w-full md:flex-1 md:min-h-0 sm:w-full sm:max-w-full sm:flex-1 sm:min-h-0";
 
-  const rightColumnClasses = "flex-1 flex flex-col md:w-full md:flex-1 md:min-h-0 md:flex md:flex-col sm:w-full sm:flex-1 sm:min-h-0 sm:flex sm:flex-col";
+  const rightColumnClasses = "flex-1 flex flex-col max-w-2xl md:w-full md:max-w-full md:flex-1 md:min-h-0 md:flex md:flex-col sm:w-full sm:max-w-full sm:flex-1 sm:min-h-0 sm:flex sm:flex-col";
 
   return (
     <div 

@@ -904,7 +904,7 @@ const Game: React.FC<GameProps> = ({
             animate={{ opacity: isTransitioning ? 0 : 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full max-w-full mx-auto h-screen flex flex-col py-4 px-6"
+            className="w-full max-w-7xl mx-auto h-screen flex flex-col py-8 px-8 lg:py-6 lg:px-6 md:py-4 md:px-4 sm:py-4 sm:px-6"
           >
           <GameHeader
             isDailyChallenge={isDailyChallenge}
