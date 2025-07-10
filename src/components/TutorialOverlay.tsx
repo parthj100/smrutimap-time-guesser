@@ -152,11 +152,10 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 
   if (!isVisible) return null;
 
-  // Calculate absolute positioning for bottom center - made wider and higher
+  // Calculate responsive positioning
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
-  const tooltipWidth = Math.min(700, viewportWidth * 0.95); // Increased from 500 to 700, and 0.9 to 0.95
-  const leftPosition = (viewportWidth - tooltipWidth) / 2;
+  const isMobileView = viewportWidth < 768; // Mobile breakpoint
 
   return createPortal(
     <AnimatePresence>
@@ -265,7 +264,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           />
         )}
 
-        {/* Tutorial tooltip - IMPROVED POSITIONING */}
+        {/* Tutorial tooltip - FIXED STATIONARY POSITION */}
         <motion.div
           ref={tooltipRef}
           role="dialog"
@@ -273,41 +272,46 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           aria-labelledby="tutorial-title"
           aria-describedby="tutorial-description"
           style={{
-            position: 'fixed', // Changed from absolute to fixed for better positioning
-            // Improved dynamic positioning logic
-            bottom: (() => {
-              // For steps targeting bottom elements, move tooltip higher
-              if (step.targetElement === '[data-tutorial="year-selector"]' || 
-                  step.targetElement === '[data-tutorial="submit-button"]') {
-                return '120px'; // Higher from bottom
-              }
-              // For map-related steps, position lower
-              if (step.targetElement === '[data-tutorial="map"]') {
-                return '40px';
-              }
-              // Default position
-              return '80px';
-            })(),
-            left: `${leftPosition}px`,
-            width: `${tooltipWidth}px`,
+            position: 'fixed',
+            // Responsive positioning - top-right on desktop, top-center on mobile
+            top: '20px',
+            ...(isMobileView ? {
+              left: '20px',
+              right: '20px',
+              width: 'auto'
+            } : {
+              right: '20px',
+              width: '400px'
+            }),
+            maxWidth: 'calc(100vw - 40px)',
             backgroundColor: 'white',
-            borderRadius: '16px', // Slightly more rounded
-            padding: '32px', // More padding
-            border: '3px solid #ea384c', // Slightly thicker border
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1)', // Enhanced shadow
-            zIndex: 99999, // Highest z-index for the tooltip
-            backdropFilter: 'blur(8px)', // Add blur effect
-            WebkitBackdropFilter: 'blur(8px)' // Safari support
+            borderRadius: '16px',
+            padding: isMobileView ? '20px' : '24px',
+            border: '3px solid #ea384c',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            zIndex: 99999,
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)'
           }}
-          initial={{ scale: 0.8, opacity: 0, y: 50 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
+          initial={{ 
+            scale: 0.8, 
+            opacity: 0, 
+            x: isMobileView ? 0 : 50,
+            y: isMobileView ? -20 : 0
+          }}
+          animate={{ 
+            scale: 1, 
+            opacity: 1, 
+            x: 0,
+            y: 0
+          }}
           transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
         >
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{
-                width: '36px', // Slightly larger
+                width: '36px',
                 height: '36px',
                 backgroundColor: '#ea384c',
                 borderRadius: '50%',
@@ -315,12 +319,19 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: '16px', // Larger font
+                fontSize: '16px',
                 fontWeight: 'bold'
               }}>
                 {currentStepNumber + 1}
               </div>
-              <h3 id="tutorial-title" style={{ fontWeight: 'bold', fontSize: '20px', color: '#1f2937', margin: 0 }}>{step.title}</h3> {/* Larger title */}
+              <div>
+                <h3 id="tutorial-title" style={{ fontWeight: 'bold', fontSize: isMobileView ? '18px' : '20px', color: '#1f2937', margin: 0 }}>{step.title}</h3>
+                {step.targetElement && (
+                  <p style={{ fontSize: '12px', color: '#6b7280', margin: '2px 0 0 0', fontStyle: 'italic' }}>
+                    Look for the highlighted element ↗
+                  </p>
+                )}
+              </div>
             </div>
             <Button
               variant="ghost"
@@ -334,12 +345,12 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           </div>
 
           {/* Content */}
-          <div style={{ marginBottom: '28px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <p id="tutorial-description" style={{ 
               color: '#4b5563', 
-              lineHeight: '1.7', // Better line height for readability
+              lineHeight: '1.7',
               margin: 0, 
-              fontSize: '16px' // Slightly larger text
+              fontSize: isMobileView ? '14px' : '16px'
             }}>
               {step.description}
             </p>
