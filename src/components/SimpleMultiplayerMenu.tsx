@@ -312,7 +312,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                 Let's play together! 🌍
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Challenge your friends to guess when and where photos were taken from around the world
+                Challenge your friends to guess when and where the Smruti photos were taken from around the world
               </p>
             </div>
           </div>

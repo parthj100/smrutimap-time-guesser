@@ -325,7 +325,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            A Journey Through Visual Stories
+            A Journey Through Visual Smrutis
           </motion.div>
 
           {/* Main Title */}

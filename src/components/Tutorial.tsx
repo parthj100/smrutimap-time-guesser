@@ -85,7 +85,7 @@ const tutorialSteps: TutorialStep[] = [
     showNext: true,
     showPrev: true,
     showSkip: true,
-    hint: 'Even experienced players don\'t get it exactly right every time!',
+    hint: 'Even veteran satsangis don\'t get it exactly right every time!',
   },
   {
     id: 'practice-ready',

@@ -164,7 +164,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               type="text"
               value={formData.username}
               onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-              placeholder="Choose a unique username"
+              placeholder="Username"
               className="border-gray-300 focus:border-[#ea384c] focus:ring-[#ea384c]"
               required
               minLength={3}

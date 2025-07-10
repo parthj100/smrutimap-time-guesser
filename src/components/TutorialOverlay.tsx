@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, ArrowRight, SkipForward, Lightbulb } from 'lucide-react';
+import { X, ArrowLeft, ArrowRight, SkipForward, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TutorialStep } from '@/types/tutorial';
 import { useFocusManagement } from '@/hooks/useAccessibility';
@@ -33,8 +33,9 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 }) => {
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
   const [spotlightPosition, setSpotlightPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [isExpanded, setIsExpanded] = useState(true);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const { trapFocus, restoreFocus } = useFocusManagement();
@@ -42,10 +43,8 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
   // Find and highlight target element
   useEffect(() => {
     if (step.targetElement && isVisible) {
-      // Add a small delay to ensure elements are rendered
       const timeout = setTimeout(() => {
         const element = document.querySelector(step.targetElement!) as HTMLElement;
-        console.log('Looking for element:', step.targetElement, 'Found:', element); // Debug log
         
         if (element) {
           setTargetElement(element);
@@ -61,13 +60,6 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
             height: rect.height + (padding * 2),
           });
 
-          console.log('Spotlight position:', {
-            x: rect.left - padding,
-            y: rect.top - padding,
-            width: rect.width + (padding * 2),
-            height: rect.height + (padding * 2),
-          }); // Debug log
-
           // Scroll element into view if needed
           element.scrollIntoView({ 
             behavior: 'smooth', 
@@ -77,10 +69,8 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 
           // Add highlight class for extra emphasis
           element.classList.add('tutorial-highlight');
-        } else {
-          console.warn('Tutorial target element not found:', step.targetElement);
         }
-      }, 100); // Small delay to ensure DOM is ready
+      }, 100);
 
       return () => {
         clearTimeout(timeout);
@@ -113,29 +103,28 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
         case 'Escape':
           onExit();
           break;
+        case ' ':
+          setIsExpanded(!isExpanded);
+          e.preventDefault();
+          break;
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible, isFirstStep, isLastStep, onNext, onPrev, onExit]);
+  }, [isVisible, isFirstStep, isLastStep, onNext, onPrev, onExit, isExpanded]);
 
   // Focus management and body class for tutorial overlay
   useEffect(() => {
     if (isVisible) {
-      // Add tutorial-active class to body
       document.body.classList.add('tutorial-active');
       
-      if (tooltipRef.current) {
-        // Store the currently focused element
+      if (barRef.current && isExpanded) {
         previousFocusRef.current = document.activeElement as HTMLElement;
-        
-        // Trap focus within the tooltip
-        const cleanup = trapFocus(tooltipRef.current);
+        const cleanup = trapFocus(barRef.current);
         
         return () => {
           cleanup();
-          // Remove tutorial-active class and restore focus when tutorial closes
           document.body.classList.remove('tutorial-active');
           if (!isVisible) {
             restoreFocus(previousFocusRef.current);
@@ -145,17 +134,14 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
     }
     
     return () => {
-      // Cleanup: remove tutorial-active class
       document.body.classList.remove('tutorial-active');
     };
-  }, [isVisible, trapFocus, restoreFocus]);
+  }, [isVisible, isExpanded, trapFocus, restoreFocus]);
 
   if (!isVisible) return null;
 
-  // Calculate responsive positioning
   const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  const isMobileView = viewportWidth < 768; // Mobile breakpoint
+  const isMobileView = viewportWidth < 768;
 
   return createPortal(
     <AnimatePresence>
@@ -166,11 +152,11 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 99999, // Increased z-index to ensure it's above everything
-          pointerEvents: 'auto'
+          zIndex: 99999,
+          pointerEvents: 'none'
         }}
       >
-        {/* Four overlay divs to create spotlight effect */}
+        {/* Spotlight effect - same as before */}
         {step.targetElement && spotlightPosition.width > 0 && (
           <>
             {/* Top overlay */}
@@ -181,7 +167,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: 0,
                 right: 0,
                 height: `${spotlightPosition.y}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
                 pointerEvents: 'none',
                 zIndex: 99990
               }}
@@ -195,7 +181,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
                 pointerEvents: 'none',
                 zIndex: 99990
               }}
@@ -209,7 +195,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: 0,
                 width: `${spotlightPosition.x}px`,
                 height: `${spotlightPosition.height}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
                 pointerEvents: 'none',
                 zIndex: 99990
               }}
@@ -223,7 +209,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: `${spotlightPosition.x + spotlightPosition.width}px`,
                 right: 0,
                 height: `${spotlightPosition.height}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
                 pointerEvents: 'none',
                 zIndex: 99990
               }}
@@ -237,9 +223,9 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 top: `${spotlightPosition.y - 4}px`,
                 width: `${spotlightPosition.width + 8}px`,
                 height: `${spotlightPosition.height + 8}px`,
-                border: '4px solid #ea384c',
+                border: '3px solid #ea384c',
                 borderRadius: '12px',
-                boxShadow: '0 0 20px rgba(234, 56, 76, 0.8), 0 0 40px rgba(234, 56, 76, 0.4)',
+                boxShadow: '0 0 20px rgba(234, 56, 76, 0.6)',
                 pointerEvents: 'none',
                 background: 'transparent',
                 zIndex: 99995
@@ -248,7 +234,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           </>
         )}
 
-        {/* Fallback dark overlay when no spotlight */}
+        {/* Fallback overlay when no spotlight */}
         {(!step.targetElement || spotlightPosition.width === 0) && (
           <div
             style={{
@@ -257,231 +243,185 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
               pointerEvents: 'none',
               zIndex: 99990
             }}
           />
         )}
 
-        {/* Tutorial tooltip - FIXED STATIONARY POSITION */}
+        {/* NEW: Expandable Bottom Bar */}
         <motion.div
-          ref={tooltipRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="tutorial-title"
-          aria-describedby="tutorial-description"
+          ref={barRef}
           style={{
             position: 'fixed',
-            // Responsive positioning - top-right on desktop, top-center on mobile
-            top: '20px',
-            ...(isMobileView ? {
-              left: '20px',
-              right: '20px',
-              width: 'auto'
-            } : {
-              right: '20px',
-              width: '400px'
-            }),
-            maxWidth: 'calc(100vw - 40px)',
+            bottom: 0,
+            left: 0,
+            right: 0,
             backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: isMobileView ? '20px' : '24px',
-            border: '3px solid #ea384c',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            borderTop: '3px solid #ea384c',
+            boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.15)',
             zIndex: 99999,
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)'
+            pointerEvents: 'auto'
           }}
-          initial={{ 
-            scale: 0.8, 
-            opacity: 0, 
-            x: isMobileView ? 0 : 50,
-            y: isMobileView ? -20 : 0
-          }}
-          animate={{ 
-            scale: 1, 
-            opacity: 1, 
-            x: 0,
-            y: 0
-          }}
-          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          exit={{ y: 100 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                backgroundColor: '#ea384c',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '16px',
-                fontWeight: 'bold'
-              }}>
-                {currentStepNumber + 1}
-              </div>
-              <div>
-                <h3 id="tutorial-title" style={{ fontWeight: 'bold', fontSize: isMobileView ? '18px' : '20px', color: '#1f2937', margin: 0 }}>{step.title}</h3>
-                {step.targetElement && (
-                  <p style={{ fontSize: '12px', color: '#6b7280', margin: '2px 0 0 0', fontStyle: 'italic' }}>
-                    Look for the highlighted element ↗
-                  </p>
-                )}
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onExit}
-              className="text-gray-500 hover:text-gray-700"
-              aria-label="Close tutorial"
+          {/* Collapsed State */}
+          {!isExpanded && (
+            <div 
+              className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => setIsExpanded(true)}
             >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
-
-          {/* Content */}
-          <div style={{ marginBottom: '24px' }}>
-            <p id="tutorial-description" style={{ 
-              color: '#4b5563', 
-              lineHeight: '1.7',
-              margin: 0, 
-              fontSize: isMobileView ? '14px' : '16px'
-            }}>
-              {step.description}
-            </p>
-            
-            {step.hint && (
-              <div style={{
-                marginTop: '16px',
-                padding: '16px', // More padding
-                backgroundColor: '#fefce8',
-                border: '1px solid #fde047',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px'
-              }}>
-                <Lightbulb style={{ width: '18px', height: '18px', color: '#ca8a04', marginTop: '2px', flexShrink: 0 }} />
-                <p style={{ fontSize: '15px', color: '#92400e', margin: 0, lineHeight: '1.6' }}>{step.hint}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Progress bar */}
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#6b7280', marginBottom: '8px' }}>
-              <span>Tutorial Progress</span>
-              <span>{currentStepNumber + 1} of {totalSteps}</span>
-            </div>
-            
-            {/* Step indicators */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              {Array.from({ length: totalSteps }, (_, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    backgroundColor: index < currentStepNumber ? '#10b981' : index === currentStepNumber ? '#ea384c' : '#e5e7eb',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {index < currentStepNumber ? '✓' : index + 1}
+              <div className="flex items-center gap-3">
+                <div className="text-sm font-medium text-gray-600">Tutorial</div>
+                
+                {/* Progress dots */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalSteps }, (_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index <= currentStepNumber ? 'bg-[#ea384c]' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
-            
-            <div style={{ width: '100%', backgroundColor: '#e5e7eb', borderRadius: '999px', height: '10px' }}> {/* Slightly taller progress bar */}
-              <motion.div
-                style={{
-                  backgroundColor: '#ea384c',
-                  height: '10px',
-                  borderRadius: '999px',
-                }}
-                initial={{ width: 0 }}
-                animate={{ width: `${((currentStepNumber + 1) / totalSteps) * 100}%` }}
-                transition={{ duration: 0.5 }}
-              />
-            </div>
-          </div>
-
-          {/* Navigation buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {!isFirstStep && (
+                
+                <div className="text-sm text-gray-700">
+                  Step {currentStepNumber + 1}: {step.title}
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
                 <Button
-                  variant="outline"
                   size="sm"
-                  onClick={onPrev}
-                  className="flex items-center gap-1 px-4 py-2" // Slightly larger buttons
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNext();
+                  }}
+                  className="bg-[#ea384c] hover:bg-red-600 text-white px-3 py-1 text-xs"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  Previous
+                  Next
                 </Button>
-              )}
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {step.showSkip !== false && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onSkip}
-                  className="text-gray-500 hover:text-gray-700 flex items-center gap-1 px-4 py-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSkip();
+                  }}
+                  className="text-gray-500 hover:text-gray-700 px-2 py-1 text-xs"
                 >
-                  <SkipForward className="w-4 h-4" />
-                  Skip Tutorial
+                  Skip
                 </Button>
-              )}
-              
-              <Button
-                onClick={onNext}
-                size="sm"
-                className="bg-[#ea384c] hover:bg-red-600 text-white flex items-center gap-1 px-4 py-2"
-              >
-                {isLastStep ? 'Complete' : 'Next'}
-                {!isLastStep && <ArrowRight className="w-4 h-4" />}
-              </Button>
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              </div>
             </div>
-          </div>
-        </motion.div>
+          )}
 
-        {/* Navigation hint at bottom - improved positioning */}
-        <div 
-          style={{
-            position: 'fixed', // Changed to fixed for better positioning
-            bottom: '15px', // Closer to bottom
-            left: '50%',
-            transform: 'translateX(-50%)',
-            textAlign: 'center',
-            zIndex: 99998, // High z-index but below tooltip
-            pointerEvents: 'none' // Allow clicks to pass through
-          }}
-        >
-          <p style={{
-            color: 'white',
-            fontSize: '12px',
-            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Slightly more opaque
-            padding: '6px 12px', // More padding
-            borderRadius: '9999px',
-            margin: 0,
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)' // Add subtle shadow
-          }}>
-            Use arrow keys or buttons to navigate
-          </p>
-        </div>
+          {/* Expanded State */}
+          {isExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              className="px-4 py-4"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center text-white text-sm font-bold">
+                      {currentStepNumber + 1}
+                    </div>
+                    <h3 className="font-semibold text-lg text-gray-900">{step.title}</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-3 max-w-2xl">
+                    {step.description}
+                  </p>
+                  
+                  {step.hint && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 max-w-2xl">
+                      <p className="text-yellow-800 text-sm">💡 {step.hint}</p>
+                    </div>
+                  )}
+                  
+                  {/* Progress bar */}
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-xs">
+                      <div 
+                        className="bg-[#ea384c] h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((currentStepNumber + 1) / totalSteps) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {currentStepNumber + 1} of {totalSteps}
+                    </span>
+                  </div>
+                </div>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              {/* Navigation buttons */}
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onSkip}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <SkipForward className="w-4 h-4 mr-1" />
+                    Skip Tutorial
+                  </Button>
+                </div>
+                
+                <div className="flex gap-2">
+                  {!isFirstStep && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={onPrev}
+                      className="flex items-center gap-1"
+                    >
+                      <ArrowLeft className="w-3 h-3" />
+                      Previous
+                    </Button>
+                  )}
+                  
+                  <Button
+                    onClick={onNext}
+                    size="sm"
+                    className="bg-[#ea384c] hover:bg-red-600 text-white flex items-center gap-1"
+                  >
+                    {isLastStep ? 'Complete' : 'Next'}
+                    {!isLastStep && <ArrowRight className="w-3 h-3" />}
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onExit}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
 
       {/* Enhanced CSS for highlighted elements */}
@@ -489,17 +429,11 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
         .tutorial-highlight {
           position: relative !important;
           z-index: 99996 !important;
-          box-shadow: 0 0 30px rgba(255, 255, 255, 0.7) !important;
+          box-shadow: 0 0 30px rgba(234, 56, 76, 0.4) !important;
           border-radius: 8px !important;
           overflow: visible !important;
         }
         
-        /* Ensure tutorial elements don't interfere with game elements */
-        .tutorial-overlay * {
-          box-sizing: border-box;
-        }
-        
-        /* Prevent any background elements from appearing above tutorial */
         body.tutorial-active {
           overflow: hidden;
         }
