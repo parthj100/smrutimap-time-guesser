@@ -167,22 +167,15 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Share Your Historic Photos! 📸
+                  Share Your Photos! 📸
                 </h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                  Help us grow SmrutiMap's collection! Submit your historic photos with location and year details, 
+                  Help us grow SmrutiMap's collection! Submit your photos with location and year details, 
                   and they might be featured in our time-guessing game for players worldwide to discover.
                 </p>
               </div>
 
               <div className="grid gap-4 max-w-md mx-auto text-left">
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                  <span className="text-2xl">🏛️</span>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Historic Value</h3>
-                    <p className="text-sm text-gray-600">Photos that show how places looked in the past</p>
-                  </div>
-                </div>
                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
                   <span className="text-2xl">📍</span>
                   <div>
@@ -218,7 +211,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                 Upload Your Photo 📤
               </h2>
               <p className="text-lg text-gray-600">
-                Choose a high-quality historic photo (JPEG, PNG, or WebP)
+                Choose a high-quality photo (JPEG, PNG, or WebP)
               </p>
             </div>
 
@@ -740,7 +733,6 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 rounded-xl p-4">
                 <Database size={16} />
-                <span>Stored securely in our database</span>
                 <Sparkles size={16} className="text-yellow-500" />
               </div>
             </div>
@@ -771,7 +763,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                 <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center">
                   <Camera size={16} className="text-white" />
                 </div>
-                <span className="font-semibold text-gray-700">Submit Historic Photo</span>
+                <span className="font-semibold text-gray-700">Submit Photo</span>
               </div>
               <Button
                 onClick={handleClose}

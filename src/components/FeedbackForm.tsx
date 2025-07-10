@@ -351,7 +351,6 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 rounded-xl p-4">
                 <Database size={16} />
-                <span>Stored securely in our database</span>
                 <Sparkles size={16} className="text-yellow-500" />
               </div>
             </div>
