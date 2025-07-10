@@ -19,8 +19,8 @@ import { transformDatabaseImageToGameImage } from '@/utils/gameUtils';
 const tutorialSteps: TutorialStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to SmrutiSnap!',
-    description: 'SmrutiSnap is a historical guessing game where you analyze photos to determine when and where they were taken. Let\'s learn how to play!',
+    title: 'Welcome to SmrutiMap!',
+    description: 'SmrutiMap is a Smruti guessing game where you analyze photos of the Satpurush to determine when and where they were taken. Let\'s learn how to play!',
     position: 'center',
     showNext: true,
     showSkip: true,
@@ -28,7 +28,7 @@ const tutorialSteps: TutorialStep[] = [
   {
     id: 'game-concept',
     title: 'How It Works',
-    description: 'You\'ll see historical photos and need to guess two things: the year it was taken and the location. Look for clues in clothing, architecture, vehicles, and surroundings.',
+    description: 'You\'ll see photos of the Satpurush and need to guess two things: the year it was taken and the location. Look for clues in clothing, architecture, vehicles, surroundings, or even the photo style.',
     position: 'center',
     showNext: true,
     showPrev: true,
@@ -236,9 +236,9 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = fal
             <div className="w-24 h-24 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
               <GraduationCap className="w-12 h-12 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">Learn to Play SmrutiSnap</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">Learn to Play SmrutiMap</h1>
             <p className="text-xl text-gray-600 leading-relaxed">
-              Master the art of historical photo analysis with our interactive tutorial
+              Master the art of Smruti photo analysis with our interactive tutorial
             </p>
           </motion.div>
 

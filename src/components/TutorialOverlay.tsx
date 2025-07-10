@@ -120,23 +120,34 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isVisible, isFirstStep, isLastStep, onNext, onPrev, onExit]);
 
-  // Focus management for tutorial overlay
+  // Focus management and body class for tutorial overlay
   useEffect(() => {
-    if (isVisible && tooltipRef.current) {
-      // Store the currently focused element
-      previousFocusRef.current = document.activeElement as HTMLElement;
+    if (isVisible) {
+      // Add tutorial-active class to body
+      document.body.classList.add('tutorial-active');
       
-      // Trap focus within the tooltip
-      const cleanup = trapFocus(tooltipRef.current);
-      
-      return () => {
-        cleanup();
-        // Restore focus when tutorial closes
-        if (!isVisible) {
-          restoreFocus(previousFocusRef.current);
-        }
-      };
+      if (tooltipRef.current) {
+        // Store the currently focused element
+        previousFocusRef.current = document.activeElement as HTMLElement;
+        
+        // Trap focus within the tooltip
+        const cleanup = trapFocus(tooltipRef.current);
+        
+        return () => {
+          cleanup();
+          // Remove tutorial-active class and restore focus when tutorial closes
+          document.body.classList.remove('tutorial-active');
+          if (!isVisible) {
+            restoreFocus(previousFocusRef.current);
+          }
+        };
+      }
     }
+    
+    return () => {
+      // Cleanup: remove tutorial-active class
+      document.body.classList.remove('tutorial-active');
+    };
   }, [isVisible, trapFocus, restoreFocus]);
 
   if (!isVisible) return null;
@@ -156,7 +167,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 9999,
+          zIndex: 99999, // Increased z-index to ensure it's above everything
           pointerEvents: 'auto'
         }}
       >
@@ -171,8 +182,9 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: 0,
                 right: 0,
                 height: `${spotlightPosition.y}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                pointerEvents: 'none'
+                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                pointerEvents: 'none',
+                zIndex: 99990
               }}
             />
             
@@ -184,8 +196,9 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                pointerEvents: 'none'
+                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                pointerEvents: 'none',
+                zIndex: 99990
               }}
             />
             
@@ -197,8 +210,9 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: 0,
                 width: `${spotlightPosition.x}px`,
                 height: `${spotlightPosition.height}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                pointerEvents: 'none'
+                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                pointerEvents: 'none',
+                zIndex: 99990
               }}
             />
             
@@ -210,8 +224,9 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 left: `${spotlightPosition.x + spotlightPosition.width}px`,
                 right: 0,
                 height: `${spotlightPosition.height}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                pointerEvents: 'none'
+                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+                pointerEvents: 'none',
+                zIndex: 99990
               }}
             />
 
@@ -227,7 +242,8 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                 borderRadius: '12px',
                 boxShadow: '0 0 20px rgba(234, 56, 76, 0.8), 0 0 40px rgba(234, 56, 76, 0.4)',
                 pointerEvents: 'none',
-                background: 'transparent'
+                background: 'transparent',
+                zIndex: 99995
               }}
             />
           </>
@@ -242,13 +258,14 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              pointerEvents: 'none'
+              backgroundColor: 'rgba(0, 0, 0, 0.85)', // Slightly darker overlay
+              pointerEvents: 'none',
+              zIndex: 99990
             }}
           />
         )}
 
-        {/* Tutorial tooltip - DYNAMIC POSITIONING TO AVOID OVERLAP */}
+        {/* Tutorial tooltip - IMPROVED POSITIONING */}
         <motion.div
           ref={tooltipRef}
           role="dialog"
@@ -256,23 +273,35 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           aria-labelledby="tutorial-title"
           aria-describedby="tutorial-description"
           style={{
-            position: 'absolute',
-            // Dynamically adjust bottom position based on what's being spotlighted
-            // Lower bottom value = closer to bottom of screen
-            bottom: (step.targetElement === '[data-tutorial="year-selector"]' || 
-                     step.targetElement === '[data-tutorial="submit-button"]') ? '20px' : '80px',
+            position: 'fixed', // Changed from absolute to fixed for better positioning
+            // Improved dynamic positioning logic
+            bottom: (() => {
+              // For steps targeting bottom elements, move tooltip higher
+              if (step.targetElement === '[data-tutorial="year-selector"]' || 
+                  step.targetElement === '[data-tutorial="submit-button"]') {
+                return '120px'; // Higher from bottom
+              }
+              // For map-related steps, position lower
+              if (step.targetElement === '[data-tutorial="map"]') {
+                return '40px';
+              }
+              // Default position
+              return '80px';
+            })(),
             left: `${leftPosition}px`,
             width: `${tooltipWidth}px`,
             backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '28px',
-            border: '2px solid #ea384c',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            zIndex: 10000
+            borderRadius: '16px', // Slightly more rounded
+            padding: '32px', // More padding
+            border: '3px solid #ea384c', // Slightly thicker border
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1)', // Enhanced shadow
+            zIndex: 99999, // Highest z-index for the tooltip
+            backdropFilter: 'blur(8px)', // Add blur effect
+            WebkitBackdropFilter: 'blur(8px)' // Safari support
           }}
           initial={{ scale: 0.8, opacity: 0, y: 50 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
         >
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -418,24 +447,26 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           </div>
         </motion.div>
 
-        {/* Navigation hint at bottom - updated position */}
+        {/* Navigation hint at bottom - improved positioning */}
         <div 
           style={{
-            position: 'absolute',
-            bottom: '20px',
+            position: 'fixed', // Changed to fixed for better positioning
+            bottom: '15px', // Closer to bottom
             left: '50%',
             transform: 'translateX(-50%)',
             textAlign: 'center',
-            zIndex: 10001
+            zIndex: 99998, // High z-index but below tooltip
+            pointerEvents: 'none' // Allow clicks to pass through
           }}
         >
           <p style={{
             color: 'white',
             fontSize: '12px',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            padding: '4px 8px',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Slightly more opaque
+            padding: '6px 12px', // More padding
             borderRadius: '9999px',
-            margin: 0
+            margin: 0,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)' // Add subtle shadow
           }}>
             Use arrow keys or buttons to navigate
           </p>
@@ -445,9 +476,29 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
       {/* Enhanced CSS for highlighted elements */}
       <style>{`
         .tutorial-highlight {
-          position: relative;
-          z-index: 10001 !important;
-          box-shadow: 0 0 30px rgba(255, 255, 255, 0.5) !important;
+          position: relative !important;
+          z-index: 99996 !important;
+          box-shadow: 0 0 30px rgba(255, 255, 255, 0.7) !important;
+          border-radius: 8px !important;
+          overflow: visible !important;
+        }
+        
+        /* Ensure tutorial elements don't interfere with game elements */
+        .tutorial-overlay * {
+          box-sizing: border-box;
+        }
+        
+        /* Prevent any background elements from appearing above tutorial */
+        body.tutorial-active {
+          overflow: hidden;
+        }
+        
+        body.tutorial-active > * {
+          z-index: 1 !important;
+        }
+        
+        body.tutorial-active .tutorial-highlight {
+          z-index: 99996 !important;
         }
       `}</style>
     </AnimatePresence>,
