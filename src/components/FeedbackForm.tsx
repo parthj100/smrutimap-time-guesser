@@ -341,17 +341,8 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Thanks for your feedback! 🎉
+                  Thank you for your feedback! 🎉
                 </h2>
-                <p className="text-lg text-gray-600 max-w-md mx-auto">
-                  Your message has been saved securely and our team will review it soon. 
-                  You're helping make SmrutiMap better!
-                </p>
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 rounded-xl p-4">
-                <Database size={16} />
-                <Sparkles size={16} className="text-yellow-500" />
               </div>
             </div>
           </div>
