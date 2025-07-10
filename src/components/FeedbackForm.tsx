@@ -229,13 +229,13 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               </p>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-6 max-w-md mx-auto">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
+                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400 text-center"
                 autoFocus
               />
               <p className="text-sm text-gray-500 text-center">
@@ -243,7 +243,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               </p>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 pt-4">
               <Button
                 onClick={prevStep}
                 variant="outline"
