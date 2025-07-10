@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: smrutimap-time-guesser
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm run preview
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "18"
+      - key: VITE_SUPABASE_URL
+        value: "https://rhxbadjyjjjrjpvfhpap.supabase.co"
+      - key: VITE_SUPABASE_ANON_KEY
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoeGJhZGp5ampqcmpwdmZocGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NDUyMTUsImV4cCI6MjA2MzUyMTIxNX0.Z7sfOz6dgSgjKyJspwoYPz4gbJwYRe8zxpNYV_YeonA"
+      - key: VITE_GOOGLE_MAPS_API_KEY
+        value: "AIzaSyBdrreySEkWF2MGQAgo1v33zEi_n_ifPtQ"
+    autoDeploy: true
+    branch: main
+    repo: https://github.com/parthj100/smrutimap-time-guesser.git 
