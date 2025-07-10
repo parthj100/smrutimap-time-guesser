@@ -114,7 +114,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                 Choose Your Game Mode
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
-                Experience historical photo analysis in your preferred style
+                Experience the Smruti in your preferred style
               </p>
               
               {/* Divider */}
@@ -181,7 +181,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                       >
                         <div className="flex items-center gap-2 text-[#ea384c] font-medium text-sm">
                           <Play size={14} />
-                          <span>Ready to start your thoughtful journey through history</span>
+                          <span>Ready to start your smruti journey</span>
                         </div>
                       </motion.div>
                     )}
