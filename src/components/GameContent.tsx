@@ -100,12 +100,18 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
     onSubmitGuess();
   };
 
-  // Desktop-first responsive layout classes
-  const containerClasses = "flex gap-12 flex-grow justify-center items-start max-w-6xl mx-auto lg:gap-8 md:gap-6 md:flex-col md:max-w-full sm:flex-col sm:gap-4 sm:max-w-full";
+  // Responsive layout classes
+  const containerClasses = isMobile 
+    ? "flex flex-col gap-3 flex-grow h-full" 
+    : "flex gap-8 flex-grow";
 
-  const leftColumnClasses = "flex-1 relative max-w-2xl md:w-full md:max-w-full md:flex-1 md:min-h-0 sm:w-full sm:max-w-full sm:flex-1 sm:min-h-0";
+  const leftColumnClasses = isMobile 
+    ? "w-full flex-1 min-h-0" 
+    : "flex-1 relative";
 
-  const rightColumnClasses = "flex-1 flex flex-col max-w-2xl md:w-full md:max-w-full md:flex-1 md:min-h-0 md:flex md:flex-col sm:w-full sm:max-w-full sm:flex-1 sm:min-h-0 sm:flex sm:flex-col";
+  const rightColumnClasses = isMobile 
+    ? "w-full flex-1 min-h-0 flex flex-col" 
+    : "flex-1 flex flex-col";
 
   return (
     <div 

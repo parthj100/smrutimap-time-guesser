@@ -56,8 +56,8 @@ const InfiniteImageBackground: React.FC = () => {
         variant="masonry" 
         className="bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0]"
         autoScroll={true}
-        scrollSpeed={1.0} // Slower, smoother movement for relaxed feeling
-        disableDrag={true} // Completely disable user interaction
+        scrollSpeed={1.0}
+        disableDrag={true}
       >
         <GridBody>
           {images.map((image, index) => (
@@ -68,14 +68,12 @@ const InfiniteImageBackground: React.FC = () => {
               <img
                 src={image.image_url}
                 alt={image.description}
-                className="pointer-events-none absolute h-full w-full object-cover opacity-40 blur-[0.5px] transition-all duration-500 hover:opacity-55 rounded-lg"
+                className="pointer-events-none absolute h-full w-full object-cover opacity-20 blur-[1px] transition-all duration-500 hover:opacity-30 rounded-lg"
                 loading="lazy"
                 onError={(e) => {
-                  // Hide broken images
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              {/* Subtle border effect with rounded corners */}
               <div className="absolute inset-0 border border-white/10 rounded-lg"></div>
             </GridItem>
           ))}
