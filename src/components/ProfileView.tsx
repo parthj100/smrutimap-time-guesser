@@ -16,11 +16,13 @@ import {
   Crown,
   Calendar,
   Check,
-  XCircle
+  XCircle,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { fixUserStatsFromSessions } from '@/utils/databaseUtils';
 
 interface ProfileViewProps {
   isOpen: boolean;
@@ -45,6 +47,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
   });
   const [errors, setErrors] = useState<Partial<ProfileFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Game mode options
   const gameModeOptions = [
@@ -180,6 +183,46 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
       } else {
         onClose();
       }
+    }
+  };
+
+  const handleRefreshStats = async () => {
+    if (!user?.id) return;
+
+    setIsRefreshing(true);
+    try {
+      console.log('🔄 Refreshing profile stats...');
+      
+      // First, fix any data consistency issues
+      const fixResult = await fixUserStatsFromSessions(user.id);
+      if (fixResult.success) {
+        console.log('✅ Stats fixed successfully:', fixResult.correctedStats);
+        toast({
+          title: "Stats Updated",
+          description: "Your profile stats have been refreshed and synchronized.",
+        });
+      } else {
+        console.warn('⚠️ Stats fix failed:', fixResult.error);
+        toast({
+          title: "Refresh Complete",
+          description: "Profile refreshed, but some stats may need manual review.",
+          variant: "destructive",
+        });
+      }
+      
+      // Then refresh the profile data
+      await refreshProfile();
+      console.log('✅ Profile refreshed successfully');
+      
+    } catch (error) {
+      console.error('❌ Profile refresh failed:', error);
+      toast({
+        title: "Refresh Failed",
+        description: "Unable to refresh your profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -405,10 +448,22 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
             {/* Game Statistics */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Trophy size={16} />
-                  Game Statistics
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <Trophy size={16} />
+                    Game Statistics
+                  </CardTitle>
+                  <Button
+                    onClick={handleRefreshStats}
+                    disabled={isRefreshing}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs"
+                  >
+                    <RefreshCw size={12} className={`mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    {isRefreshing ? 'Syncing...' : 'Refresh'}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">

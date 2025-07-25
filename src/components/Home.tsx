@@ -131,7 +131,7 @@ export const Home: React.FC<HomeProps> = ({
           className="fixed top-3 left-3 right-3 z-50 flex justify-between items-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
         >
           {/* Left side - Leaderboard */}
           <motion.div
@@ -187,7 +187,7 @@ export const Home: React.FC<HomeProps> = ({
             className="fixed top-6 left-6 z-50"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
           >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -209,7 +209,7 @@ export const Home: React.FC<HomeProps> = ({
             className="fixed bottom-6 left-6 z-50"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
           >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -231,7 +231,7 @@ export const Home: React.FC<HomeProps> = ({
             className="fixed bottom-6 right-6 z-50"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
           >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -257,7 +257,7 @@ export const Home: React.FC<HomeProps> = ({
           className="fixed top-6 right-6 z-50"
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
         >
           <UserHeader onShowLeaderboard={() => setShowLeaderboard(true)} />
         </motion.div>

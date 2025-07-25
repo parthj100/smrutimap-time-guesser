@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { User, Trophy, LogOut, Crown, Target, Calendar, Edit3 } from 'lucide-react';
+import { User, Trophy, LogOut, Crown, Target, Calendar, Edit3, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from './auth/AuthModal';
 import ProfileView from './ProfileView';
+import { fixUserStatsFromSessions } from '@/utils/databaseUtils';
 
 interface UserHeaderProps {
   onShowLeaderboard: () => void;
 }
 
 export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => {
-  const { user, profile, signOut, loading } = useAuth();
+  const { user, profile, signOut, loading, refreshProfile } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleSignOut = async () => {
     console.log('🚪 Sign out requested');
@@ -22,6 +24,32 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
       console.log('✅ Sign out completed');
     } catch (error) {
       console.error('❌ Sign out failed:', error);
+    }
+  };
+
+  const handleRefreshProfile = async () => {
+    if (!user?.id) return;
+
+    setIsRefreshing(true);
+    try {
+      console.log('🔄 Refreshing profile data...');
+      
+      // First, fix any data consistency issues
+      const fixResult = await fixUserStatsFromSessions(user.id);
+      if (fixResult.success) {
+        console.log('✅ Stats fixed successfully:', fixResult.correctedStats);
+      } else {
+        console.warn('⚠️ Stats fix failed:', fixResult.error);
+      }
+      
+      // Then refresh the profile data
+      await refreshProfile();
+      console.log('✅ Profile refreshed successfully');
+      
+    } catch (error) {
+      console.error('❌ Profile refresh failed:', error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -88,6 +116,19 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
           {/* Stats Section */}
           {profile ? (
             <div className="px-3 py-2 mb-2 bg-gray-50 rounded-lg">
+              {/* Refresh Button */}
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-gray-700">Profile Stats</span>
+                <button
+                  onClick={handleRefreshProfile}
+                  disabled={isRefreshing}
+                  className="flex items-center gap-1 px-2 py-1 text-xs bg-[#ea384c] text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />
+                  {isRefreshing ? 'Syncing...' : 'Refresh'}
+                </button>
+              </div>
+              
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex items-center gap-2">
                   <Target size={16} className="text-[#ea384c]" />
@@ -132,6 +173,16 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
               <div className="text-xs text-gray-500 mt-1 text-center">
                 Game scores will still be saved
               </div>
+              {user && (
+                <button
+                  onClick={handleRefreshProfile}
+                  disabled={isRefreshing}
+                  className="mt-2 w-full flex items-center justify-center gap-1 px-2 py-1 text-xs bg-[#ea384c] text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />
+                  {isRefreshing ? 'Syncing...' : 'Refresh Profile'}
+                </button>
+              )}
             </div>
           )}
 
