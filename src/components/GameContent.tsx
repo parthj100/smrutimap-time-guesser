@@ -56,7 +56,8 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
   // Keyboard navigation for year selection
   useKeyboardNavigation(
     () => {
-      if (!hasGuessed && locationGuess) {
+      // Only auto-submit if both location and year are selected AND user explicitly presses Enter
+      if (!hasGuessed && locationGuess && yearGuess) {
         onSubmitGuess();
       }
     },

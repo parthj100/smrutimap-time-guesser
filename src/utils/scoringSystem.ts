@@ -7,37 +7,37 @@ export const SCORE_CONSTANTS = {
   DISPLAY_MULTIPLIER: 50, // Raw score * 50 = display score (max 5000 per category)
   MAX_DISPLAY_SCORE_PER_CATEGORY: 5000,
   MAX_TOTAL_DISPLAY_SCORE: 10000,
-  TIME_BONUS_MULTIPLIER: 2 // seconds left * 2 = bonus points
+  TIME_BONUS_MULTIPLIER: 1.5 // seconds left * 1.5 = bonus points (reduced from 2)
 } as const;
 
-// Calculate year score based on how close the guess is to the actual year - TIMEGUESSR STYLE
+// Calculate year score based on how close the guess is to the actual year - INCREASED DIFFICULTY
 export const calculateYearScore = (actualYear: number, guessedYear: number): number => {
   const yearDiff = Math.abs(actualYear - guessedYear);
   
-  // TimeGuessr-style year scoring - much more lenient
+  // Increased difficulty - harder to get high scores
   // Perfect guess (exact year)
   if (yearDiff === 0) return 100;
   
-  // Excellent precision (1-3 years) - very high reward like TimeGuessr
-  if (yearDiff <= 3) return Math.round(100 - yearDiff * 2.67); // 100 to 92 (matches TimeGuessr's 3yr = 92%)
+  // Excellent precision (1-2 years) - reduced perfect range
+  if (yearDiff <= 2) return Math.round(100 - yearDiff * 5); // 100 to 90
   
-  // Very good (4-10 years) - generous scoring
-  if (yearDiff <= 10) return Math.round(92 - (yearDiff - 3) * 3); // 92 to 71
+  // Very good (3-8 years) - steeper drop
+  if (yearDiff <= 8) return Math.round(90 - (yearDiff - 2) * 4); // 90 to 66
   
-  // Good (11-25 years) - still decent rewards
-  if (yearDiff <= 25) return Math.round(71 - (yearDiff - 10) * 2); // 71 to 41
+  // Good (9-20 years) - faster decline
+  if (yearDiff <= 20) return Math.round(66 - (yearDiff - 8) * 2.5); // 66 to 36
   
-  // Fair (26-50 years) - moderate rewards
-  if (yearDiff <= 50) return Math.round(41 - (yearDiff - 25) * 1); // 41 to 16
+  // Fair (21-40 years) - moderate rewards
+  if (yearDiff <= 40) return Math.round(36 - (yearDiff - 20) * 1.2); // 36 to 12
   
-  // Poor (51-100 years) - still some reward
-  if (yearDiff <= 100) return Math.round(16 - (yearDiff - 50) * 0.2); // 16 to 6
+  // Poor (41-80 years) - minimal rewards
+  if (yearDiff <= 80) return Math.round(12 - (yearDiff - 40) * 0.15); // 12 to 6
   
-  // Very poor (>100 years) - minimal but not zero
-  return Math.max(1, Math.round(6 - (yearDiff - 100) * 0.05));
+  // Very poor (>80 years) - very minimal
+  return Math.max(1, Math.round(6 - (yearDiff - 80) * 0.05));
 };
 
-// Calculate location score based on distance in kilometers - TIMEGUESSR STYLE
+// Calculate location score based on distance in kilometers - INCREASED DIFFICULTY
 export const calculateLocationScore = (
   actualLat: number,
   actualLng: number,
@@ -51,30 +51,30 @@ export const calculateLocationScore = (
     guessedLng
   );
   
-  // Convert km to miles for TimeGuessr-style calculation
+  // Convert km to miles for calculation
   const distanceMiles = distance * 0.621371;
   
-  // TimeGuessr-style location scoring - very generous
-  // Perfect guess (within 10 miles) - extended perfect range
-  if (distanceMiles < 10) return 100;
+  // Increased difficulty - harder to get high scores
+  // Perfect guess (within 5 miles) - kept same
+  if (distanceMiles < 5) return 100;
   
-  // Excellent precision (10-50 miles) - high reward
-  if (distanceMiles < 50) return Math.round(100 - (distanceMiles - 10) * 0.5); // 100 to 80
+  // Excellent precision (5-25 miles) - much steeper drop
+  if (distanceMiles < 25) return Math.round(100 - (distanceMiles - 5) * 1.5); // 100 to 70
   
-  // Very good (50-150 miles) - generous scoring
-  if (distanceMiles < 150) return Math.round(80 - (distanceMiles - 50) * 0.3); // 80 to 50
+  // Very good (25-75 miles) - much faster decline
+  if (distanceMiles < 75) return Math.round(70 - (distanceMiles - 25) * 0.8); // 70 to 30
   
-  // Good (150-400 miles) - matches TimeGuessr's ~266mi = 81% (4072/5000)
-  if (distanceMiles < 400) return Math.round(50 - (distanceMiles - 150) * 0.12); // 50 to 20
+  // Good (75-200 miles) - steeper decline
+  if (distanceMiles < 200) return Math.round(30 - (distanceMiles - 75) * 0.12); // 30 to 15
   
-  // Fair (400-1000 miles) - still decent rewards
-  if (distanceMiles < 1000) return Math.round(20 - (distanceMiles - 400) * 0.025); // 20 to 5
+  // Fair (200-500 miles) - minimal rewards
+  if (distanceMiles < 500) return Math.round(15 - (distanceMiles - 200) * 0.03); // 15 to 6
   
-  // Poor (1000-3000 miles) - minimal but reasonable
-  if (distanceMiles < 3000) return Math.round(5 - (distanceMiles - 1000) * 0.002); // 5 to 1
+  // Poor (500-1500 miles) - very minimal
+  if (distanceMiles < 1500) return Math.round(6 - (distanceMiles - 500) * 0.003); // 6 to 3
   
-  // Very poor (3000+ miles) - still get something
-  return Math.max(0.5, Math.round(1 - (distanceMiles - 3000) * 0.0001));
+  // Very poor (1500+ miles) - minimal but not zero
+  return Math.max(1, Math.round(3 - (distanceMiles - 1500) * 0.001));
 };
 
 // Calculate total score - FIXED: Now just adds display scores instead of weighted calculation

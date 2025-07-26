@@ -37,6 +37,10 @@ const RoundResults: React.FC<RoundResultsProps> = ({
   const animationRef = useRef<number | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const [progressWidth, setProgressWidth] = useState(0);
+  const [animatedTotalScore, setAnimatedTotalScore] = useState(0);
+  const [animatedYearScore, setAnimatedYearScore] = useState(0);
+  const [animatedLocationScore, setAnimatedLocationScore] = useState(0);
+  const [animatedTimeBonus, setAnimatedTimeBonus] = useState(0);
 
   // Calculate distance in miles for display purposes
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -246,13 +250,46 @@ const RoundResults: React.FC<RoundResultsProps> = ({
       }
     };
     
-    // Reduced delay for more immediate start
+    // Minimal delay for immediate start
     const timer = setTimeout(() => {
       requestAnimationFrame(animateProgress);
-    }, 100);
+    }, 50);
     
     return () => clearTimeout(timer);
   }, [roundNumber, totalRounds]);
+
+  // Animate score counters
+  useEffect(() => {
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const stepDuration = duration / steps;
+    
+    const animateScore = (target: number, setter: (value: number) => void) => {
+      let current = 0;
+      const increment = target / steps;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          setter(target);
+          clearInterval(timer);
+        } else {
+          setter(Math.floor(current));
+        }
+      }, stepDuration);
+      
+      return timer;
+    };
+
+    const timers = [
+      animateScore(Math.round(totalScore), setAnimatedTotalScore),
+      animateScore(Math.round(yearScore), setAnimatedYearScore),
+      animateScore(Math.round(locationScore), setAnimatedLocationScore),
+      animateScore(Math.round(timeBonus), setAnimatedTimeBonus)
+    ];
+
+    return () => timers.forEach(timer => clearInterval(timer));
+  }, [totalScore, yearScore, locationScore, timeBonus]);
 
   return (
     <motion.div 
@@ -277,7 +314,7 @@ const RoundResults: React.FC<RoundResultsProps> = ({
         </button>
         
         <div className="text-center flex-1 mx-6 lg:mx-12">
-          <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800 mb-3 lg:mb-4 font-manrope">
+          <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800 mb-3 lg:mb-4 font-sans">
             Round {roundNumber} of {totalRounds}
           </h1>
           <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl bg-white rounded-full h-3 lg:h-4 mx-auto shadow-inner">
@@ -286,7 +323,7 @@ const RoundResults: React.FC<RoundResultsProps> = ({
               style={{ width: `${progressWidth}%` }}
             />
           </div>
-          <div className="text-sm lg:text-base text-gray-600 mt-2 font-medium font-poppins">
+          <div className="text-sm lg:text-base text-gray-600 mt-2 font-medium font-sans">
             {Math.round(progressWidth)}% Complete
           </div>
         </div>
@@ -295,12 +332,12 @@ const RoundResults: React.FC<RoundResultsProps> = ({
         {(!multiplayerMode || isHost) && onNext ? (
           <Button 
             onClick={onNext}
-            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-poppins"
+            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-sans"
           >
             {isLastRound ? 'Final Results' : (multiplayerMode ? 'Next Round (Host)' : 'Next Round')}
           </Button>
         ) : multiplayerMode && !isHost ? (
-          <div className="bg-gray-200 text-gray-600 px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl font-poppins text-center">
+          <div className="bg-gray-200 text-gray-600 px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl font-sans text-center">
             {isLastRound ? 'Waiting for final results...' : 'Waiting for host to continue...'}
           </div>
         ) : null}
@@ -310,11 +347,11 @@ const RoundResults: React.FC<RoundResultsProps> = ({
       <div className="max-w-7xl mx-auto space-y-4 lg:space-y-5">
         {/* Prominent Distance Display */}
         <div className="text-center px-4">
-          <p className="text-xl lg:text-3xl xl:text-4xl text-gray-800 font-work">
-            Your guess was <span className="font-bold text-[#ea384c] text-2xl lg:text-4xl xl:text-5xl font-anton">{Math.round(distanceOff).toLocaleString()} miles</span> from the correct location
+          <p className="text-xl lg:text-3xl xl:text-4xl text-gray-800 font-sans">
+            Your guess was <span className="font-bold text-[#ea384c] text-2xl lg:text-4xl xl:text-5xl font-sans">{Math.round(distanceOff).toLocaleString()} miles</span> from the correct location
           </p>
-          <p className="text-base lg:text-lg xl:text-xl text-gray-600 mt-2 font-work">
-            You were <span className="font-bold text-[#ea384c] font-anton">{Math.abs(result.yearGuess - result.actualYear)} years</span> off
+          <p className="text-base lg:text-lg xl:text-xl text-gray-600 mt-2 font-sans">
+            You were <span className="font-bold text-[#ea384c] font-sans">{Math.abs(result.yearGuess - result.actualYear)} years</span> off
           </p>
         </div>
 
@@ -323,38 +360,38 @@ const RoundResults: React.FC<RoundResultsProps> = ({
           <div className="flex flex-wrap justify-center gap-3 lg:gap-4 xl:gap-5 max-w-5xl">
             {/* Total Score - prominent */}
             <div className="bg-[#ea384c] text-white rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
-              <div className="text-sm lg:text-base xl:text-lg opacity-90 font-medium mb-1 font-inter">Total</div>
-              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-space">{Math.round(totalScore)}</div>
-              <div className="text-xs lg:text-sm opacity-75 font-inter">points</div>
+              <div className="text-sm lg:text-base xl:text-lg opacity-90 font-medium mb-1 font-sans">Total</div>
+              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-sans">{animatedTotalScore.toLocaleString()}</div>
+              <div className="text-xs lg:text-sm opacity-75 font-sans">points</div>
             </div>
 
             {/* Year Score */}
             <div className="bg-white rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg border-2 border-[#ea384c]/20 min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
-              <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-inter">Year</div>
-              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-space">{Math.round(yearScore)}</div>
-              <div className="text-xs lg:text-sm text-gray-500 font-inter">/5000</div>
+              <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-sans">Year</div>
+              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-sans">{animatedYearScore.toLocaleString()}</div>
+              <div className="text-xs lg:text-sm text-gray-500 font-sans">/5000</div>
             </div>
 
             {/* Location Score */}
             <div className="bg-white rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg border-2 border-[#ea384c]/20 min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
-              <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-inter">Location</div>
-              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-space">{Math.round(locationScore)}</div>
-              <div className="text-xs lg:text-sm text-gray-500 font-inter">/5000</div>
+              <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-sans">Location</div>
+              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-sans">{animatedLocationScore.toLocaleString()}</div>
+              <div className="text-xs lg:text-sm text-gray-500 font-sans">/5000</div>
             </div>
 
             {/* Year Comparison */}
             <div className="bg-gray-50 rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
-              <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-inter">Year Guess</div>
-              <div className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-800 font-space">{result.yearGuess}</div>
-              <div className="text-xs lg:text-sm text-gray-500 font-inter">vs {result.actualYear}</div>
+              <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-sans">Year Guess</div>
+              <div className="text-xl lg:text-2xl xl:text-3xl font-bold text-gray-800 font-sans">{result.yearGuess}</div>
+              <div className="text-xs lg:text-sm text-gray-500 font-sans">vs {result.actualYear}</div>
             </div>
 
             {/* Time Bonus (if applicable) - always in the flow */}
             {timeBonus > 0 && (
               <div className="bg-yellow-400 text-yellow-900 rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
-                <div className="text-sm lg:text-base xl:text-lg font-medium mb-1 font-inter">Time Bonus</div>
-                <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-anton">+{Math.round(timeBonus)}</div>
-                <div className="text-xs lg:text-sm opacity-75 font-inter">bonus</div>
+                <div className="text-sm lg:text-base xl:text-lg font-medium mb-1 font-sans">Time Bonus</div>
+                <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-sans">+{animatedTimeBonus.toLocaleString()}</div>
+                <div className="text-xs lg:text-sm opacity-75 font-sans">bonus</div>
               </div>
             )}
           </div>
@@ -363,7 +400,7 @@ const RoundResults: React.FC<RoundResultsProps> = ({
         {/* Description - more prominent */}
         {imageDescription && (
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 lg:p-6 xl:p-8 shadow-lg border border-[#ea384c]/30 mx-2 lg:mx-6">
-            <p className="text-gray-800 text-center leading-relaxed text-base lg:text-lg xl:text-xl font-manrope">
+            <p className="text-gray-800 text-center leading-relaxed text-base lg:text-lg xl:text-xl font-sans">
               {imageDescription}
             </p>
           </div>

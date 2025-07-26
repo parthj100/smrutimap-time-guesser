@@ -357,7 +357,7 @@ const MapSelector: React.FC<MapSelectorProps> = ({
         {/* Guess confirmation overlay */}
         {!isDisabled && guessedLocation && (
           <div className="absolute top-4 right-4 z-10 bg-green-500/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm border-2 border-white/30">
-            ✅ Guess placed! Click elsewhere to move it
+            ✅ Location selected! Click elsewhere to move it or press Enter to submit
           </div>
         )}
         

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { Maximize2, X } from 'lucide-react';
 
 interface GameImageProps {
   imageUrl: string;
@@ -113,6 +114,7 @@ const GameImage: React.FC<GameImageProps> = React.memo(({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(containerRef);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Only start loading image when component is visible
   const shouldLoadImage = isVisible;
@@ -246,6 +248,17 @@ const GameImage: React.FC<GameImageProps> = React.memo(({
               sizes: "(max-width: 768px) 800px, (max-width: 1024px) 1200px, 1600px"
             })}
           />
+          
+          {/* Fullscreen Button */}
+          {imageLoaded && (
+            <button
+              onClick={() => setIsFullscreen(true)}
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-110 z-10"
+              title="View fullscreen"
+            >
+              <Maximize2 size={20} />
+            </button>
+          )}
         </div>
       )}
       
@@ -286,6 +299,34 @@ const GameImage: React.FC<GameImageProps> = React.memo(({
                 Unable to load after multiple attempts. Please refresh the page.
               </div>
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* Fullscreen Modal */}
+      {isFullscreen && (
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsFullscreen(false)}
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 z-10"
+              title="Close fullscreen"
+            >
+              <X size={24} />
+            </button>
+            
+            {/* Fullscreen Image */}
+            <img 
+              src={currentSrc || optimizedImageUrl}
+              alt="Historical image (fullscreen)" 
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              style={{ 
+                maxWidth: '95vw',
+                maxHeight: '95vh'
+              }}
+              onError={handleImageError}
+            />
           </div>
         </div>
       )}

@@ -142,7 +142,7 @@ export const Home: React.FC<HomeProps> = ({
               onClick={() => setShowLeaderboard(true)}
               variant="outline"
               size="sm"
-              className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+              className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
             >
               <Trophy size={16} />
             </Button>
@@ -158,7 +158,7 @@ export const Home: React.FC<HomeProps> = ({
                 onClick={() => setShowPhotoSubmissionForm(true)}
                 variant="outline"
                 size="sm"
-                className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
               >
                 <Camera size={16} />
               </Button>
@@ -172,7 +172,7 @@ export const Home: React.FC<HomeProps> = ({
                 onClick={() => setShowFeedbackForm(true)}
                 variant="outline"
                 size="sm"
-                className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
               >
                 <MessageSquare size={16} />
               </Button>
@@ -196,7 +196,7 @@ export const Home: React.FC<HomeProps> = ({
               <Button
                 onClick={() => setShowLeaderboard(true)}
                 variant="outline"
-                className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
+                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
               >
                 <Trophy size={18} />
                 Leaderboard
@@ -218,7 +218,7 @@ export const Home: React.FC<HomeProps> = ({
               <Button
                 onClick={() => setShowPhotoSubmissionForm(true)}
                 variant="outline"
-                className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
+                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
               >
                 <Camera size={18} />
                 Submit Photos
@@ -240,7 +240,7 @@ export const Home: React.FC<HomeProps> = ({
               <Button
                 onClick={() => setShowFeedbackForm(true)}
                 variant="outline"
-                className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
+                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
               >
                 <MessageSquare size={18} />
                 Feedback

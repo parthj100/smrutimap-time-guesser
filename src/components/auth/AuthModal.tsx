@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
-import { X, Eye, EyeOff, User, MapPin, Lock, CheckCircle, ArrowRight, ArrowLeft, Users, Gamepad2, Trophy } from 'lucide-react';
+import { X, Eye, EyeOff, User, MapPin, Lock, CheckCircle, ArrowRight, ArrowLeft, Mail, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AuthModalProps {
@@ -72,10 +72,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 'account':
-        if (!formData.username || formData.username.length < 3) {
-          toast.error('Username must be at least 3 characters long');
-          return false;
-        }
+    if (!formData.username || formData.username.length < 3) {
+      toast.error('Username must be at least 3 characters long');
+      return false;
+    }
         if (isLogin && (!formData.password || formData.password.length < 6)) {
           toast.error('Password must be at least 6 characters long');
           return false;
@@ -83,9 +83,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         break;
       case 'profile':
         if (!formData.displayName || formData.displayName.length < 2) {
-          toast.error('Display name must be at least 2 characters long');
-          return false;
-        }
+      toast.error('Display name must be at least 2 characters long');
+      return false;
+    }
         break;
       case 'location':
         if (!formData.center.trim()) {
@@ -94,14 +94,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         }
         break;
       case 'password':
-        if (!formData.password || formData.password.length < 6) {
-          toast.error('Password must be at least 6 characters long');
-          return false;
-        }
-        if (!isLogin && formData.password !== formData.confirmPassword) {
-          toast.error('Passwords do not match');
-          return false;
-        }
+    if (!formData.password || formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return false;
+    }
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return false;
+    }
         break;
     }
     return true;
@@ -114,8 +114,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     if (currentStep === 'review') {
       // Handle final submission
-      setLoading(true);
-      try {
+    setLoading(true);
+    try {
         console.log('📝 Attempting signup for username:', formData.username);
         const { data, error } = await signUp(
           formData.username, 
@@ -150,7 +150,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       } finally {
         setLoading(false);
       }
-         } else if (currentStep === 'account' && isLogin) {
+    } else if (currentStep === 'account' && isLogin) {
       // Handle login
       setLoading(true);
       try {
@@ -174,487 +174,420 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           console.log('✅ Login successful for user:', data.user.id);
           toast.success(`Welcome back, ${formData.username}!`);
           nextStep();
-        }
-      } catch (error: any) {
-        console.error('❌ Auth form submission error:', error);
-        toast.error(error.message || 'Login failed. Please try again.');
-      } finally {
-        setLoading(false);
       }
+    } catch (error: any) {
+      console.error('❌ Auth form submission error:', error);
+        toast.error(error.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
     } else {
       nextStep();
     }
   };
 
-  const handleModeSwitch = () => {
-    setIsLogin(!isLogin);
-    resetForm();
-  };
-
   const renderStep = () => {
     switch (currentStep) {
-             case 'welcome':
-         return (
-           <div className="text-center space-y-8">
-             <div className="space-y-6">
-               <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
-                 <User size={40} className="text-white" />
-               </div>
-               
-               <div>
-                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                   Welcome to SmrutiMap! 🎮
-                 </h2>
-               </div>
+      case 'welcome':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
+              <User className="w-7 h-7 text-[#ea384c]" />
+            </div>
+            <h2 className="text-2xl font-semibold mb-4">
+              Welcome to SmrutiMap!
+            </h2>
+            <p className="text-gray-500 text-sm mb-8">
+              Join the community and start playing
+            </p>
+            <div className="w-full flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setIsLogin(false);
+                  nextStep();
+                }}
+                className="w-full bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition"
+              >
+                Create Account
+              </button>
+              <button
+                onClick={() => {
+                  setIsLogin(true);
+                  nextStep();
+                }}
+                className="w-full border border-gray-300 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition"
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        );
 
-               <div className="grid gap-4 max-w-md mx-auto text-left">
-                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                   <span className="text-2xl">🏆</span>
-                   <div>
-                     <h3 className="font-semibold text-gray-900">Compete & Track Progress</h3>
-                     <p className="text-sm text-gray-600">Save your scores and climb the leaderboards</p>
-                   </div>
-                 </div>
-                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                   <span className="text-2xl">🌍</span>
-                   <div>
-                     <h3 className="font-semibold text-gray-900">Join the Community</h3>
-                     <p className="text-sm text-gray-600">Connect with players from around the world</p>
-                   </div>
-                 </div>
-                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                   <span className="text-2xl">📊</span>
-                   <div>
-                     <h3 className="font-semibold text-gray-900">Detailed Analytics</h3>
-                     <p className="text-sm text-gray-600">View your performance and improvement over time</p>
-                   </div>
-                 </div>
-               </div>
+      case 'account':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
+              <LogIn className="w-7 h-7 text-[#ea384c]" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                {isLogin ? 'Sign in' : 'Create your account'}
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                {isLogin 
+                  ? 'Welcome back! Enter your details to continue'
+                  : 'Let\'s start by creating your unique username'
+                }
+              </p>
+            </div>
 
-               <div className="space-y-4">
-                 <Button
-                   onClick={() => {
-                     setIsLogin(false);
-                     nextStep();
-                   }}
-                   className="w-full px-8 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white text-lg font-medium"
-                 >
-                   Create Account
-                   <ArrowRight className="w-5 h-5 ml-2" />
-                 </Button>
-                 
-                 <Button
-                   onClick={() => {
-                     setIsLogin(true);
-                     nextStep();
-                   }}
-                   variant="outline"
-                   className="w-full px-8 py-3 rounded-xl border-2 border-gray-300 hover:border-[#ea384c] hover:bg-gray-50 text-gray-700 text-lg font-medium"
-                 >
-                   Sign In
-                   <ArrowRight className="w-5 h-5 ml-2" />
-                 </Button>
-               </div>
-             </div>
-           </div>
-         );
+            <div className="w-full flex flex-col gap-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <User className="w-4 h-4" />
+                </span>
+                <input
+                  placeholder={isLogin ? "Enter your username" : "Choose a unique username"}
+              type="text"
+              value={formData.username}
+                  className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 bg-gray-50 text-black text-sm"
+                  onChange={(e) => updateFormData('username', e.target.value)}
+                  autoFocus
+            />
+          </div>
 
-             case 'account':
-         return (
-           <div className="space-y-8">
-             <div className="text-center">
-               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                 {isLogin ? 'Welcome Back!' : 'Create Your Account'} 👋
-               </h2>
-               <p className="text-lg text-gray-600 max-w-md mx-auto">
-                 {isLogin 
-                   ? 'Sign in to access your profile and continue your journey'
-                   : 'Let\'s start by creating your unique username'
-                 }
-               </p>
-             </div>
+              {isLogin && (
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Lock className="w-4 h-4" />
+                  </span>
+                  <input
+                    placeholder="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 bg-gray-50 text-black text-sm"
+                    onChange={(e) => updateFormData('password', e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              )}
 
-             <div className="space-y-6 max-w-md mx-auto">
-               <div>
-                 <label className="block text-lg font-medium text-gray-700 mb-3">Username</label>
-                 <Input
-                   type="text"
-                   value={formData.username}
-                   onChange={(e) => updateFormData('username', e.target.value)}
-                   placeholder={isLogin ? "Enter your username" : "Choose a unique username"}
-                   className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
-                   autoFocus
-                 />
-                 {!isLogin && (
-                   <p className="text-sm text-gray-500 mt-2">
-                     This will be your unique identifier on SmrutiMap
-                   </p>
-                 )}
-               </div>
+          {!isLogin && (
+                <p className="text-xs text-gray-500 text-left">
+                  This will be your unique identifier on SmrutiMap
+                </p>
+              )}
+            </div>
 
-               {isLogin && (
-                 <div>
-                   <label className="block text-lg font-medium text-gray-700 mb-3">Password</label>
-                   <div className="relative">
-                     <Input
-                       type={showPassword ? 'text' : 'password'}
-                       value={formData.password}
-                       onChange={(e) => updateFormData('password', e.target.value)}
-                       placeholder="Enter your password"
-                       className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400 pr-12"
-                     />
-                     <Button
-                       type="button"
-                       variant="ghost"
-                       size="sm"
-                       className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-transparent"
-                       onClick={() => setShowPassword(!showPassword)}
-                     >
-                       {showPassword ? (
-                         <EyeOff className="h-5 w-5 text-gray-400" />
-                       ) : (
-                         <Eye className="h-5 w-5 text-gray-400" />
-                       )}
-                     </Button>
-                   </div>
-                 </div>
-               )}
-             </div>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={prevStep}
+                className="flex-1 border border-gray-300 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleStepSubmit}
+                disabled={loading || !formData.username.trim() || (isLogin && !formData.password.trim())}
+                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  isLogin ? 'Sign In' : 'Continue'
+                )}
+              </button>
+            </div>
+          </div>
+        );
 
-             <div className="flex gap-4 max-w-md mx-auto">
-               <Button
-                 onClick={prevStep}
-                 variant="outline"
-                 className="flex-1 py-3 rounded-xl border-2 hover:bg-gray-50"
-               >
-                 <ArrowLeft className="w-4 h-4 mr-2" />
-                 Back
-               </Button>
-               <Button
-                 onClick={handleStepSubmit}
-                 disabled={loading || !formData.username.trim() || (isLogin && !formData.password.trim())}
-                 className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-               >
-                 {loading ? (
-                   <>
-                     <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                     Signing In...
-                   </>
-                 ) : (
-                   <>
-                     {isLogin ? 'Sign In' : 'Continue'}
-                     <ArrowRight className="w-4 h-4 ml-2" />
-                   </>
-                 )}
-               </Button>
-             </div>
-           </div>
-         );
+            case 'profile':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
+              <User className="w-7 h-7 text-[#ea384c]" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                Tell us about yourself
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                How would you like to be known?
+              </p>
+            </div>
 
-             case 'profile':
-         return (
-           <div className="space-y-8">
-             <div className="text-center">
-               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                 Tell us about yourself 👤
-               </h2>
-               <p className="text-lg text-gray-600 max-w-md mx-auto">
-                 How would you like to be known in the SmrutiMap community?
-               </p>
-             </div>
+            <div className="w-full flex flex-col gap-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <User className="w-4 h-4" />
+                </span>
+                <input
+                  placeholder="Enter your display name"
+                type="text"
+                value={formData.displayName}
+                  className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 bg-gray-50 text-black text-sm"
+                  onChange={(e) => updateFormData('displayName', e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <p className="text-xs text-gray-500 text-left">
+                This is how other players will see you on leaderboards
+              </p>
+            </div>
 
-             <div className="space-y-6 max-w-md mx-auto">
-               <div>
-                 <label className="block text-lg font-medium text-gray-700 mb-3">Display Name</label>
-                 <Input
-                   type="text"
-                   value={formData.displayName}
-                   onChange={(e) => updateFormData('displayName', e.target.value)}
-                   placeholder="Enter your display name"
-                   className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
-                   autoFocus
-                 />
-                 <p className="text-sm text-gray-500 mt-2">
-                   This is how other players will see you on leaderboards
-                 </p>
-               </div>
-             </div>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={prevStep}
+                className="flex-1 border border-gray-300 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleStepSubmit}
+                disabled={!formData.displayName.trim()}
+                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        );
 
-             <div className="flex gap-4 max-w-md mx-auto">
-               <Button
-                 onClick={prevStep}
-                 variant="outline"
-                 className="flex-1 py-3 rounded-xl border-2 hover:bg-gray-50"
-               >
-                 <ArrowLeft className="w-4 h-4 mr-2" />
-                 Back
-               </Button>
-               <Button
-                 onClick={handleStepSubmit}
-                 disabled={!formData.displayName.trim()}
-                 className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-               >
-                 Continue
-                 <ArrowRight className="w-4 h-4 ml-2" />
-               </Button>
-             </div>
-           </div>
-         );
+            case 'location':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
+              <MapPin className="w-7 h-7 text-[#ea384c]" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                Where are you from?
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                Connect with players in your area
+              </p>
+            </div>
 
-             case 'location':
-         return (
-           <div className="space-y-8">
-             <div className="text-center">
-               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                 Where are you from? 📍
-               </h2>
-               <p className="text-lg text-gray-600 max-w-md mx-auto">
-                 Help us connect you with players in your area
-               </p>
-             </div>
+            <div className="w-full flex flex-col gap-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <MapPin className="w-4 h-4" />
+                </span>
+                <input
+                  placeholder="Enter your center location (e.g., New York, Robbinsville)"
+                  type="text"
+                  value={formData.center}
+                  className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 bg-gray-50 text-black text-sm"
+                  onChange={(e) => updateFormData('center', e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <p className="text-xs text-gray-500 text-left">
+                This will be displayed on your profile and leaderboards
+              </p>
+            </div>
 
-             <div className="space-y-6 max-w-md mx-auto">
-               <div>
-                 <label className="block text-lg font-medium text-gray-700 mb-3">Center Location</label>
-                 <Input
-                   type="text"
-                   value={formData.center}
-                   onChange={(e) => updateFormData('center', e.target.value)}
-                   placeholder="Enter your center location (e.g., New York, Robbinsville)"
-                   className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
-                   autoFocus
-                 />
-                 <p className="text-sm text-gray-500 mt-2">
-                   This will be displayed on your profile and leaderboards
-                 </p>
-               </div>
-             </div>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={prevStep}
+                className="flex-1 border border-gray-300 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleStepSubmit}
+                disabled={!formData.center.trim()}
+                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        );
 
-             <div className="flex gap-4 max-w-md mx-auto">
-               <Button
-                 onClick={prevStep}
-                 variant="outline"
-                 className="flex-1 py-3 rounded-xl border-2 hover:bg-gray-50"
-               >
-                 <ArrowLeft className="w-4 h-4 mr-2" />
-                 Back
-               </Button>
-               <Button
-                 onClick={handleStepSubmit}
-                 disabled={!formData.center.trim()}
-                 className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-               >
-                 Continue
-                 <ArrowRight className="w-4 h-4 ml-2" />
-               </Button>
-             </div>
-           </div>
-         );
+            case 'password':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
+              <Lock className="w-7 h-7 text-[#ea384c]" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                Secure your account
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                Create a strong password
+              </p>
+            </div>
 
-             case 'password':
-         return (
-           <div className="space-y-8">
-             <div className="text-center">
-               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                 Secure Your Account 🔒
-               </h2>
-               <p className="text-lg text-gray-600 max-w-md mx-auto">
-                 Create a strong password to protect your account
-               </p>
-             </div>
+            <div className="w-full flex flex-col gap-3">
+            <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Lock className="w-4 h-4" />
+                </span>
+                <input
+                  placeholder="Create a password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 bg-gray-50 text-black text-sm"
+                  onChange={(e) => updateFormData('password', e.target.value)}
+                  autoFocus
+              />
+                <button
+                type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
 
-             <div className="space-y-6 max-w-md mx-auto">
-               <div>
-                 <label className="block text-lg font-medium text-gray-700 mb-3">Password</label>
-                 <div className="relative">
-                   <Input
-                     type={showPassword ? 'text' : 'password'}
-                     value={formData.password}
-                     onChange={(e) => updateFormData('password', e.target.value)}
-                     placeholder="Create a password"
-                     className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400 pr-12"
-                     autoFocus
-                   />
-                   <Button
-                     type="button"
-                     variant="ghost"
-                     size="sm"
-                     className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-transparent"
-                     onClick={() => setShowPassword(!showPassword)}
-                   >
-                     {showPassword ? (
-                       <EyeOff className="h-5 w-5 text-gray-400" />
-                     ) : (
-                       <Eye className="h-5 w-5 text-gray-400" />
-                     )}
-                   </Button>
-                 </div>
-                 <p className="text-sm text-gray-500 mt-2">
-                   Must be at least 6 characters long
-                 </p>
-               </div>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <Lock className="w-4 h-4" />
+                </span>
+                <input
+                  placeholder="Confirm your password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 bg-gray-50 text-black text-sm"
+                  onChange={(e) => updateFormData('confirmPassword', e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 text-left">
+                Must be at least 6 characters long
+              </p>
+            </div>
 
-               <div>
-                 <label className="block text-lg font-medium text-gray-700 mb-3">Confirm Password</label>
-                 <div className="relative">
-                   <Input
-                     type={showConfirmPassword ? 'text' : 'password'}
-                     value={formData.confirmPassword}
-                     onChange={(e) => updateFormData('confirmPassword', e.target.value)}
-                     placeholder="Confirm your password"
-                     className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400 pr-12"
-                   />
-                   <Button
-                     type="button"
-                     variant="ghost"
-                     size="sm"
-                     className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-transparent"
-                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                   >
-                     {showConfirmPassword ? (
-                       <EyeOff className="h-5 w-5 text-gray-400" />
-                     ) : (
-                       <Eye className="h-5 w-5 text-gray-400" />
-                     )}
-                   </Button>
-                 </div>
-               </div>
-             </div>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={prevStep}
+                className="flex-1 border border-gray-300 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleStepSubmit}
+                disabled={loading || !formData.password.trim()}
+                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
+              >
+                {loading ? (
+                  <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  'Continue'
+                )}
+              </button>
+            </div>
+          </div>
+        );
 
-             <div className="flex gap-4 max-w-md mx-auto">
-               <Button
-                 onClick={prevStep}
-                 variant="outline"
-                 className="flex-1 py-3 rounded-xl border-2 hover:bg-gray-50"
-               >
-                 <ArrowLeft className="w-4 h-4 mr-2" />
-                 Back
-               </Button>
-               <Button
-                 onClick={handleStepSubmit}
-                 disabled={loading || !formData.password.trim()}
-                 className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50"
-               >
-                 {loading ? (
-                   <>
-                     <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                     Creating Account...
-                   </>
-                 ) : (
-                   <>
-                     Continue
-                     <ArrowRight className="w-4 h-4 ml-2" />
-                   </>
-                 )}
-               </Button>
-             </div>
-           </div>
-         );
+            case 'review':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
+              <CheckCircle className="w-7 h-7 text-[#ea384c]" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                Review your account
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                Review your details before creating your account
+              </p>
+            </div>
+            
+            <div className="w-full space-y-4">
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Account Details</h3>
+                <div className="bg-white p-3 rounded-lg border space-y-2 text-sm">
+                  <p><span className="font-medium">Username:</span> {formData.username}</p>
+                  <p><span className="font-medium">Display Name:</span> {formData.displayName}</p>
+                  <p><span className="font-medium">Center:</span> {formData.center}</p>
+                </div>
+              </div>
 
-             case 'review':
-         return (
-           <div className="space-y-8">
-             <div className="text-center">
-               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                 Review Your Account 👀
-               </h2>
-               <p className="text-lg text-gray-600 max-w-md mx-auto">
-                 Please review all details before creating your account
-               </p>
-             </div>
-             
-             <div className="space-y-6 max-w-md mx-auto">
-               <div className="bg-gray-50 rounded-2xl p-6 space-y-4">
-                 <div>
-                   <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Account Details</h3>
-                   <div className="bg-white p-4 rounded-xl border space-y-2">
-                     <p><span className="font-medium">Username:</span> {formData.username}</p>
-                     <p><span className="font-medium">Display Name:</span> {formData.displayName}</p>
-                     <p><span className="font-medium">Center:</span> {formData.center}</p>
-                   </div>
-                 </div>
+              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <div>
+                  <p className="font-medium text-green-900 text-sm">Account ready to create!</p>
+                  <p className="text-xs text-green-700">All information looks good</p>
+                </div>
+              </div>
+            </div>
 
-                 <div className="flex items-center gap-3 p-4 bg-green-50 rounded-xl">
-                   <CheckCircle className="w-5 h-5 text-green-600" />
-                   <div>
-                     <p className="font-medium text-green-900">Account ready to create!</p>
-                     <p className="text-sm text-green-700">All information looks good</p>
-                   </div>
-                 </div>
-               </div>
-             </div>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={prevStep}
+                className="flex-1 border border-gray-300 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition"
+                disabled={loading}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleStepSubmit}
+                disabled={loading}
+                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
+              >
+                {loading ? (
+                  <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </div>
+          </div>
+        );
 
-             <div className="flex gap-4 max-w-md mx-auto">
-               <Button
-                 onClick={prevStep}
-                 variant="outline"
-                 className="flex-1 py-3 rounded-xl border-2 hover:bg-gray-50"
-                 disabled={loading}
-               >
-                 <ArrowLeft className="w-4 h-4 mr-2" />
-                 Back
-               </Button>
-               <Button
-                 onClick={handleStepSubmit}
-                 disabled={loading}
-                 className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50"
-               >
-                 {loading ? (
-                   <>
-                     <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                     Creating Account...
-                   </>
-                 ) : (
-                   <>
-                     Create Account
-                     <ArrowRight className="w-4 h-4 ml-2" />
-                   </>
-                 )}
-               </Button>
-             </div>
-           </div>
-         );
+            case 'success':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-green-100 mb-6 shadow-lg shadow-opacity-5">
+              <CheckCircle className="w-7 h-7 text-green-600" />
+            </div>
+            
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">
+                {isLogin ? 'Welcome Back!' : 'Account Created Successfully!'}
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                {isLogin 
+                  ? `Welcome back, ${formData.username}! You're all set.`
+                  : `Welcome to SmrutiMap, ${formData.displayName}! Your account is ready.`
+                }
+              </p>
+            </div>
 
-             case 'success':
-         return (
-           <div className="text-center space-y-8">
-             <div className="space-y-6">
-               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                 <CheckCircle size={40} className="text-green-600" />
-               </div>
-               
-               <div>
-                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                   {isLogin ? 'Welcome Back!' : 'Account Created Successfully!'} 🎉
-                 </h2>
-                 <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                   {isLogin 
-                     ? `Welcome back to SmrutiMap, ${formData.username}! You're all set to continue your journey.`
-                     : `Welcome to SmrutiMap, ${formData.displayName}! Your account has been created successfully.`
-                   }
-                 </p>
-               </div>
-
-               <div className="bg-green-50 rounded-xl p-6 max-w-md mx-auto">
-                 <h3 className="font-semibold text-green-900 mb-3">What's next?</h3>
-                 <ul className="text-sm text-green-800 space-y-2 text-left">
-                   <li>• Start playing and track your progress</li>
-                   <li>• Compete on leaderboards</li>
-                   <li>• Connect with other players</li>
-                   <li>• Explore different game modes</li>
-                 </ul>
-               </div>
-               
-               <Button
-                 onClick={handleModalClose}
-                 className="px-8 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white text-lg font-medium"
-               >
-                 Get Started
-                 <ArrowRight className="w-5 h-5 ml-2" />
-               </Button>
-             </div>
-           </div>
-         );
+            <div className="bg-green-50 rounded-xl p-4 max-w-md mx-auto">
+              <h3 className="font-semibold text-green-900 mb-3 text-sm">What's next?</h3>
+              <ul className="text-xs text-green-800 space-y-1 text-left">
+                <li>• Start playing and track your progress</li>
+                <li>• Compete on leaderboards</li>
+                <li>• Connect with other players</li>
+                <li>• Explore different game modes</li>
+              </ul>
+            </div>
+            
+            <button
+              onClick={handleModalClose}
+              className="w-full bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition"
+            >
+              Get Started
+            </button>
+          </div>
+        );
 
       default:
         return null;
@@ -664,79 +597,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <AnimatePresence>
+    <AnimatePresence>
+      {isOpen && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={handleModalClose}
         >
-          {/* Header with Progress */}
-          {currentStep !== 'success' && currentStep !== 'welcome' && (
-            <div className="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center">
-                    <User size={16} className="text-white" />
-                  </div>
-                  <span className="font-semibold text-gray-700">
-                    {isLogin ? 'Sign In' : 'Create Account'}
-                  </span>
-                </div>
-                <Button
-                  onClick={handleModalClose}
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-400 hover:text-gray-600 rounded-full"
-                >
-                  <X size={20} />
-                </Button>
-              </div>
-              
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-[#ea384c] to-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
+          <motion.div
+            className="w-full max-w-sm bg-gradient-to-b from-red-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 p-8 flex flex-col items-center border border-red-100 text-black"
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Progress Bar */}
+            <div className="w-full mb-6">
+              <div className="w-full bg-gray-200 rounded-full h-1">
+                <div
+                  className="bg-[#ea384c] h-1 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <div className="text-xs text-gray-500 mt-2 text-center">
-                Step {currentStepIndex + 1} of {steps.length}
-              </div>
             </div>
-          )}
 
-          {/* Welcome step header */}
-          {currentStep === 'welcome' && (
-            <div className="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center">
-                    <User size={16} className="text-white" />
-                  </div>
-                  <span className="font-semibold text-gray-700">Welcome to SmrutiMap</span>
-                </div>
-                <Button
-                  onClick={handleModalClose}
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-400 hover:text-gray-600 rounded-full"
-                >
-                  <X size={20} />
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Main Content */}
-          <div className="p-8">
-            <div className="min-h-[500px] flex flex-col justify-center">
+            {/* Content */}
+            <div className="w-full">
               {renderStep()}
             </div>
-          </div>
+          </motion.div>
         </motion.div>
-      </AnimatePresence>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }; 
