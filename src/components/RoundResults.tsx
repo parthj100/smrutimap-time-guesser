@@ -348,7 +348,7 @@ const RoundResults: React.FC<RoundResultsProps> = ({
         {/* Prominent Distance Display */}
         <div className="text-center px-4">
           <p className="text-xl lg:text-3xl xl:text-4xl text-gray-800 font-sans">
-            Your guess was <span className="font-bold text-[#ea384c] text-2xl lg:text-4xl xl:text-5xl font-sans">{Math.round(distanceOff).toLocaleString()} miles</span> from the correct location
+            Your guess was <span className="font-bold text-[#ea384c] text-2xl lg:text-4xl xl:text-5xl font-sans">{Math.round(distanceOff)} miles</span> from the correct location
           </p>
           <p className="text-base lg:text-lg xl:text-xl text-gray-600 mt-2 font-sans">
             You were <span className="font-bold text-[#ea384c] font-sans">{Math.abs(result.yearGuess - result.actualYear)} years</span> off
@@ -361,21 +361,21 @@ const RoundResults: React.FC<RoundResultsProps> = ({
             {/* Total Score - prominent */}
             <div className="bg-[#ea384c] text-white rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
               <div className="text-sm lg:text-base xl:text-lg opacity-90 font-medium mb-1 font-sans">Total</div>
-              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-sans">{animatedTotalScore.toLocaleString()}</div>
+              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-sans">{animatedTotalScore}</div>
               <div className="text-xs lg:text-sm opacity-75 font-sans">points</div>
             </div>
 
             {/* Year Score */}
             <div className="bg-white rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg border-2 border-[#ea384c]/20 min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
               <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-sans">Year</div>
-              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-sans">{animatedYearScore.toLocaleString()}</div>
+              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-sans">{animatedYearScore}</div>
               <div className="text-xs lg:text-sm text-gray-500 font-sans">/5000</div>
             </div>
 
             {/* Location Score */}
             <div className="bg-white rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg border-2 border-[#ea384c]/20 min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
               <div className="text-sm lg:text-base xl:text-lg text-gray-600 mb-1 font-sans">Location</div>
-              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-sans">{animatedLocationScore.toLocaleString()}</div>
+              <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#ea384c] font-sans">{animatedLocationScore}</div>
               <div className="text-xs lg:text-sm text-gray-500 font-sans">/5000</div>
             </div>
 
@@ -390,7 +390,7 @@ const RoundResults: React.FC<RoundResultsProps> = ({
             {timeBonus > 0 && (
               <div className="bg-yellow-400 text-yellow-900 rounded-xl p-4 lg:p-5 xl:p-6 text-center shadow-lg min-w-[140px] lg:min-w-[160px] xl:min-w-[180px]">
                 <div className="text-sm lg:text-base xl:text-lg font-medium mb-1 font-sans">Time Bonus</div>
-                <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-sans">+{animatedTimeBonus.toLocaleString()}</div>
+                <div className="text-2xl lg:text-3xl xl:text-4xl font-bold font-sans">+{animatedTimeBonus}</div>
                 <div className="text-xs lg:text-sm opacity-75 font-sans">bonus</div>
               </div>
             )}
