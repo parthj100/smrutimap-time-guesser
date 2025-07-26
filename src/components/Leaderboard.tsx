@@ -19,6 +19,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
     gameMode: 'all',
     metric: 'total_score'
   });
+  
+
 
   // Animation variants
   const containerVariants = {
@@ -202,6 +204,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
             username: profile.username,
             display_name: profile.display_name,
             avatar_url: profile.avatar_url,
+            center: profile.center,
             total_games_played: totalGames,
             total_score: totalScore,
             best_single_game_score: bestSingleGame,
@@ -328,6 +331,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
             username: profile.username,
             display_name: profile.display_name,
             avatar_url: profile.avatar_url,
+            center: profile.center,
             total_games_played: totalGames,
             total_score: totalScore,
             best_single_game_score: bestSingleGame,
@@ -362,6 +366,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
         username: profile.username,
         display_name: profile.display_name,
         avatar_url: profile.avatar_url,
+        center: profile.center,
         total_games_played: profile.total_games_played || 0,
         total_score: profile.total_score || 0,
         best_single_game_score: profile.best_single_game_score || 0,
@@ -447,6 +452,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
     }
   };
 
+
+
   if (!isOpen) return null;
 
   return (
@@ -498,7 +505,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
               <select
                 value={filters.timeframe}
                 onChange={(e) => setFilters(prev => ({ ...prev, timeframe: e.target.value as any }))}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-200"
+                className="w-full pl-4 pr-10 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-200 appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 12px center',
+                  backgroundSize: '16px'
+                }}
               >
                 <option value="all-time">All Time</option>
                 <option value="monthly">This Month</option>
@@ -516,7 +529,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
               <select
                 value={filters.gameMode}
                 onChange={(e) => setFilters(prev => ({ ...prev, gameMode: e.target.value as any }))}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-200"
+                className="w-full pl-4 pr-10 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-200 appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 12px center',
+                  backgroundSize: '16px'
+                }}
               >
                 <option value="all">All Modes</option>
                 <option value="random">Random</option>
@@ -534,7 +553,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
               <select
                 value={filters.metric}
                 onChange={(e) => setFilters(prev => ({ ...prev, metric: e.target.value as any }))}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-200"
+                className="w-full pl-4 pr-10 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-200 appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 12px center',
+                  backgroundSize: '16px'
+                }}
               >
                 <option value="total_score">Total Score</option>
                 <option value="average_score">Average Score</option>
@@ -546,7 +571,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
         </div>
 
         {/* Leaderboard Content */}
-          <div className="p-8 max-h-[60vh] overflow-y-auto">
+          <div className="px-8 pt-8 pb-4 max-h-[75vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {loading ? (
               <motion.div 
                 className="flex flex-col items-center justify-center py-16"
@@ -631,90 +656,148 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
               </motion.div>
           ) : (
               <motion.div 
-                className="space-y-3"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-8"
                 variants={itemVariants}
               >
-              {entries.map((entry, index) => (
-                  <motion.div
-                  key={entry.id}
-                    className={`relative overflow-hidden rounded-2xl transition-all duration-300 ${
-                    index < 3 
-                        ? 'bg-gradient-to-r from-yellow-50/90 via-orange-50/90 to-yellow-50/90 backdrop-blur-sm border-2 border-yellow-200/50 shadow-lg' 
-                        : 'bg-white/60 backdrop-blur-sm hover:bg-white/80 border border-white/20 shadow-sm hover:shadow-md'
-                    }`}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {/* Top 3 glow effect */}
-                    {index < 3 && (
-                      <div className={`absolute inset-0 rounded-2xl ${
-                        index === 0 ? 'bg-gradient-to-r from-yellow-400/10 to-orange-400/10' :
-                        index === 1 ? 'bg-gradient-to-r from-gray-300/10 to-gray-400/10' :
-                        'bg-gradient-to-r from-amber-400/10 to-orange-400/10'
-                      }`} />
-                    )}
-                    
-                    <div className="relative flex items-center gap-6 p-6">
-                  {/* Rank */}
-                      <div className="flex-shrink-0 w-14 flex justify-center">
-                    {getRankIcon(index + 1)}
-                  </div>
+                {entries.map((entry, index) => {
+                  const rank = index + 1;
+                  const isTopThree = rank <= 3;
+                  
+                  // Color schemes for different ranks
+                  const getCardColors = () => {
+                    if (rank === 1) return {
+                      card: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 shadow-xl shadow-yellow-100/50',
+                      avatar: 'bg-gradient-to-br from-yellow-400 to-amber-500',
+                      badge: 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white',
+                      rankIcon: '👑'
+                    };
+                    if (rank === 2) return {
+                      card: 'bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-200 shadow-xl shadow-slate-100/50',
+                      avatar: 'bg-gradient-to-br from-slate-400 to-gray-500',
+                      badge: 'bg-gradient-to-r from-slate-400 to-gray-500 text-white',
+                      rankIcon: '🥈'
+                    };
+                    if (rank === 3) return {
+                      card: 'bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 shadow-xl shadow-orange-100/50',
+                      avatar: 'bg-gradient-to-br from-orange-400 to-amber-600',
+                      badge: 'bg-gradient-to-r from-orange-400 to-amber-600 text-white',
+                      rankIcon: '🥉'
+                    };
+                    return {
+                      card: 'bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-0',
+                      avatar: 'bg-gradient-to-br from-blue-400 to-indigo-500',
+                      badge: 'bg-gradient-to-r from-gray-500 to-gray-600 text-white',
+                      rankIcon: rank.toString()
+                    };
+                  };
 
-                  {/* Avatar */}
-                  <div className="flex-shrink-0">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg ${
-                          index < 3 ? 'bg-gradient-to-br from-[#ea384c] to-red-600' : 'bg-gradient-to-br from-gray-500 to-gray-600'
-                        }`}>
-                      {entry.display_name?.[0]?.toUpperCase() || entry.username[0]?.toUpperCase() || 'U'}
-                    </div>
-                  </div>
+                  const colors = getCardColors();
 
-                  {/* User Info */}
-                  <div className="flex-grow">
-                        <div className="font-bold text-gray-900 text-lg">
-                      {entry.display_name || entry.username}
-                    </div>
-                        <div className="text-sm text-gray-600 flex items-center gap-4 mt-1">
-                          <span className="flex items-center gap-1">
-                            <Users size={14} />
-                            {entry.total_games_played} games
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Target size={14} />
-                            Avg: {Math.round(entry.average_score)}
-                          </span>
-                    </div>
-                  </div>
+                  return (
+                    <motion.div
+                      key={entry.id}
+                      className={`relative p-6 rounded-2xl transition-all duration-0 group hover:scale-105 ${colors.card}`}
+                      variants={itemVariants}
+                      whileHover={{ y: -4 }}
+                      transition={{ duration: 0 }}
+                    >
+                      {/* Rank Badge */}
+                      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full ${colors.badge} flex items-center justify-center text-sm font-bold shadow-lg z-10`}>
+                        {isTopThree ? colors.rankIcon : rank}
+                      </div>
 
-                  {/* Metric Value */}
-                  <div className="text-right">
-                        <div className={`text-3xl font-bold ${
-                          index < 3 ? 'text-[#ea384c]' : 'text-gray-700'
-                        }`}>
-                      {getMetricValue(entry)}
-                    </div>
-                        <div className="text-sm text-gray-500 font-medium flex items-center justify-end gap-1">
-                          {getMetricIcon()}
-                      {getMetricLabel()}
-                    </div>
-                  </div>
-                </div>
-                  </motion.div>
-              ))}
+                      {/* Card Content */}
+                      <div className="flex flex-col items-center text-center space-y-4">
+                        
+                        {/* Avatar */}
+                        <div className="relative">
+                          <div className={`w-20 h-20 rounded-full ${colors.avatar} flex items-center justify-center text-white font-bold text-2xl shadow-lg group-hover:shadow-xl transition-all duration-0`}>
+                            {entry.display_name?.[0]?.toUpperCase() || entry.username[0]?.toUpperCase() || 'U'}
+                          </div>
+                          {isTopThree && (
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md">
+                              {rank === 1 && <Crown className="w-4 h-4 text-yellow-500" />}
+                              {rank === 2 && <Medal className="w-4 h-4 text-slate-500" />}
+                              {rank === 3 && <Award className="w-4 h-4 text-orange-500" />}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* User Info */}
+                        <div className="space-y-2">
+                          <h3 className="font-bold text-gray-900 text-lg leading-tight">
+                            {entry.display_name || entry.username}
+                          </h3>
+                          
+                          {/* Center Location */}
+                          {entry.center && (
+                            <div className="text-sm text-gray-600 font-medium">
+                              📍 {entry.center}
+                            </div>
+                          )}
+                          
+                          {/* Primary Metric Display */}
+                          <div className={`text-3xl font-bold ${isTopThree ? 'text-gray-800' : 'text-gray-700'}`}>
+                            {getMetricValue(entry)}
+                          </div>
+                          
+                          <div className="flex items-center justify-center gap-1 text-sm text-gray-500 font-medium">
+                            {getMetricIcon()}
+                            <span>{getMetricLabel()}</span>
+                          </div>
+                        </div>
+
+                        {/* Stats Row */}
+                        <div className="w-full pt-4 border-t border-gray-200/60">
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                            <div className="space-y-1">
+                              <div className="text-sm font-semibold text-gray-700">
+                                {entry.total_games_played}
+                              </div>
+                              <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                                <Users size={12} />
+                                Games
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="text-sm font-semibold text-gray-700">
+                                {Math.round(entry.average_score)}
+                              </div>
+                              <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                                <Target size={12} />
+                                Average
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Progress indicator for top performers */}
+                        {isTopThree && (
+                          <div className="w-full">
+                            <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full transition-all duration-1000 ${
+                                  rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' :
+                                  rank === 2 ? 'bg-gradient-to-r from-slate-400 to-gray-500' :
+                                  'bg-gradient-to-r from-orange-400 to-amber-600'
+                                }`}
+                                style={{ 
+                                  width: `${Math.min(100, (entry.total_score / Math.max(...entries.map(e => e.total_score))) * 100)}%`
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </motion.div>
           )}
         </div>
 
-        {/* Footer */}
-          <motion.div 
-            className="bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm px-8 py-6 text-center border-t border-white/20"
-            variants={itemVariants}
-          >
-            <p className="text-sm text-gray-600 font-medium">
-              🏆 Rankings update in real-time • Play more games to climb the leaderboard!
-            </p>
-          </motion.div>
         </motion.div>
       </AnimatePresence>
     </div>

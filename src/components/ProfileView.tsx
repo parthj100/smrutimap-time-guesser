@@ -32,6 +32,7 @@ interface ProfileViewProps {
 interface ProfileFormData {
   display_name: string;
   username: string;
+  center: string;
   favorite_game_mode: string;
 }
 
@@ -43,6 +44,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState<ProfileFormData>({
     display_name: '',
     username: '',
+    center: '',
     favorite_game_mode: ''
   });
   const [errors, setErrors] = useState<Partial<ProfileFormData>>({});
@@ -63,6 +65,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
       setFormData({
         display_name: profile.display_name || '',
         username: profile.username || '',
+        center: profile.center || '',
         favorite_game_mode: profile.favorite_game_mode || ''
       });
       setErrors({});
@@ -122,6 +125,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
         .update({
           display_name: formData.display_name,
           username: formData.username,
+          center: formData.center || null,
           favorite_game_mode: formData.favorite_game_mode || null,
           updated_at: new Date().toISOString()
         })
@@ -137,10 +141,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
             description: "Please choose a different username.",
             variant: "destructive"
           });
+        } else if (error.code === '42703') {
+          // Column doesn't exist error
+          toast({
+            title: "Database Migration Required",
+            description: "The center field needs to be added to the database. Please contact support or run the migration.",
+            variant: "destructive"
+          });
         } else {
+          // Show more detailed error information
+          const errorMessage = error.message || 'Unknown error occurred';
+          console.error('Full error details:', error);
+          
           toast({
             title: "Update failed",
-            description: "There was an error updating your profile. Please try again.",
+            description: `Error: ${errorMessage}. Check console for details.`,
             variant: "destructive"
           });
         }
@@ -398,6 +413,31 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
                   </div>
                 ) : (
                   <p className="text-lg">@{profile.username}</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Center Location */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Target size={16} />
+                  Center Location
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isEditing ? (
+                  <div className="space-y-2">
+                    <Input
+                      value={formData.center}
+                      onChange={(e) => updateFormData('center', e.target.value)}
+                      placeholder="Enter your center location"
+                      className="focus:border-[#ea384c] focus:ring-[#ea384c]"
+                    />
+                    <p className="text-xs text-gray-500">Enter the name of your center or location</p>
+                  </div>
+                ) : (
+                  <p className="text-lg">{profile.center || 'Not specified'}</p>
                 )}
               </CardContent>
             </Card>

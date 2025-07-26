@@ -508,6 +508,7 @@ export type Database = {
           avatar_url: string | null
           average_score: number | null
           best_single_game_score: number | null
+          center: string | null
           created_at: string | null
           display_name: string | null
           favorite_game_mode: string | null
@@ -522,6 +523,7 @@ export type Database = {
           avatar_url?: string | null
           average_score?: number | null
           best_single_game_score?: number | null
+          center?: string | null
           created_at?: string | null
           display_name?: string | null
           favorite_game_mode?: string | null
@@ -536,6 +538,7 @@ export type Database = {
           avatar_url?: string | null
           average_score?: number | null
           best_single_game_score?: number | null
+          center?: string | null
           created_at?: string | null
           display_name?: string | null
           favorite_game_mode?: string | null

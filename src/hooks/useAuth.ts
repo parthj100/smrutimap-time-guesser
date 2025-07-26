@@ -124,7 +124,7 @@ export const useAuth = (options: UseAuthOptions = {}) => {
     }
   };
 
-  const createUserProfile = async (userId: string, username?: string, displayName?: string) => {
+  const createUserProfile = async (userId: string, username?: string, displayName?: string, center?: string) => {
     if (ENV_CONFIG.IS_DEVELOPMENT) {
       console.log('👤 Creating profile for user:', userId);
     }
@@ -142,6 +142,7 @@ export const useAuth = (options: UseAuthOptions = {}) => {
         user_id: userId,
         username: defaultUsername,
         display_name: displayName || defaultUsername,
+        center: center || null,
         total_games_played: 0,
         total_score: 0,
         best_single_game_score: 0,
@@ -193,7 +194,7 @@ export const useAuth = (options: UseAuthOptions = {}) => {
     }
   };
 
-  const signUp = async (username: string, displayName: string, password: string) => {
+  const signUp = async (username: string, displayName: string, password: string, center?: string) => {
     try {
       // Validate inputs
       if (!username || username.length < 3) {
@@ -227,7 +228,7 @@ export const useAuth = (options: UseAuthOptions = {}) => {
 
       // Create profile if user was created
       if (data.user) {
-        await createUserProfile(data.user.id, username, displayName);
+        await createUserProfile(data.user.id, username, displayName, center);
       }
 
       return { data, error: null };

@@ -60,6 +60,7 @@ export interface UserProfile {
   username: string;
   display_name?: string;
   avatar_url?: string;
+  center?: string;
   created_at: string;
   updated_at: string;
   total_games_played: number;
@@ -109,6 +110,7 @@ export interface LeaderboardEntry {
   username: string;
   display_name?: string;
   avatar_url?: string;
+  center?: string;
   total_games_played: number;
   total_score: number;
   best_single_game_score: number;

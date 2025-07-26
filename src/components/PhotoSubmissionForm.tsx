@@ -166,13 +166,9 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               </div>
               
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                   Share Your Photos! 📸
                 </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                  Help us grow SmrutiMap's collection! Submit your photos with location and year details, 
-                  and they might be featured in our time-guessing game for players worldwide to discover.
-                </p>
               </div>
 
               <div className="grid gap-4 max-w-md mx-auto text-left">
