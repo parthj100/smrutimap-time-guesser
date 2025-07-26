@@ -198,54 +198,117 @@ export default function MultiplayerRoundResults({
             )}
 
             {/* Leaderboard */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-              <div className="p-4 border-b border-gray-200 bg-gray-50">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-amber-600" />
-                  <span className="font-medium text-gray-800">Current Standings</span>
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20">
+              <div className="p-6 border-b border-white/20 bg-gradient-to-r from-amber-50 to-orange-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center">
+                    <Trophy className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-800 text-lg">Current Standings</h3>
+                    <p className="text-sm text-gray-600">Round {roundNumber} Results</p>
+                  </div>
                 </div>
               </div>
-              <div className="p-4">
-                <div className="space-y-2">
-                  {leaderboard.slice(0, 5).map((entry, index) => (
-                    <div
-                      key={entry.participant_id}
-                      className={`flex items-center gap-3 p-3 rounded-lg ${
-                        entry.participant_id === myParticipantId 
-                          ? 'bg-blue-50 border border-blue-200' 
-                          : 'bg-gray-50'
-                      }`}
-                    >
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        index === 0 ? 'bg-yellow-500 text-white' :
-                        index === 1 ? 'bg-gray-400 text-white' :
-                        index === 2 ? 'bg-amber-600 text-white' :
-                        'bg-gray-300 text-gray-700'
-                      }`}>
-                        {index + 1}
-                      </div>
+              <div className="p-6">
+                <div className="grid grid-cols-1 gap-4">
+                  {leaderboard.slice(0, 5).map((entry, index) => {
+                    const rank = index + 1;
+                    const isTopThree = rank <= 3;
+                    const isCurrentUser = entry.participant_id === myParticipantId;
+                    
+                    // Color schemes for different ranks (matching main leaderboard)
+                    const getCardColors = () => {
+                      if (rank === 1) return {
+                        card: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 shadow-xl shadow-yellow-100/50',
+                        avatar: 'bg-gradient-to-br from-yellow-400 to-amber-500',
+                        badge: 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white',
+                        rankIcon: '👑'
+                      };
+                      if (rank === 2) return {
+                        card: 'bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-200 shadow-xl shadow-slate-100/50',
+                        avatar: 'bg-gradient-to-br from-slate-400 to-gray-500',
+                        badge: 'bg-gradient-to-r from-slate-400 to-gray-500 text-white',
+                        rankIcon: '🥈'
+                      };
+                      if (rank === 3) return {
+                        card: 'bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 shadow-xl shadow-orange-100/50',
+                        avatar: 'bg-gradient-to-br from-orange-400 to-amber-600',
+                        badge: 'bg-gradient-to-r from-orange-400 to-amber-600 text-white',
+                        rankIcon: '🥉'
+                      };
+                      return {
+                        card: isCurrentUser 
+                          ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-xl shadow-blue-100/50'
+                          : 'bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-0',
+                        avatar: isCurrentUser 
+                          ? 'bg-gradient-to-br from-blue-400 to-indigo-500'
+                          : 'bg-gradient-to-br from-gray-400 to-gray-500',
+                        badge: isCurrentUser
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                          : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white',
+                        rankIcon: rank.toString()
+                      };
+                    };
+
+                    const colors = getCardColors();
+
+                    return (
                       <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: entry.avatar_color }}
-                      />
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-800">
-                          {entry.display_name}
-                          {entry.participant_id === myParticipantId && (
-                            <span className="text-xs text-blue-600 ml-1">(You)</span>
-                          )}
+                        key={entry.participant_id}
+                        className={`relative p-4 rounded-2xl transition-all duration-0 group hover:scale-105 ${colors.card}`}
+                      >
+                        {/* Rank Badge */}
+                        <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full ${colors.badge} flex items-center justify-center text-sm font-bold shadow-lg z-10`}>
+                          {isTopThree ? colors.rankIcon : rank}
                         </div>
-                        <div className="text-xs text-gray-500">
-                          {entry.rounds_completed} rounds • Avg: {Math.round(entry.average_score)}
+
+                        {/* Card Content */}
+                        <div className="flex items-center gap-4">
+                          {/* Avatar */}
+                          <div className="relative">
+                            <div className={`w-16 h-16 rounded-full ${colors.avatar} flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:shadow-xl transition-all duration-0`}>
+                              {entry.display_name?.[0]?.toUpperCase() || 'U'}
+                            </div>
+                            {isCurrentUser && (
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-md">
+                                <span className="text-xs text-white font-bold">U</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* User Info */}
+                          <div className="flex-1 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-bold text-gray-900 text-base leading-tight">
+                                {entry.display_name}
+                              </h3>
+                              {isCurrentUser && (
+                                <span className="text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-medium">You</span>
+                              )}
+                            </div>
+                            
+                            {/* Stats */}
+                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <span>{entry.rounds_completed} rounds</span>
+                              <span>•</span>
+                              <span>Avg: {Math.round(entry.average_score)}</span>
+                            </div>
+                          </div>
+
+                          {/* Score */}
+                          <div className="text-right">
+                            <div className={`text-2xl font-bold ${isTopThree ? 'text-gray-800' : 'text-gray-700'}`}>
+                              {entry.total_score}
+                            </div>
+                            <div className="text-xs text-gray-500 font-medium">
+                              points
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-bold text-gray-800">
-                          {entry.total_score.toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

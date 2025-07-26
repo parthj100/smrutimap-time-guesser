@@ -478,7 +478,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                 </div>
                 <div>
                   <h2 className="text-4xl font-bold">Leaderboard</h2>
-                  <p className="text-white/80 text-lg">Compete with players worldwide</p>
+  
                 </div>
               </div>
               <motion.button

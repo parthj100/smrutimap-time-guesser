@@ -119,7 +119,8 @@ export const useSimpleMultiplayer = () => {
     const { data, error } = await sb
       .from('simple_multiplayer_scores')
       .select('*')
-      .eq('room_id', roomId);
+      .eq('room_id', roomId)
+      .order('created_at', { ascending: true }); // Order by creation time to handle duplicates
     
     console.log('📊 Scores query result:', { 
       data, 
@@ -128,15 +129,41 @@ export const useSimpleMultiplayer = () => {
       scores: data?.map(s => ({ 
         user_id: s.user_id, 
         round: s.round_number, 
-        points: s.points 
+        points: s.points,
+        created_at: s.created_at
       }))
     });
     
     if (!error && data) {
+      // Clean up any duplicate scores (keep the latest one for each user/round combination)
+      const cleanedScores = data.reduce((acc, score) => {
+        const existingIndex = acc.findIndex(s => 
+          s.user_id === score.user_id && s.round_number === score.round_number
+        );
+        
+        if (existingIndex === -1) {
+          acc.push(score);
+        } else {
+          // Keep the score with higher points, or the newer one if points are equal
+          const existing = acc[existingIndex];
+          if (score.points > existing.points || 
+              (score.points === existing.points && new Date(score.created_at) > new Date(existing.created_at))) {
+            acc[existingIndex] = score;
+          }
+        }
+        return acc;
+      }, [] as typeof data);
+      
+      console.log('📊 Cleaned scores:', {
+        originalCount: data.length,
+        cleanedCount: cleanedScores.length,
+        removedDuplicates: data.length - cleanedScores.length
+      });
+      
       setState(prev => {
         console.log('📊 Previous scores state:', prev.scores.length, 'items');
-        console.log('📊 New scores state:', data.length, 'items');
-        return { ...prev, scores: data as any };
+        console.log('📊 New scores state:', cleanedScores.length, 'items');
+        return { ...prev, scores: cleanedScores as any };
       });
     } else if (error) {
       console.error('❌ Error loading scores:', error);
@@ -408,6 +435,20 @@ export const useSimpleMultiplayer = () => {
       return;
     }
 
+    // Check if user has already submitted for this round
+    const existingScore = state.scores.find(s => 
+      s.user_id === user.id && s.round_number === state.room.current_round
+    );
+    
+    if (existingScore) {
+      console.log('⚠️ User has already submitted for this round:', {
+        userId: user.id,
+        round: state.room.current_round,
+        existingScore: existingScore.points
+      });
+      return;
+    }
+
     console.log('📝 About to submit guess:', { 
       guessedYear, 
       actualYear, 
@@ -462,7 +503,7 @@ export const useSimpleMultiplayer = () => {
       
       // Add time bonus if applicable
       const timeRemaining = Math.max(0, (state.room.time_per_round || 60) - timeUsed);
-      const timeBonus = timeRemaining * 2; // TIME_BONUS_MULTIPLIER
+      const timeBonus = timeRemaining * 1.5; // Updated TIME_BONUS_MULTIPLIER to match scoring system
       
       totalDisplayScore = displayYearScore + timeBonus;
       
@@ -492,6 +533,10 @@ export const useSimpleMultiplayer = () => {
 
     if (error) {
       console.error('❌ Error submitting guess:', error);
+      // Check if it's a duplicate key error
+      if (error.code === '23505') {
+        console.log('⚠️ Duplicate score detected - user may have already submitted for this round');
+      }
     } else {
       console.log('✅ Guess submitted successfully to database:', data);
       
@@ -508,7 +553,7 @@ export const useSimpleMultiplayer = () => {
         console.log('📊 Score counts - Before:', scoresBeforeReload, 'After:', scoresAfterReload);
       }, 1000);
     }
-  }, [state.room, user, sb, loadScores]);
+  }, [state.room, user, sb, loadScores, state.scores]);
 
   /** Check if all players have submitted guesses for current round */
   const checkAllPlayersReady = useCallback(() => {
@@ -559,18 +604,34 @@ export const useSimpleMultiplayer = () => {
     console.log('📊 Creating leaderboard for users:', {
       participants: state.participants,
       usersWithScores: allUsersWithScores,
-      totalScores: state.scores.length
+      totalScores: state.scores.length,
+      scores: state.scores.map(s => ({ user: s.user_id, round: s.round_number, points: s.points }))
     });
     
     // Group scores by user and calculate total points
     const userTotals = allUsersWithScores.map(userId => {
       const userScores = state.scores.filter(s => s.user_id === userId);
-      const totalPoints = userScores.reduce((sum, score) => sum + score.points, 0);
-      const roundsPlayed = userScores.length;
+      
+      // Ensure we don't count duplicate scores for the same round
+      const uniqueRoundScores = userScores.reduce((acc, score) => {
+        const existing = acc.find(s => s.round_number === score.round_number);
+        if (!existing) {
+          acc.push(score);
+        } else if (score.points > existing.points) {
+          // If we have a higher score for the same round, use that one
+          const index = acc.indexOf(existing);
+          acc[index] = score;
+        }
+        return acc;
+      }, [] as typeof userScores);
+      
+      const totalPoints = uniqueRoundScores.reduce((sum, score) => sum + score.points, 0);
+      const roundsPlayed = uniqueRoundScores.length;
       
       console.log('📊 User score calculation:', {
         userId,
         userScores: userScores.map(s => ({ round: s.round_number, points: s.points })),
+        uniqueRoundScores: uniqueRoundScores.map(s => ({ round: s.round_number, points: s.points })),
         totalPoints,
         roundsPlayed
       });
@@ -589,7 +650,7 @@ export const useSimpleMultiplayer = () => {
     console.log('📊 Final leaderboard:', sortedLeaderboard);
     
     return sortedLeaderboard;
-  }, [state.scores]);
+  }, [state.scores, state.room, state.participants]);
 
   /** Get round-specific leaderboard */
   const getRoundLeaderboard = useCallback((roundNumber: number) => {
