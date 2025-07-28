@@ -72,10 +72,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 'account':
-    if (!formData.username || formData.username.length < 3) {
-      toast.error('Username must be at least 3 characters long');
-      return false;
-    }
+        if (!formData.username || formData.username.length < 3) {
+          toast.error('Username must be at least 3 characters long');
+          return false;
+        }
         if (isLogin && (!formData.password || formData.password.length < 6)) {
           toast.error('Password must be at least 6 characters long');
           return false;
@@ -83,9 +83,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         break;
       case 'profile':
         if (!formData.displayName || formData.displayName.length < 2) {
-      toast.error('Display name must be at least 2 characters long');
-      return false;
-    }
+          toast.error('Display name must be at least 2 characters long');
+          return false;
+        }
         break;
       case 'location':
         if (!formData.center.trim()) {
@@ -94,14 +94,41 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         }
         break;
       case 'password':
-    if (!formData.password || formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters long');
-      return false;
-    }
-    if (!isLogin && formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return false;
-    }
+        if (!formData.password || formData.password.length < 6) {
+          toast.error('Password must be at least 6 characters long');
+          return false;
+        }
+        if (!isLogin && formData.password !== formData.confirmPassword) {
+          toast.error('Passwords do not match');
+          return false;
+        }
+        if (!isLogin && !formData.confirmPassword) {
+          toast.error('Please confirm your password');
+          return false;
+        }
+        break;
+      case 'review':
+        // Validate all fields are complete before final submission
+        if (!formData.username || formData.username.length < 3) {
+          toast.error('Username must be at least 3 characters long');
+          return false;
+        }
+        if (!formData.displayName || formData.displayName.length < 2) {
+          toast.error('Display name must be at least 2 characters long');
+          return false;
+        }
+        if (!formData.center.trim()) {
+          toast.error('Please enter your center location');
+          return false;
+        }
+        if (!formData.password || formData.password.length < 6) {
+          toast.error('Password must be at least 6 characters long');
+          return false;
+        }
+        if (formData.password !== formData.confirmPassword) {
+          toast.error('Passwords do not match');
+          return false;
+        }
         break;
     }
     return true;
@@ -224,7 +251,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         );
 
       case 'account':
-        return (
+  return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
               <LogIn className="w-7 h-7 text-[#ea384c]" />
@@ -234,11 +261,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 {isLogin ? 'Sign in' : 'Create your account'}
               </h2>
               <p className="text-gray-500 text-sm mb-6">
-                {isLogin 
+            {isLogin 
                   ? 'Welcome back! Enter your details to continue'
                   : 'Let\'s start by creating your unique username'
-                }
-              </p>
+            }
+          </p>
+              {!isLogin && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                  <p className="text-blue-800 text-xs font-medium">
+                    📝 All fields marked with * are required to create your account
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="w-full flex flex-col gap-3">
@@ -279,9 +313,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               )}
 
           {!isLogin && (
-                <p className="text-xs text-gray-500 text-left">
-                  This will be your unique identifier on SmrutiMap
-                </p>
+                              <p className="text-xs text-gray-500 text-left">
+                This will be your unique identifier on SmrutiMap *
+              </p>
               )}
             </div>
 
@@ -320,6 +354,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <p className="text-gray-500 text-sm mb-6">
                 How would you like to be known?
               </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-blue-800 text-xs font-medium">
+                  📝 All fields marked with * are required to create your account
+                </p>
+              </div>
             </div>
 
             <div className="w-full flex flex-col gap-3">
@@ -337,7 +376,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 />
               </div>
               <p className="text-xs text-gray-500 text-left">
-                This is how other players will see you on leaderboards
+                This is how other players will see you on leaderboards *
               </p>
             </div>
 
@@ -372,6 +411,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <p className="text-gray-500 text-sm mb-6">
                 Connect with players in your area
               </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-blue-800 text-xs font-medium">
+                  📝 All fields marked with * are required to create your account
+                </p>
+              </div>
             </div>
 
             <div className="w-full flex flex-col gap-3">
@@ -389,7 +433,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 />
               </div>
               <p className="text-xs text-gray-500 text-left">
-                This will be displayed on your profile and leaderboards
+                This will be displayed on your profile and leaderboards *
               </p>
             </div>
 
@@ -424,6 +468,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <p className="text-gray-500 text-sm mb-6">
                 Create a strong password
               </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-blue-800 text-xs font-medium">
+                  📝 All fields marked with * are required to create your account
+                </p>
+              </div>
             </div>
 
             <div className="w-full flex flex-col gap-3">
@@ -468,7 +517,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 </button>
               </div>
               <p className="text-xs text-gray-500 text-left">
-                Must be at least 6 characters long
+                Must be at least 6 characters long *
               </p>
             </div>
 
@@ -481,7 +530,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </button>
               <button
                 onClick={handleStepSubmit}
-                disabled={loading || !formData.password.trim()}
+                disabled={loading || !formData.password.trim() || !formData.confirmPassword.trim()}
                 className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
               >
                 {loading ? (

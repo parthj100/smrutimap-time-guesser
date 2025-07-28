@@ -8,10 +8,13 @@ import { useSkipLinks } from "@/hooks/useAccessibility";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import CustomImages from "./pages/CustomImages";
+import Admin from "./pages/Admin";
 
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import NetworkStatus from "@/components/NetworkStatus";
+import { VisitorTracker } from "@/components/VisitorTracker";
+import { ProfileProvider } from "@/contexts/ProfileContext";
 
 const App = () => {
   const { addSkipLinks } = useSkipLinks();
@@ -30,20 +33,24 @@ const App = () => {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <NetworkStatus />
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <main id="main-content" tabIndex={-1}>
-              <Routes>
-                <Route path="/" element={<Index />} />
+          <ProfileProvider>
+            <NetworkStatus />
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <VisitorTracker />
+              <main id="main-content" tabIndex={-1}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
 
-                <Route path="/custom-images" element={<CustomImages />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-          </BrowserRouter>
+                  <Route path="/custom-images" element={<CustomImages />} />
+                  <Route path="/admin" element={<Admin />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+            </BrowserRouter>
+          </ProfileProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>

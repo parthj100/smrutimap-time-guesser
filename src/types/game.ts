@@ -123,7 +123,7 @@ export interface LeaderboardEntry {
 }
 
 export interface LeaderboardFilters {
-  timeframe: 'all-time' | 'monthly' | 'weekly' | 'daily';
+  timeframe: 'all-time' | 'monthly' | 'weekly' | 'daily' | 'daily-challenge';
   gameMode: 'all' | 'random' | 'daily' | 'timed';
   metric: 'total_score' | 'average_score' | 'best_single_game' | 'games_played';
 }

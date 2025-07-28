@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { User, Trophy, LogOut, Crown, Target, Calendar, Edit3, RefreshCw } from 'lucide-react';
@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from './auth/AuthModal';
 import ProfileView from './ProfileView';
 import { fixUserStatsFromSessions } from '@/utils/databaseUtils';
+import { useProfileContext } from '@/contexts/ProfileContext';
 
 interface UserHeaderProps {
   onShowLeaderboard: () => void;
@@ -16,6 +17,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { refreshUserProfile } = useProfileContext();
 
   const handleSignOut = async () => {
     console.log('🚪 Sign out requested');
@@ -44,6 +46,9 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
       
       // Then refresh the profile data
       await refreshProfile();
+      
+      // Trigger updates across the system
+      await refreshUserProfile(user.id);
       console.log('✅ Profile refreshed successfully');
       
     } catch (error) {
@@ -52,6 +57,22 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
       setIsRefreshing(false);
     }
   };
+
+  // Listen for profile updates
+  useEffect(() => {
+    const handleProfileUpdate = (event: CustomEvent) => {
+      if (user?.id && event.detail.type === 'user' && event.detail.userId === user.id) {
+        console.log('🔄 Profile update detected in UserHeader, refreshing...');
+        refreshProfile();
+      }
+    };
+
+    window.addEventListener('profileUpdate', handleProfileUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('profileUpdate', handleProfileUpdate as EventListener);
+    };
+  }, [user?.id, refreshProfile]);
 
   // Show authenticated state if user exists, even if profile is loading/missing
   if (!user) {

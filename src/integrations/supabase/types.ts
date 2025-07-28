@@ -7,8 +7,88 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
+      analytics_daily_summary: {
+        Row: {
+          created_at: string | null
+          date: string
+          games_played: number | null
+          id: string
+          new_users: number | null
+          returning_visitors: number | null
+          total_visitors: number | null
+          unique_visitors: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          games_played?: number | null
+          id?: string
+          new_users?: number | null
+          returning_visitors?: number | null
+          total_visitors?: number | null
+          unique_visitors?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          games_played?: number | null
+          id?: string
+          new_users?: number | null
+          returning_visitors?: number | null
+          total_visitors?: number | null
+          unique_visitors?: number | null
+        }
+        Relationships: []
+      }
+      analytics_visitors: {
+        Row: {
+          city: string | null
+          country: string | null
+          id: string
+          ip_address: unknown | null
+          page_visited: string | null
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+          user_id: string | null
+          visit_date: string | null
+          visit_time: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          id?: string
+          ip_address?: unknown | null
+          page_visited?: string | null
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+          user_id?: string | null
+          visit_date?: string | null
+          visit_time?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          id?: string
+          ip_address?: unknown | null
+          page_visited?: string | null
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+          user_id?: string | null
+          visit_date?: string | null
+          visit_time?: string | null
+        }
+        Relationships: []
+      }
       daily_challenges: {
         Row: {
           challenge_date: string
@@ -473,6 +553,127 @@ export type Database = {
           },
         ]
       }
+      simple_multiplayer_players: {
+        Row: {
+          display_name: string
+          id: string
+          joined_at: string | null
+          room_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          display_name: string
+          id?: string
+          joined_at?: string | null
+          room_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          display_name?: string
+          id?: string
+          joined_at?: string | null
+          room_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simple_multiplayer_players_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "simple_multiplayer_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      simple_multiplayer_rooms: {
+        Row: {
+          created_at: string | null
+          current_image_id: string | null
+          current_round: number | null
+          game_status: string | null
+          host_user_id: string | null
+          id: string
+          image_sequence: string[] | null
+          room_code: string
+          round_start_time: string | null
+          time_per_round: number | null
+          total_rounds: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_image_id?: string | null
+          current_round?: number | null
+          game_status?: string | null
+          host_user_id?: string | null
+          id?: string
+          image_sequence?: string[] | null
+          room_code: string
+          round_start_time?: string | null
+          time_per_round?: number | null
+          total_rounds?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_image_id?: string | null
+          current_round?: number | null
+          game_status?: string | null
+          host_user_id?: string | null
+          id?: string
+          image_sequence?: string[] | null
+          room_code?: string
+          round_start_time?: string | null
+          time_per_round?: number | null
+          total_rounds?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      simple_multiplayer_scores: {
+        Row: {
+          actual_year: number | null
+          created_at: string | null
+          guess_time_seconds: number | null
+          guessed_year: number | null
+          id: string
+          points: number | null
+          room_id: string | null
+          round_number: number | null
+          user_id: string | null
+        }
+        Insert: {
+          actual_year?: number | null
+          created_at?: string | null
+          guess_time_seconds?: number | null
+          guessed_year?: number | null
+          id?: string
+          points?: number | null
+          room_id?: string | null
+          round_number?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          actual_year?: number | null
+          created_at?: string | null
+          guess_time_seconds?: number | null
+          guessed_year?: number | null
+          id?: string
+          points?: number | null
+          room_id?: string | null
+          round_number?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simple_multiplayer_scores_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "simple_multiplayer_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_image_pools: {
         Row: {
           available_image_ids: string[]
@@ -513,6 +714,7 @@ export type Database = {
           display_name: string | null
           favorite_game_mode: string | null
           id: string
+          is_admin: boolean | null
           total_games_played: number | null
           total_score: number | null
           updated_at: string | null
@@ -528,6 +730,7 @@ export type Database = {
           display_name?: string | null
           favorite_game_mode?: string | null
           id?: string
+          is_admin?: boolean | null
           total_games_played?: number | null
           total_score?: number | null
           updated_at?: string | null
@@ -543,6 +746,7 @@ export type Database = {
           display_name?: string | null
           favorite_game_mode?: string | null
           id?: string
+          is_admin?: boolean | null
           total_games_played?: number | null
           total_score?: number | null
           updated_at?: string | null
@@ -669,21 +873,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -701,14 +909,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -724,14 +934,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -747,14 +959,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -762,14 +976,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

@@ -17,12 +17,15 @@ import {
   Calendar,
   Check,
   XCircle,
-  RefreshCw
+  RefreshCw,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { fixUserStatsFromSessions } from '@/utils/databaseUtils';
+import { useAdmin } from '@/hooks/useAdmin';
+import { useProfileContext } from '@/contexts/ProfileContext';
 
 interface ProfileViewProps {
   isOpen: boolean;
@@ -39,6 +42,8 @@ interface ProfileFormData {
 const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
   const { profile, user, refreshProfile } = useAuth();
   const { toast } = useToast();
+  const { isAdmin } = useAdmin();
+  const { refreshAllProfiles } = useProfileContext();
   
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
@@ -167,11 +172,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
       // Reload profile data
       await refreshProfile();
       
+      // Trigger updates across the entire system
+      await refreshAllProfiles();
+      
       setIsEditing(false);
       
       toast({
         title: "Profile updated!",
-        description: "Your profile has been successfully updated.",
+        description: "Your profile has been successfully updated across the system.",
       });
 
     } catch (error) {
@@ -551,6 +559,35 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
             </Card>
           </div>
 
+          {/* Admin Panel Button */}
+          {isAdmin && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Shield size={16} />
+                  Admin Access
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  onClick={() => {
+                    // TODO: Open admin panel
+                    console.log('Opening admin panel...');
+                    window.open('/admin', '_blank');
+                  }}
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                >
+                  <Shield size={16} className="mr-2" />
+                  Open Admin Dashboard
+                </Button>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  Access game analytics, user management, and system settings
+                </p>
+              </CardContent>
+            </Card>
+          )}
+          </div>
+
           {/* Action Buttons */}
           {isEditing && (
             <div className="flex gap-3 pt-4 border-t border-gray-200">
@@ -582,7 +619,6 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
               </Button>
             </div>
           )}
-        </div>
       </motion.div>
     </div>
   );

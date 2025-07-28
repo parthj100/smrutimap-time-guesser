@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Clock, Target, Users } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useProfileContext } from '@/contexts/ProfileContext';
 
 interface RoundResult {
   userId: string;
@@ -42,8 +44,99 @@ export const SimpleMultiplayerRoundResults: React.FC<SimpleMultiplayerRoundResul
   isLastRound,
   isHost
 }) => {
+  const [userProfiles, setUserProfiles] = useState<Record<string, any>>({});
+  const { refreshUserProfile } = useProfileContext();
+
+  // Load user profiles for display names
+  useEffect(() => {
+    const loadUserProfiles = async () => {
+      const userIds = [...new Set([
+        ...roundResults.map(r => r.userId),
+        ...overallLeaderboard.map(l => l.userId)
+      ])];
+      
+      if (userIds.length === 0) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .select('user_id, display_name, username, center')
+          .in('user_id', userIds);
+
+        if (error) {
+          console.error('Error loading user profiles:', error);
+          return;
+        }
+
+        const profilesMap: Record<string, any> = {};
+        data?.forEach(profile => {
+          profilesMap[profile.user_id] = profile;
+        });
+
+        setUserProfiles(profilesMap);
+      } catch (error) {
+        console.error('Error loading user profiles:', error);
+      }
+    };
+
+    loadUserProfiles();
+  }, [roundResults, overallLeaderboard]);
+
+  // Listen for profile updates
+  useEffect(() => {
+    const handleProfileUpdate = (event: CustomEvent) => {
+      if (event.detail.type === 'user') {
+        console.log('🔄 Profile update detected in multiplayer results, refreshing...');
+        // Reload profiles when any user profile is updated
+        const loadUserProfiles = async () => {
+          const userIds = [...new Set([
+            ...roundResults.map(r => r.userId),
+            ...overallLeaderboard.map(l => l.userId)
+          ])];
+          
+          if (userIds.length === 0) return;
+
+          try {
+            const { data, error } = await supabase
+              .from('user_profiles')
+              .select('user_id, display_name, username, center')
+              .in('user_id', userIds);
+
+            if (error) {
+              console.error('Error loading user profiles:', error);
+              return;
+            }
+
+            const profilesMap: Record<string, any> = {};
+            data?.forEach(profile => {
+              profilesMap[profile.user_id] = profile;
+            });
+
+            setUserProfiles(profilesMap);
+          } catch (error) {
+            console.error('Error loading user profiles:', error);
+          }
+        };
+
+        loadUserProfiles();
+      }
+    };
+
+    window.addEventListener('profileUpdate', handleProfileUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('profileUpdate', handleProfileUpdate as EventListener);
+    };
+  }, [roundResults, overallLeaderboard]);
+
   const getUserDisplayName = (userId: string) => {
     if (userId === currentUserId) return 'You';
+    
+    const profile = userProfiles[userId];
+    if (profile) {
+      return profile.display_name || profile.username || `Player ${userId.slice(0, 8)}`;
+    }
+    
     const index = roundResults.findIndex(r => r.userId === userId);
     return `Player ${index + 1}`;
   };
@@ -182,9 +275,9 @@ export const SimpleMultiplayerRoundResults: React.FC<SimpleMultiplayerRoundResul
                   };
 
                   const colors = getCardColors();
-
+                  
                   return (
-                    <div
+                    <div 
                       key={entry.userId}
                       className={`relative p-4 rounded-2xl transition-all duration-0 group hover:scale-105 ${colors.card}`}
                     >
@@ -209,14 +302,14 @@ export const SimpleMultiplayerRoundResults: React.FC<SimpleMultiplayerRoundResul
 
                         {/* User Info */}
                         <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <h3 className="font-bold text-gray-900 text-base leading-tight">
                               {getUserDisplayName(entry.userId)}
                             </h3>
                             {isCurrentUser && (
                               <span className="text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-medium">You</span>
                             )}
-                          </div>
+                            </div>
                           
                           {/* Stats */}
                           <div className="flex items-center gap-4 text-sm text-gray-600">

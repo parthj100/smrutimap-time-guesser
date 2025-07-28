@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { LeaderboardEntry, LeaderboardFilters } from '@/types/game';
 import { Trophy, Medal, Award, Calendar, Clock, Target, Users, X, Star, Crown, Zap } from 'lucide-react';
 import { safeQuery, testDatabaseConnectivity } from '@/utils/databaseUtils';
+import { useProfileContext } from '@/contexts/ProfileContext';
 
 interface LeaderboardProps {
   isOpen: boolean;
@@ -15,11 +16,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<LeaderboardFilters>({
-    timeframe: 'all-time',
-    gameMode: 'all',
+    timeframe: 'daily-challenge',
+    gameMode: 'daily',
     metric: 'total_score'
   });
-  
+  const { refreshAllProfiles } = useProfileContext();
+
 
 
   // Animation variants
@@ -63,6 +65,22 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
     }
   }, [isOpen, filters]);
 
+  // Listen for profile updates and refresh leaderboard
+  useEffect(() => {
+    const handleProfileUpdate = (event: CustomEvent) => {
+      if (isOpen && event.detail.type === 'all') {
+        console.log('🔄 Profile update detected, refreshing leaderboard...');
+        fetchLeaderboard();
+      }
+    };
+
+    window.addEventListener('profileUpdate', handleProfileUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('profileUpdate', handleProfileUpdate as EventListener);
+    };
+  }, [isOpen]);
+
   const fetchLeaderboard = async () => {
     setLoading(true);
     setError(null);
@@ -87,6 +105,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
         
         switch (filters.timeframe) {
           case 'daily':
+          case 'daily-challenge':
             // Start of today in local timezone
             startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             break;
@@ -478,7 +497,18 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                 </div>
                 <div>
                   <h2 className="text-4xl font-bold">Leaderboard</h2>
-  
+                  {filters.timeframe === 'daily-challenge' && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="px-3 py-1 bg-yellow-400/20 backdrop-blur-sm rounded-full border border-yellow-400/30">
+                        <span className="text-yellow-300 text-sm font-medium flex items-center gap-1">
+                          🎯 Daily Challenge
+                        </span>
+                      </div>
+                      <span className="text-white/70 text-sm">
+                        Resets daily at midnight
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <motion.button
@@ -513,6 +543,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                   backgroundSize: '16px'
                 }}
               >
+                <option value="daily-challenge">🎯 Daily Challenge</option>
                 <option value="all-time">All Time</option>
                 <option value="monthly">This Month</option>
                 <option value="weekly">This Week</option>
@@ -624,19 +655,28 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                   <Trophy className="w-10 h-10 text-gray-400" />
             </div>
                 <h3 className="text-2xl font-semibold text-gray-700 mb-3">
-                {filters.gameMode === 'all' 
-                  ? 'No Players Found' 
-                  : `No ${filters.gameMode.charAt(0).toUpperCase() + filters.gameMode.slice(1)} Games`
+                {filters.timeframe === 'daily-challenge' 
+                  ? 'No Daily Challenge Scores Yet' 
+                  : filters.gameMode === 'all' 
+                    ? 'No Players Found' 
+                    : `No ${filters.gameMode.charAt(0).toUpperCase() + filters.gameMode.slice(1)} Games`
                 }
               </h3>
                 <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                {filters.gameMode === 'all' 
-                  ? 'No player profiles found in the database.'
-                  : `No games have been completed in ${filters.gameMode} mode${filters.timeframe !== 'all-time' ? ` ${filters.timeframe.replace('-', ' ')}` : ''}.`
+                {filters.timeframe === 'daily-challenge'
+                  ? "No one has completed today's daily challenge yet. Be the first to play and set a high score!"
+                  : filters.gameMode === 'all' 
+                    ? 'No player profiles found in the database.'
+                    : `No games have been completed in ${filters.gameMode} mode${filters.timeframe !== 'all-time' ? ` ${filters.timeframe.replace('-', ' ')}` : ''}.`
                 }
               </p>
-              {filters.gameMode !== 'all' && (
-                  <div className="text-sm text-gray-400 mb-6 max-w-sm mx-auto">
+              {filters.timeframe === 'daily-challenge' ? (
+                <div className="text-sm text-gray-400 mb-6 max-w-sm mx-auto">
+                  <p>🎯 Play today's daily challenge to compete!</p>
+                  <p>📅 This leaderboard resets every day at midnight</p>
+                </div>
+              ) : filters.gameMode !== 'all' && (
+                <div className="text-sm text-gray-400 mb-6 max-w-sm mx-auto">
                   <p>Try switching to "All Modes" to see overall rankings,</p>
                   <p>or play some {filters.gameMode} games to populate this leaderboard!</p>
                 </div>
@@ -694,26 +734,33 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                   const colors = getCardColors();
 
                   return (
-                    <motion.div
-                      key={entry.id}
+                  <motion.div
+                  key={entry.id}
                       className={`relative p-6 rounded-2xl transition-all duration-0 group hover:scale-105 ${colors.card}`}
-                      variants={itemVariants}
+                    variants={itemVariants}
                       whileHover={{ y: -4 }}
                       transition={{ duration: 0 }}
-                    >
+                  >
                       {/* Rank Badge */}
                       <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full ${colors.badge} flex items-center justify-center text-sm font-bold shadow-lg z-10`}>
                         {isTopThree ? colors.rankIcon : rank}
                       </div>
 
+                      {/* Daily Challenge Indicator */}
+                      {filters.timeframe === 'daily-challenge' && (
+                        <div className="absolute -top-2 -left-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg z-10">
+                          <span className="text-xs">🎯</span>
+                        </div>
+                      )}
+
                       {/* Card Content */}
                       <div className="flex flex-col items-center text-center space-y-4">
-                        
-                        {/* Avatar */}
+
+                  {/* Avatar */}
                         <div className="relative">
                           <div className={`w-20 h-20 rounded-full ${colors.avatar} flex items-center justify-center text-white font-bold text-2xl shadow-lg group-hover:shadow-xl transition-all duration-0`}>
-                            {entry.display_name?.[0]?.toUpperCase() || entry.username[0]?.toUpperCase() || 'U'}
-                          </div>
+                      {entry.display_name?.[0]?.toUpperCase() || entry.username[0]?.toUpperCase() || 'U'}
+                    </div>
                           {isTopThree && (
                             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md">
                               {rank === 1 && <Crown className="w-4 h-4 text-yellow-500" />}
@@ -721,12 +768,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                               {rank === 3 && <Award className="w-4 h-4 text-orange-500" />}
                             </div>
                           )}
-                        </div>
+                  </div>
 
-                        {/* User Info */}
+                  {/* User Info */}
                         <div className="space-y-2">
                           <h3 className="font-bold text-gray-900 text-lg leading-tight">
-                            {entry.display_name || entry.username}
+                      {entry.display_name || entry.username}
                           </h3>
                           
                           {/* Center Location */}
@@ -739,13 +786,20 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                           {/* Primary Metric Display */}
                           <div className={`text-3xl font-bold ${isTopThree ? 'text-gray-800' : 'text-gray-700'}`}>
                             {getMetricValue(entry)}
-                          </div>
+                    </div>
                           
                           <div className="flex items-center justify-center gap-1 text-sm text-gray-500 font-medium">
                             {getMetricIcon()}
                             <span>{getMetricLabel()}</span>
                           </div>
-                        </div>
+                          
+                          {/* Daily Challenge Score Label */}
+                          {filters.timeframe === 'daily-challenge' && (
+                            <div className="text-xs text-yellow-600 font-medium bg-yellow-50 px-2 py-1 rounded-full">
+                              Daily Challenge Score
+                            </div>
+                          )}
+                  </div>
 
                         {/* Stats Row */}
                         <div className="w-full pt-4 border-t border-gray-200/60">
@@ -766,9 +820,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                               <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
                                 <Target size={12} />
                                 Average
-                              </div>
-                            </div>
-                          </div>
+                    </div>
+                    </div>
+                  </div>
                         </div>
 
                         {/* Progress indicator for top performers */}
@@ -790,8 +844,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                         )}
 
 
-                      </div>
-                    </motion.div>
+                </div>
+                  </motion.div>
                   );
                 })}
               </motion.div>

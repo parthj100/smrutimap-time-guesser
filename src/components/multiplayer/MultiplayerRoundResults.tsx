@@ -254,8 +254,8 @@ export default function MultiplayerRoundResults({
                     const colors = getCardColors();
 
                     return (
-                      <div
-                        key={entry.participant_id}
+                    <div
+                      key={entry.participant_id}
                         className={`relative p-4 rounded-2xl transition-all duration-0 group hover:scale-105 ${colors.card}`}
                       >
                         {/* Rank Badge */}
@@ -275,29 +275,29 @@ export default function MultiplayerRoundResults({
                                 <span className="text-xs text-white font-bold">U</span>
                               </div>
                             )}
-                          </div>
+                      </div>
 
                           {/* User Info */}
                           <div className="flex-1 space-y-1">
                             <div className="flex items-center gap-2">
                               <h3 className="font-bold text-gray-900 text-base leading-tight">
-                                {entry.display_name}
+                          {entry.display_name}
                               </h3>
                               {isCurrentUser && (
                                 <span className="text-xs bg-blue-500 text-white px-2 py-1 rounded-full font-medium">You</span>
-                              )}
-                            </div>
+                          )}
+                        </div>
                             
                             {/* Stats */}
                             <div className="flex items-center gap-4 text-sm text-gray-600">
                               <span>{entry.rounds_completed} rounds</span>
                               <span>•</span>
                               <span>Avg: {Math.round(entry.average_score)}</span>
-                            </div>
-                          </div>
+                        </div>
+                      </div>
 
                           {/* Score */}
-                          <div className="text-right">
+                      <div className="text-right">
                             <div className={`text-2xl font-bold ${isTopThree ? 'text-gray-800' : 'text-gray-700'}`}>
                               {entry.total_score}
                             </div>
