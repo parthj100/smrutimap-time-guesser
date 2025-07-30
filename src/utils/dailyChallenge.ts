@@ -38,14 +38,25 @@ const getTodayDateString = (): string => {
   return easternTime.toISOString().split('T')[0];
 };
 
+// Get yesterday's date string to exclude those images
+const getYesterdayDateString = (): string => {
+  const now = new Date();
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+  const yesterday = new Date(easternTime);
+  yesterday.setDate(yesterday.getDate() - 1);
+  return yesterday.toISOString().split('T')[0];
+};
+
 // Get a unique seed for today's daily challenge to ensure it's different from yesterday
 const getTodayChallengeSeed = (): string => {
   const todayString = getTodayDateString();
-  // Add a timestamp component to make it unique for today's reset
+  // Use current timestamp in milliseconds to ensure uniqueness
   const now = new Date();
   const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
-  const timeComponent = Math.floor(easternTime.getTime() / (1000 * 60 * 60 * 24)); // Days since epoch
-  return `${todayString}-${timeComponent}`;
+  const timestamp = easternTime.getTime();
+  // Add some randomness to make it even more unique
+  const randomComponent = Math.floor(Math.random() * 1000000);
+  return `${todayString}-${timestamp}-${randomComponent}`;
 };
 
 // Get daily challenge images for today
@@ -86,9 +97,41 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
       return allImages;
     }
     
-    // Use unique seed for today's challenge to ensure it's different from yesterday
+    // Get yesterday's images to exclude them
+    const yesterdayString = getYesterdayDateString();
+    let yesterdayImageIds: string[] = [];
+    
+    try {
+      const { data: yesterdayChallenge } = await supabase
+        .from('daily_challenges')
+        .select('image_ids')
+        .eq('challenge_date', yesterdayString)
+        .maybeSingle();
+      
+      if (yesterdayChallenge && yesterdayChallenge.image_ids) {
+        yesterdayImageIds = yesterdayChallenge.image_ids;
+        console.log('Excluding yesterday\'s images:', yesterdayImageIds);
+      }
+    } catch (error) {
+      console.log('Could not fetch yesterday\'s challenge, proceeding without exclusion');
+    }
+    
+    // Filter out yesterday's images to ensure different selection
+    const availableImages = yesterdayImageIds.length > 0 
+      ? allImages.filter(img => !yesterdayImageIds.includes(img.id))
+      : allImages;
+    
+    if (availableImages.length < 5) {
+      console.warn('Not enough images after excluding yesterday\'s, using all images');
+      // Fallback to all images if we don't have enough after exclusion
+      const challengeSeed = getTodayChallengeSeed();
+      const shuffledImages = seededShuffle(allImages, challengeSeed);
+      return shuffledImages.slice(0, 5);
+    }
+    
+    // Use unique seed for today's challenge with filtered images
     const challengeSeed = getTodayChallengeSeed();
-    const shuffledImages = seededShuffle(allImages, challengeSeed);
+    const shuffledImages = seededShuffle(availableImages, challengeSeed);
     const selectedImages = shuffledImages.slice(0, 5);
     const selectedImageIds = selectedImages.map(img => img.id);
     
