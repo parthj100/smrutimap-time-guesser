@@ -16,6 +16,7 @@ interface HomeProps {
   onTutorialClick?: () => void;
   onMultiplayerClick?: () => void;
   hasPlayedDailyToday?: boolean;
+  onRefreshDailyChallenge?: () => Promise<void>;
 }
 
 // Animation variants for staggered effects
@@ -78,7 +79,8 @@ export const Home: React.FC<HomeProps> = ({
   onDailyChallengeClick,
   onTutorialClick,
   onMultiplayerClick,
-  hasPlayedDailyToday = false
+  hasPlayedDailyToday = false,
+  onRefreshDailyChallenge
 }) => {
   const navigate = useNavigate();
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -103,7 +105,10 @@ export const Home: React.FC<HomeProps> = ({
   };
 
   const handleDailyChallengeClick = async () => {
-    if (onDailyChallengeClick) {
+    if (hasPlayedDailyToday && onRefreshDailyChallenge) {
+      // If already played today, try to refresh the status
+      await onRefreshDailyChallenge();
+    } else if (onDailyChallengeClick) {
       await onDailyChallengeClick();
     }
   };
@@ -341,12 +346,12 @@ export const Home: React.FC<HomeProps> = ({
                 className={isMobile ? 'w-full max-w-xs' : 'w-full max-w-sm'}
               >
                 <GradientButton 
-                  onClick={hasPlayedDailyToday ? undefined : handleDailyChallengeClick}
+                  onClick={handleDailyChallengeClick}
                   variant="variant"
-                  disabled={hasPlayedDailyToday}
+                  disabled={false}
                   className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg transition-all duration-300 w-full font-poppins ${
                     hasPlayedDailyToday 
-                      ? 'opacity-60 cursor-not-allowed bg-gray-500' 
+                      ? 'opacity-80 cursor-pointer bg-gray-500 hover:bg-gray-400' 
                       : 'hover:shadow-xl'
                   } ${
                     isMobile 
@@ -355,7 +360,7 @@ export const Home: React.FC<HomeProps> = ({
                   }`}
                 >
                   <Calendar size={isMobile ? 18 : 20} className="lg:w-6 lg:h-6" />
-                  {hasPlayedDailyToday ? 'Daily Challenge Completed' : 'Daily Challenge'}
+                  {hasPlayedDailyToday ? 'Daily Challenge Completed (Click to Refresh)' : 'Daily Challenge'}
                 </GradientButton>
               </motion.div>
             </motion.div>

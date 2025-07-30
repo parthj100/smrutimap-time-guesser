@@ -153,6 +153,23 @@ const Game: React.FC<GameProps> = ({
     };
 
     checkDailyChallengeStatus();
+
+    // Set up periodic check for daily challenge reset (every 5 minutes)
+    const intervalId = setInterval(checkDailyChallengeStatus, 5 * 60 * 1000);
+
+    // Also check when the page becomes visible (user returns to tab)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkDailyChallengeStatus();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [user, multiplayerMode]);
 
   // Effect to start game when data is ready
@@ -358,7 +375,7 @@ const Game: React.FC<GameProps> = ({
       const hasPlayed = await hasUserPlayedDailyChallengeToday(user.id);
       
       if (hasPlayed) {
-        toast.error('You have already played the daily challenge today. Come back tomorrow at midnight EST!');
+        toast.error('You have already played the daily challenge today. Come back tomorrow at midnight Eastern Time!');
         return;
       }
       
@@ -369,6 +386,29 @@ const Game: React.FC<GameProps> = ({
     } catch (error) {
       console.error('Error checking daily challenge status:', error);
       toast.error('Unable to check daily challenge status. Please try again.');
+    }
+  };
+
+  const handleRefreshDailyChallenge = async () => {
+    console.log('🔄 Refreshing daily challenge status...');
+    
+    if (!user) {
+      toast.error('Please log in to check daily challenge status');
+      return;
+    }
+    
+    try {
+      const hasPlayed = await hasUserPlayedDailyChallengeToday(user.id);
+      setHasPlayedDailyToday(hasPlayed);
+      
+      if (!hasPlayed) {
+        toast.success('Daily challenge is now available!');
+      } else {
+        toast.info('Daily challenge is still completed for today. Check back at midnight Eastern Time!');
+      }
+    } catch (error) {
+      console.error('Error refreshing daily challenge status:', error);
+      toast.error('Unable to refresh daily challenge status. Please try again.');
     }
   };
 
@@ -643,6 +683,7 @@ const Game: React.FC<GameProps> = ({
           onTutorialClick={handleTutorialClick}
           onMultiplayerClick={handleMultiplayerClick}
           hasPlayedDailyToday={hasPlayedDailyToday}
+          onRefreshDailyChallenge={handleRefreshDailyChallenge}
         />
       )}
 
