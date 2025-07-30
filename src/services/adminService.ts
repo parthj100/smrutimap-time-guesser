@@ -130,11 +130,10 @@ export class AdminService {
   // Get dashboard statistics
   static async getDashboardStats(): Promise<AdminDashboardStats> {
     try {
-      // Use EST timezone for date calculations
-      const estOffset = -5; // EST is UTC-5
-      const utcNow = new Date();
-      const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
-      const today = estNow.toISOString().split('T')[0];
+      // Use Eastern Time (EST/EDT) for date calculations
+      const now = new Date();
+      const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+      const today = easternTime.toISOString().split('T')[0];
       
       // Get total users
       const { count: totalUsers, error: usersError } = await supabase
@@ -334,11 +333,10 @@ export class AdminService {
   }> {
     try {
       const visitors = await this.getVisitorAnalytics(date);
-      // Use EST timezone for date calculations
-      const estOffset = -5; // EST is UTC-5
-      const utcNow = new Date();
-      const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
-      const today = date || estNow.toISOString().split('T')[0];
+      // Use Eastern Time (EST/EDT) for date calculations
+      const now = new Date();
+      const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+      const today = date || easternTime.toISOString().split('T')[0];
       const todayVisitors = visitors.filter(v => v.visit_date === today);
       
       const uniqueSessions = new Set(todayVisitors.map(v => v.session_id));
@@ -488,18 +486,17 @@ export class AdminService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      // Use EST timezone for visit tracking
-      const estOffset = -5; // EST is UTC-5
-      const utcNow = new Date();
-      const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+      // Use Eastern Time (EST/EDT) for visit tracking
+      const now = new Date();
+      const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
       
-      await supabase
+              await supabase
         .from('analytics_visitors')
         .insert({
           user_id: user?.id || null,
           session_id: sessionId,
           page_visited: page,
-          visit_date: estNow.toISOString().split('T')[0],
+          visit_date: easternTime.toISOString().split('T')[0],
           visit_time: new Date().toISOString()
         });
     } catch (error) {

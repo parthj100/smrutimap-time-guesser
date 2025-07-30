@@ -30,12 +30,12 @@ const seededShuffle = <T>(array: T[], seed: string): T[] => {
   return newArray;
 };
 
-// Get today's date in EST timezone YYYY-MM-DD format
+// Get today's date in Eastern Time (EST/EDT) YYYY-MM-DD format
 const getTodayDateString = (): string => {
-  const estOffset = -5; // EST is UTC-5
-  const utcNow = new Date();
-  const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
-  return estNow.toISOString().split('T')[0];
+  // Get current time in Eastern Time (automatically handles EST/EDT)
+  const now = new Date();
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+  return easternTime.toISOString().split('T')[0];
 };
 
 // Get daily challenge images for today
@@ -105,28 +105,28 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
 };
 
 /**
- * Get the start and end dates for today in EST timezone
+ * Get the start and end dates for today in Eastern Time (EST/EDT)
  * Used for daily challenge leaderboard filtering
  */
 export const getESTDateRange = () => {
-  const estOffset = -5; // EST is UTC-5
-  const utcNow = new Date();
-  const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+  // Get current time in Eastern Time (automatically handles EST/EDT)
+  const now = new Date();
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
   
-  // Start of today in EST (midnight EST)
-  const estStartOfDay = new Date(estNow.getFullYear(), estNow.getMonth(), estNow.getDate());
-  // Convert back to UTC
-  const utcStartOfDay = new Date(estStartOfDay.getTime() - (estOffset * 60 * 60 * 1000));
+  // Start of today in Eastern Time (midnight)
+  const easternStartOfDay = new Date(easternTime.getFullYear(), easternTime.getMonth(), easternTime.getDate());
   
-  // End of today in EST (midnight EST tomorrow)
-  const estEndOfDay = new Date(estNow.getFullYear(), estNow.getMonth(), estNow.getDate() + 1);
-  // Convert back to UTC
-  const utcEndOfDay = new Date(estEndOfDay.getTime() - (estOffset * 60 * 60 * 1000));
+  // End of today in Eastern Time (midnight tomorrow)
+  const easternEndOfDay = new Date(easternTime.getFullYear(), easternTime.getMonth(), easternTime.getDate() + 1);
+  
+  // Convert to UTC for database queries
+  const utcStartOfDay = new Date(easternStartOfDay.getTime() - (easternStartOfDay.getTimezoneOffset() * 60000));
+  const utcEndOfDay = new Date(easternEndOfDay.getTime() - (easternEndOfDay.getTimezoneOffset() * 60000));
   
   return {
     startDate: utcStartOfDay,
     endDate: utcEndOfDay,
-    estDate: estNow.toISOString().split('T')[0] // YYYY-MM-DD format in EST
+    estDate: easternTime.toISOString().split('T')[0] // YYYY-MM-DD format in Eastern Time
   };
 };
 

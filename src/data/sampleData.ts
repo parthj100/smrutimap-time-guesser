@@ -162,12 +162,11 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
   console.log('📅 getDailyChallengeImages called');
   
   try {
-    // Use EST timezone for daily challenge date
-    const estOffset = -5; // EST is UTC-5
-    const utcNow = new Date();
-    const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
-    const today = estNow.toISOString().split('T')[0]; // YYYY-MM-DD format in EST
-    console.log('📆 Daily challenge date (EST):', today);
+    // Use Eastern Time (EST/EDT) for daily challenge date
+    const now = new Date();
+    const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+    const today = easternTime.toISOString().split('T')[0]; // YYYY-MM-DD format in Eastern Time
+    console.log('📆 Daily challenge date (Eastern Time):', today);
     
     // First, check if we already have today's challenge
     console.log('🔍 Checking for existing daily challenge...');
