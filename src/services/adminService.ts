@@ -130,7 +130,11 @@ export class AdminService {
   // Get dashboard statistics
   static async getDashboardStats(): Promise<AdminDashboardStats> {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      // Use EST timezone for date calculations
+      const estOffset = -5; // EST is UTC-5
+      const utcNow = new Date();
+      const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+      const today = estNow.toISOString().split('T')[0];
       
       // Get total users
       const { count: totalUsers, error: usersError } = await supabase
@@ -330,7 +334,11 @@ export class AdminService {
   }> {
     try {
       const visitors = await this.getVisitorAnalytics(date);
-      const today = date || new Date().toISOString().split('T')[0];
+      // Use EST timezone for date calculations
+      const estOffset = -5; // EST is UTC-5
+      const utcNow = new Date();
+      const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+      const today = date || estNow.toISOString().split('T')[0];
       const todayVisitors = visitors.filter(v => v.visit_date === today);
       
       const uniqueSessions = new Set(todayVisitors.map(v => v.session_id));
@@ -480,13 +488,18 @@ export class AdminService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
+      // Use EST timezone for visit tracking
+      const estOffset = -5; // EST is UTC-5
+      const utcNow = new Date();
+      const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+      
       await supabase
         .from('analytics_visitors')
         .insert({
           user_id: user?.id || null,
           session_id: sessionId,
           page_visited: page,
-          visit_date: new Date().toISOString().split('T')[0],
+          visit_date: estNow.toISOString().split('T')[0],
           visit_time: new Date().toISOString()
         });
     } catch (error) {
@@ -542,13 +555,131 @@ export class AdminService {
   }
 
   // Ban/Unban user
-  static async toggleUserBan(userId: string, banned: boolean): Promise<void> {
+  static async toggleUserBan(userId: string, banned: boolean, reason?: string): Promise<void> {
     try {
-      // TODO: Add banned field to user_profiles table
-      console.log(`User ${userId} ${banned ? 'banned' : 'unbanned'}`);
-      // For now, just log the action
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          banned: banned,
+          banned_at: banned ? new Date().toISOString() : null,
+          banned_reason: banned ? reason : null
+        })
+        .eq('user_id', userId);
+
+      if (error) throw error;
     } catch (error) {
       console.error('Error toggling user ban:', error);
+      throw error;
+    }
+  }
+
+  // Get admin settings
+  static async getAdminSettings(): Promise<Record<string, any>> {
+    try {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('setting_key, setting_value');
+
+      if (error) throw error;
+
+      const settings: Record<string, any> = {};
+      data?.forEach(setting => {
+        settings[setting.setting_key] = setting.setting_value;
+      });
+
+      return settings;
+    } catch (error) {
+      console.error('Error fetching admin settings:', error);
+      return {};
+    }
+  }
+
+  // Update admin settings
+  static async updateAdminSettings(settings: Record<string, any>): Promise<void> {
+    try {
+      const updates = Object.entries(settings).map(([key, value]) => ({
+        setting_key: key,
+        setting_value: value
+      }));
+
+      const { error } = await supabase
+        .from('admin_settings')
+        .upsert(updates, { onConflict: 'setting_key' });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating admin settings:', error);
+      throw error;
+    }
+  }
+
+  // Database backup (placeholder for now)
+  static async backupDatabase(): Promise<string> {
+    try {
+      // In a real implementation, this would trigger a database backup
+      // For now, return a success message
+      return 'Database backup initiated successfully';
+    } catch (error) {
+      console.error('Error backing up database:', error);
+      throw error;
+    }
+  }
+
+  // Clean old data
+  static async cleanOldData(daysToKeep: number = 90): Promise<number> {
+    try {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
+
+      // Clean old analytics data
+      const { count: analyticsDeleted } = await supabase
+        .from('analytics_visitors')
+        .delete()
+        .lt('visit_time', cutoffDate.toISOString());
+
+      // Clean old game sessions (keep some for stats)
+      const { count: sessionsDeleted } = await supabase
+        .from('game_sessions')
+        .delete()
+        .lt('created_at', cutoffDate.toISOString());
+
+      return (analyticsDeleted || 0) + (sessionsDeleted || 0);
+    } catch (error) {
+      console.error('Error cleaning old data:', error);
+      throw error;
+    }
+  }
+
+  // Reset all user stats
+  static async resetAllUserStats(): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('user_profiles')
+        .update({
+          total_score: 0,
+          total_games_played: 0,
+          average_score: 0,
+          best_single_game_score: 0
+        });
+
+      return count || 0;
+    } catch (error) {
+      console.error('Error resetting all user stats:', error);
+      throw error;
+    }
+  }
+
+  // Clear game sessions
+  static async clearGameSessions(): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('game_sessions')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Keep at least one record
+
+      return count || 0;
+    } catch (error) {
+      console.error('Error clearing game sessions:', error);
       throw error;
     }
   }

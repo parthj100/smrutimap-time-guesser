@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       analytics_daily_summary: {
         Row: {
           created_at: string | null
@@ -708,6 +735,9 @@ export type Database = {
         Row: {
           avatar_url: string | null
           average_score: number | null
+          banned: boolean | null
+          banned_at: string | null
+          banned_reason: string | null
           best_single_game_score: number | null
           center: string | null
           created_at: string | null
@@ -715,6 +745,7 @@ export type Database = {
           favorite_game_mode: string | null
           id: string
           is_admin: boolean | null
+          last_active: string | null
           total_games_played: number | null
           total_score: number | null
           updated_at: string | null
@@ -724,6 +755,9 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           average_score?: number | null
+          banned?: boolean | null
+          banned_at?: string | null
+          banned_reason?: string | null
           best_single_game_score?: number | null
           center?: string | null
           created_at?: string | null
@@ -731,6 +765,7 @@ export type Database = {
           favorite_game_mode?: string | null
           id?: string
           is_admin?: boolean | null
+          last_active?: string | null
           total_games_played?: number | null
           total_score?: number | null
           updated_at?: string | null
@@ -740,6 +775,9 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           average_score?: number | null
+          banned?: boolean | null
+          banned_at?: string | null
+          banned_reason?: string | null
           best_single_game_score?: number | null
           center?: string | null
           created_at?: string | null
@@ -747,6 +785,7 @@ export type Database = {
           favorite_game_mode?: string | null
           id?: string
           is_admin?: boolean | null
+          last_active?: string | null
           total_games_played?: number | null
           total_score?: number | null
           updated_at?: string | null

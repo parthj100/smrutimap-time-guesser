@@ -30,50 +30,88 @@ interface GameSettings {
   enableLeaderboard: boolean;
 }
 
+interface SystemSettings {
+  enableVisitorTracking: boolean;
+  enableErrorLogging: boolean;
+  enablePerformanceMonitoring: boolean;
+}
+
+interface AnalyticsSettings {
+  retentionDays: number;
+  enableGeolocation: boolean;
+  enableReferrerTracking: boolean;
+}
+
+interface AdminSettings {
+  game_settings: GameSettings;
+  system_settings: SystemSettings;
+  analytics_settings: AnalyticsSettings;
+}
+
 export const AdminSettingsPanel: React.FC = () => {
-  const [settings, setSettings] = useState<GameSettings>({
-    maintenanceMode: false,
-    allowNewRegistrations: true,
-    maxPlayersPerRoom: 8,
-    defaultRounds: 5,
-    defaultTimePerRound: 60,
-    enableAnalytics: true,
-    enableMultiplayer: true,
-    enableLeaderboard: true
+  const [settings, setSettings] = useState<AdminSettings>({
+    game_settings: {
+      maintenanceMode: false,
+      allowNewRegistrations: true,
+      maxPlayersPerRoom: 8,
+      defaultRounds: 5,
+      defaultTimePerRound: 60,
+      enableAnalytics: true,
+      enableMultiplayer: true,
+      enableLeaderboard: true
+    },
+    system_settings: {
+      enableVisitorTracking: true,
+      enableErrorLogging: true,
+      enablePerformanceMonitoring: true
+    },
+    analytics_settings: {
+      retentionDays: 90,
+      enableGeolocation: false,
+      enableReferrerTracking: true
+    }
   });
 
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [initialSettings, setInitialSettings] = useState<AdminSettings | null>(null);
 
-  // Load settings from localStorage on component mount
+  // Load settings from database on component mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('adminGameSettings');
-    if (savedSettings) {
+    const loadSettings = async () => {
       try {
-        const parsed = JSON.parse(savedSettings);
-        setSettings(prev => ({ ...prev, ...parsed }));
+        setLoading(true);
+        const dbSettings = await AdminService.getAdminSettings();
+        if (Object.keys(dbSettings).length > 0) {
+          setSettings(dbSettings as AdminSettings);
+          setInitialSettings(dbSettings as AdminSettings);
+        } else {
+          setInitialSettings(settings);
+        }
       } catch (error) {
-        console.error('Error loading saved settings:', error);
+        console.error('Error loading admin settings:', error);
+        toast.error('Failed to load admin settings');
+        setInitialSettings(settings);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    loadSettings();
   }, []);
 
   // Track changes
   useEffect(() => {
-    const savedSettings = localStorage.getItem('adminGameSettings');
-    if (savedSettings) {
-      const parsed = JSON.parse(savedSettings);
-      setHasChanges(JSON.stringify(settings) !== JSON.stringify(parsed));
-    } else {
-      setHasChanges(true);
+    if (initialSettings) {
+      setHasChanges(JSON.stringify(settings) !== JSON.stringify(initialSettings));
     }
-  }, [settings]);
+  }, [settings, initialSettings]);
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      // Save to localStorage for now (in a real app, this would go to database)
-      localStorage.setItem('adminGameSettings', JSON.stringify(settings));
+      await AdminService.updateAdminSettings(settings);
+      setInitialSettings(settings);
       toast.success('Settings saved successfully!');
       setHasChanges(false);
     } catch (error) {
@@ -85,18 +123,29 @@ export const AdminSettingsPanel: React.FC = () => {
   };
 
   const handleReset = () => {
-    const defaultSettings = {
-      maintenanceMode: false,
-      allowNewRegistrations: true,
-      maxPlayersPerRoom: 8,
-      defaultRounds: 5,
-      defaultTimePerRound: 60,
-      enableAnalytics: true,
-      enableMultiplayer: true,
-      enableLeaderboard: true
+    const defaultSettings: AdminSettings = {
+      game_settings: {
+        maintenanceMode: false,
+        allowNewRegistrations: true,
+        maxPlayersPerRoom: 8,
+        defaultRounds: 5,
+        defaultTimePerRound: 60,
+        enableAnalytics: true,
+        enableMultiplayer: true,
+        enableLeaderboard: true
+      },
+      system_settings: {
+        enableVisitorTracking: true,
+        enableErrorLogging: true,
+        enablePerformanceMonitoring: true
+      },
+      analytics_settings: {
+        retentionDays: 90,
+        enableGeolocation: false,
+        enableReferrerTracking: true
+      }
     };
     setSettings(defaultSettings);
-    localStorage.removeItem('adminGameSettings');
     toast.success('Settings reset to defaults');
   };
 
@@ -143,10 +192,13 @@ export const AdminSettingsPanel: React.FC = () => {
               <Input
                 id="maxPlayers"
                 type="number"
-                value={settings.maxPlayersPerRoom}
+                value={settings.game_settings.maxPlayersPerRoom}
                 onChange={(e) => setSettings(prev => ({ 
                   ...prev, 
-                  maxPlayersPerRoom: parseInt(e.target.value) || 8 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    maxPlayersPerRoom: parseInt(e.target.value) || 8 
+                  } 
                 }))}
                 min="2"
                 max="20"
@@ -158,10 +210,13 @@ export const AdminSettingsPanel: React.FC = () => {
               <Input
                 id="defaultRounds"
                 type="number"
-                value={settings.defaultRounds}
+                value={settings.game_settings.defaultRounds}
                 onChange={(e) => setSettings(prev => ({ 
                   ...prev, 
-                  defaultRounds: parseInt(e.target.value) || 5 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    defaultRounds: parseInt(e.target.value) || 5 
+                  } 
                 }))}
                 min="1"
                 max="20"
@@ -173,10 +228,13 @@ export const AdminSettingsPanel: React.FC = () => {
               <Input
                 id="timePerRound"
                 type="number"
-                value={settings.defaultTimePerRound}
+                value={settings.game_settings.defaultTimePerRound}
                 onChange={(e) => setSettings(prev => ({ 
                   ...prev, 
-                  defaultTimePerRound: parseInt(e.target.value) || 60 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    defaultTimePerRound: parseInt(e.target.value) || 60 
+                  } 
                 }))}
                 min="30"
                 max="300"
@@ -205,10 +263,13 @@ export const AdminSettingsPanel: React.FC = () => {
               </div>
               <Switch
                 id="maintenance"
-                checked={settings.maintenanceMode}
+                checked={settings.game_settings.maintenanceMode}
                 onCheckedChange={(checked) => setSettings(prev => ({ 
                   ...prev, 
-                  maintenanceMode: checked 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    maintenanceMode: checked 
+                  } 
                 }))}
               />
             </div>
@@ -222,10 +283,13 @@ export const AdminSettingsPanel: React.FC = () => {
               </div>
               <Switch
                 id="registrations"
-                checked={settings.allowNewRegistrations}
+                checked={settings.game_settings.allowNewRegistrations}
                 onCheckedChange={(checked) => setSettings(prev => ({ 
                   ...prev, 
-                  allowNewRegistrations: checked 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    allowNewRegistrations: checked 
+                  } 
                 }))}
               />
             </div>
@@ -239,10 +303,13 @@ export const AdminSettingsPanel: React.FC = () => {
               </div>
               <Switch
                 id="analytics"
-                checked={settings.enableAnalytics}
+                checked={settings.game_settings.enableAnalytics}
                 onCheckedChange={(checked) => setSettings(prev => ({ 
                   ...prev, 
-                  enableAnalytics: checked 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    enableAnalytics: checked 
+                  } 
                 }))}
               />
             </div>
@@ -256,10 +323,13 @@ export const AdminSettingsPanel: React.FC = () => {
               </div>
               <Switch
                 id="multiplayer"
-                checked={settings.enableMultiplayer}
+                checked={settings.game_settings.enableMultiplayer}
                 onCheckedChange={(checked) => setSettings(prev => ({ 
                   ...prev, 
-                  enableMultiplayer: checked 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    enableMultiplayer: checked 
+                  } 
                 }))}
               />
             </div>
@@ -273,10 +343,13 @@ export const AdminSettingsPanel: React.FC = () => {
               </div>
               <Switch
                 id="leaderboard"
-                checked={settings.enableLeaderboard}
+                checked={settings.game_settings.enableLeaderboard}
                 onCheckedChange={(checked) => setSettings(prev => ({ 
                   ...prev, 
-                  enableLeaderboard: checked 
+                  game_settings: { 
+                    ...prev.game_settings, 
+                    enableLeaderboard: checked 
+                  } 
                 }))}
               />
             </div>
