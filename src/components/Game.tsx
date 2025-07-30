@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getDailyChallengeImages } from '@/utils/dailyChallenge';
+import { getDailyChallengeImages, hasUserPlayedDailyChallengeToday } from '@/utils/dailyChallenge';
 import { resetImagePool } from '@/utils/imagePool';
 import { GameImage, GuessResult } from '@/types/game';
 import GameSummary from './GameSummary';
@@ -96,6 +96,7 @@ const Game: React.FC<GameProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [lastResult, setLastResult] = useState<any>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [hasPlayedDailyToday, setHasPlayedDailyToday] = useState(false);
 
   // Custom hooks
   const {
@@ -134,6 +135,25 @@ const Game: React.FC<GameProps> = ({
     onTimeUpdate: (newTime: number) => updateTimer(newTime, true),
     onTimeUp: handleTimeUp
   });
+
+  // Effect to check daily challenge status when user changes
+  useEffect(() => {
+    const checkDailyChallengeStatus = async () => {
+      if (user && !multiplayerMode) {
+        try {
+          const hasPlayed = await hasUserPlayedDailyChallengeToday(user.id);
+          setHasPlayedDailyToday(hasPlayed);
+        } catch (error) {
+          console.error('Error checking daily challenge status:', error);
+          setHasPlayedDailyToday(false);
+        }
+      } else {
+        setHasPlayedDailyToday(false);
+      }
+    };
+
+    checkDailyChallengeStatus();
+  }, [user, multiplayerMode]);
 
   // Effect to start game when data is ready
   useEffect(() => {
@@ -324,11 +344,32 @@ const Game: React.FC<GameProps> = ({
     setIsDailyChallenge(false);
   };
 
-  const handleDailyChallengeClick = () => {
+  const handleDailyChallengeClick = async () => {
     console.log('📅 Daily challenge button clicked');
-    setIsDailyChallenge(true);
-    // Start daily challenge directly as normal mode (no time restrictions)
-    startGame(false, 'per-round', true);
+    
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Please log in to play the daily challenge');
+      return;
+    }
+    
+    // Check if user has already played today
+    try {
+      const hasPlayed = await hasUserPlayedDailyChallengeToday(user.id);
+      
+      if (hasPlayed) {
+        toast.error('You have already played the daily challenge today. Come back tomorrow at midnight EST!');
+        return;
+      }
+      
+      // User hasn't played today, proceed with daily challenge
+      setIsDailyChallenge(true);
+      startGame(false, 'per-round', true);
+      
+    } catch (error) {
+      console.error('Error checking daily challenge status:', error);
+      toast.error('Unable to check daily challenge status. Please try again.');
+    }
   };
 
   const handleTutorialClick = () => {
@@ -601,6 +642,7 @@ const Game: React.FC<GameProps> = ({
           onDailyChallengeClick={handleDailyChallengeClick}
           onTutorialClick={handleTutorialClick}
           onMultiplayerClick={handleMultiplayerClick}
+          hasPlayedDailyToday={hasPlayedDailyToday}
         />
       )}
 

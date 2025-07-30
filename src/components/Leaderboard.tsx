@@ -6,6 +6,7 @@ import { Trophy, Medal, Award, Calendar, Clock, Target, Users, X, Star, Crown, Z
 import { safeQuery, testDatabaseConnectivity } from '@/utils/databaseUtils';
 import { useProfileContext } from '@/contexts/ProfileContext';
 
+
 interface LeaderboardProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,9 +17,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<LeaderboardFilters>({
-    timeframe: 'daily-challenge',
-    gameMode: 'daily',
-    metric: 'total_score'
+    timeframe: 'all-time',
+    gameMode: 'all',
+    metric: 'best_single_game'
   });
   const { refreshAllProfiles } = useProfileContext();
 
@@ -100,35 +101,41 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
 
       // Calculate timeframe dates with proper precision
       let startDate: Date | null = null;
+      let endDate: Date | null = null;
       if (filters.timeframe !== 'all-time') {
         const now = new Date();
         
         switch (filters.timeframe) {
           case 'daily':
-          case 'daily-challenge':
             // Start of today in local timezone
             startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            // End of today (start of tomorrow)
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
             break;
           case 'weekly':
             // Start of this week (Monday)
             const dayOfWeek = now.getDay();
             const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Sunday = 0, so we need 6 days back
             startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysToMonday);
+            // End of this week (start of next Monday)
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - dayOfWeek));
             break;
           case 'monthly':
             // Start of this month
             startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            // Start of next month
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
             break;
         }
         
         if (startDate) {
-          console.log('📅 Filtering from date:', startDate.toISOString(), 'for timeframe:', filters.timeframe);
+          console.log('📅 Filtering from date:', startDate.toISOString(), 'to date:', endDate?.toISOString(), 'for timeframe:', filters.timeframe);
         }
       }
 
       if (filters.gameMode === 'all') {
         // For "all modes", we need to query game_sessions for ALL modes within the timeframe
-        console.log('📊 Querying all game sessions for all modes with timeframe filter');
+        console.log('📊 Querying game sessions with timeframe filter');
         
         const { data: sessionsData, error: sessionsError, timedOut: sessionsTimeout } = await safeQuery(
           async () => {
@@ -143,22 +150,27 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
             if (startDate) {
               sessionQuery = sessionQuery.gte('completed_at', startDate.toISOString());
             }
+            if (endDate) {
+              sessionQuery = sessionQuery.lt('completed_at', endDate.toISOString());
+            }
 
-            console.log('📊 Executing all modes query...');
+            console.log('📊 Executing query...');
             return await sessionQuery;
           },
-          { operation: 'Fetch all game sessions for leaderboard', timeoutMs: 8000 }
+          { operation: 'Fetch game sessions for leaderboard', timeoutMs: 8000 }
         );
 
         queryError = sessionsError || sessionsData?.error;
         timedOut = sessionsTimeout;
         
-        console.log('✅ All modes query result:', { 
+        console.log('✅ Query result:', { 
           dataLength: sessionsData?.data?.length, 
           error: queryError?.message,
           timedOut,
           timeframe: filters.timeframe,
-          startDate: startDate?.toISOString()
+          gameMode: filters.gameMode,
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString()
         });
 
         if (queryError) {
@@ -183,11 +195,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
               .select('*')
               .in('user_id', userIds);
           },
-          { operation: 'Fetch user profiles for all modes', timeoutMs: 3000 }
+          { operation: 'Fetch user profiles', timeoutMs: 3000 }
         );
 
         if (profilesError || profilesTimeout) {
-          console.error('❌ Error fetching profiles for all modes:', profilesError);
+          console.error('❌ Error fetching profiles:', profilesError);
           throw profilesError || new Error('Profile fetch timed out');
         }
 
@@ -197,7 +209,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
           return;
         }
 
-        console.log('👤 Found profiles for all modes:', profilesData.data.length);
+        console.log('👤 Found profiles:', profilesData.data.length);
 
         // Create a map of user sessions for easy lookup
         const userSessionsMap = new Map();
@@ -236,12 +248,21 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
           };
         });
 
-        // Sort by the selected metric
-        transformedEntries.sort((a: any, b: any) => {
-          const aValue = a[getDbColumnName(filters.metric)] || 0;
-          const bValue = b[getDbColumnName(filters.metric)] || 0;
-          return bValue - aValue;
-        });
+        // For daily challenges, always sort by best single game score regardless of metric setting
+        if (filters.timeframe === 'daily-challenge') {
+          transformedEntries.sort((a: any, b: any) => {
+            const aValue = a.best_single_game_score || 0;
+            const bValue = b.best_single_game_score || 0;
+            return bValue - aValue;
+          });
+        } else {
+          // Sort by the selected metric for other timeframes
+          transformedEntries.sort((a: any, b: any) => {
+            const aValue = a[getDbColumnName(filters.metric)] || 0;
+            const bValue = b[getDbColumnName(filters.metric)] || 0;
+            return bValue - aValue;
+          });
+        }
 
         data = transformedEntries;
 
@@ -269,6 +290,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
             if (startDate) {
               sessionQuery = sessionQuery.gte('completed_at', startDate.toISOString());
             }
+            if (endDate) {
+              sessionQuery = sessionQuery.lt('completed_at', endDate.toISOString());
+            }
 
             console.log('📊 Executing sessions query...');
             return await sessionQuery;
@@ -285,7 +309,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
           timedOut,
           gameMode: filters.gameMode,
           timeframe: filters.timeframe,
-          startDate: startDate?.toISOString()
+          startDate: startDate?.toISOString(),
+          endDate: endDate?.toISOString()
         });
 
         if (queryError) {
@@ -363,12 +388,21 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
           };
         });
 
-        // Sort by the selected metric
-        transformedEntries.sort((a: any, b: any) => {
-          const aValue = a[getDbColumnName(filters.metric)] || 0;
-          const bValue = b[getDbColumnName(filters.metric)] || 0;
-          return bValue - aValue;
-        });
+        // For daily challenges, always sort by best single game score regardless of metric setting
+        if (filters.timeframe === 'daily-challenge') {
+          transformedEntries.sort((a: any, b: any) => {
+            const aValue = a.best_single_game_score || 0;
+            const bValue = b.best_single_game_score || 0;
+            return bValue - aValue;
+          });
+        } else {
+          // Sort by the selected metric for other timeframes
+          transformedEntries.sort((a: any, b: any) => {
+            const aValue = a[getDbColumnName(filters.metric)] || 0;
+            const bValue = b[getDbColumnName(filters.metric)] || 0;
+            return bValue - aValue;
+          });
+        }
 
         data = transformedEntries;
       }
@@ -448,7 +482,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
       case 'average_score':
         return 'Average Score';
       case 'best_single_game':
-        return 'Best Game';
+        return 'Best Single Game';
       case 'games_played':
         return 'Games Played';
       default:
@@ -497,18 +531,6 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                 </div>
                 <div>
                   <h2 className="text-4xl font-bold">Leaderboard</h2>
-                  {filters.timeframe === 'daily-challenge' && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="px-3 py-1 bg-yellow-400/20 backdrop-blur-sm rounded-full border border-yellow-400/30">
-                        <span className="text-yellow-300 text-sm font-medium flex items-center gap-1">
-                          🎯 Daily Challenge
-                        </span>
-                      </div>
-                      <span className="text-white/70 text-sm">
-                        Resets daily at midnight
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
               <motion.button
@@ -543,7 +565,6 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                   backgroundSize: '16px'
                 }}
               >
-                <option value="daily-challenge">🎯 Daily Challenge</option>
                 <option value="all-time">All Time</option>
                 <option value="monthly">This Month</option>
                 <option value="weekly">This Week</option>
@@ -569,9 +590,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                 }}
               >
                 <option value="all">All Modes</option>
-                <option value="random">Random</option>
                 <option value="daily">Daily Challenge</option>
-                <option value="timed">Timed</option>
+                <option value="timed">Timed (30s & 4min)</option>
+                <option value="random">Normal Mode</option>
               </select>
             </div>
 
@@ -592,10 +613,10 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                   backgroundSize: '16px'
                 }}
               >
-                <option value="total_score">Total Score</option>
-                <option value="average_score">Average Score</option>
-                <option value="best_single_game">Best Single Game</option>
+                <option value="best_single_game">Best Single Game (Round of 5)</option>
+                <option value="total_score">Total Accumulated Score</option>
                 <option value="games_played">Games Played</option>
+                <option value="average_score">Average Score</option>
               </select>
             </div>
             </motion.div>
@@ -655,27 +676,18 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                   <Trophy className="w-10 h-10 text-gray-400" />
             </div>
                 <h3 className="text-2xl font-semibold text-gray-700 mb-3">
-                {filters.timeframe === 'daily-challenge' 
-                  ? 'No Daily Challenge Scores Yet' 
-                  : filters.gameMode === 'all' 
-                    ? 'No Players Found' 
-                    : `No ${filters.gameMode.charAt(0).toUpperCase() + filters.gameMode.slice(1)} Games`
+                {filters.gameMode === 'all' 
+                  ? 'No Players Found' 
+                  : `No ${filters.gameMode.charAt(0).toUpperCase() + filters.gameMode.slice(1)} Games`
                 }
               </h3>
                 <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                {filters.timeframe === 'daily-challenge'
-                  ? "No one has completed today's daily challenge yet. Be the first to play and set a high score!"
-                  : filters.gameMode === 'all' 
-                    ? 'No player profiles found in the database.'
-                    : `No games have been completed in ${filters.gameMode} mode${filters.timeframe !== 'all-time' ? ` ${filters.timeframe.replace('-', ' ')}` : ''}.`
+                {filters.gameMode === 'all' 
+                  ? 'No player profiles found in the database.'
+                  : `No games have been completed in ${filters.gameMode} mode${filters.timeframe !== 'all-time' ? ` ${filters.timeframe.replace('-', ' ')}` : ''}.`
                 }
               </p>
-              {filters.timeframe === 'daily-challenge' ? (
-                <div className="text-sm text-gray-400 mb-6 max-w-sm mx-auto">
-                  <p>🎯 Play today's daily challenge to compete!</p>
-                  <p>📅 This leaderboard resets every day at midnight</p>
-                </div>
-              ) : filters.gameMode !== 'all' && (
+              {filters.gameMode !== 'all' && (
                 <div className="text-sm text-gray-400 mb-6 max-w-sm mx-auto">
                   <p>Try switching to "All Modes" to see overall rankings,</p>
                   <p>or play some {filters.gameMode} games to populate this leaderboard!</p>
@@ -746,12 +758,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                         {isTopThree ? colors.rankIcon : rank}
                       </div>
 
-                      {/* Daily Challenge Indicator */}
-                      {filters.timeframe === 'daily-challenge' && (
-                        <div className="absolute -top-2 -left-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg z-10">
-                          <span className="text-xs">🎯</span>
-                        </div>
-                      )}
+
 
                       {/* Card Content */}
                       <div className="flex flex-col items-center text-center space-y-4">
@@ -793,12 +800,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                             <span>{getMetricLabel()}</span>
                           </div>
                           
-                          {/* Daily Challenge Score Label */}
-                          {filters.timeframe === 'daily-challenge' && (
-                            <div className="text-xs text-yellow-600 font-medium bg-yellow-50 px-2 py-1 rounded-full">
-                              Daily Challenge Score
-                            </div>
-                          )}
+
                   </div>
 
                         {/* Stats Row */}

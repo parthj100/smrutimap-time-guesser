@@ -12,9 +12,10 @@ import { useBreakpoint } from '@/hooks/useResponsive';
 
 interface HomeProps {
   onPlayClick?: () => void;
-  onDailyChallengeClick?: () => void;
+  onDailyChallengeClick?: () => Promise<void>;
   onTutorialClick?: () => void;
   onMultiplayerClick?: () => void;
+  hasPlayedDailyToday?: boolean;
 }
 
 // Animation variants for staggered effects
@@ -76,7 +77,8 @@ export const Home: React.FC<HomeProps> = ({
   onPlayClick,
   onDailyChallengeClick,
   onTutorialClick,
-  onMultiplayerClick
+  onMultiplayerClick,
+  hasPlayedDailyToday = false
 }) => {
   const navigate = useNavigate();
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -100,9 +102,9 @@ export const Home: React.FC<HomeProps> = ({
     }
   };
 
-  const handleDailyChallengeClick = () => {
+  const handleDailyChallengeClick = async () => {
     if (onDailyChallengeClick) {
-      onDailyChallengeClick();
+      await onDailyChallengeClick();
     }
   };
 
@@ -334,21 +336,26 @@ export const Home: React.FC<HomeProps> = ({
               variants={buttonVariants}
             >
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={hasPlayedDailyToday ? {} : { scale: 1.05 }}
+                whileTap={hasPlayedDailyToday ? {} : { scale: 0.95 }}
                 className={isMobile ? 'w-full max-w-xs' : 'w-full max-w-sm'}
               >
                 <GradientButton 
-                  onClick={handleDailyChallengeClick}
+                  onClick={hasPlayedDailyToday ? undefined : handleDailyChallengeClick}
                   variant="variant"
-                  className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full font-poppins ${
+                  disabled={hasPlayedDailyToday}
+                  className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg transition-all duration-300 w-full font-poppins ${
+                    hasPlayedDailyToday 
+                      ? 'opacity-60 cursor-not-allowed bg-gray-500' 
+                      : 'hover:shadow-xl'
+                  } ${
                     isMobile 
                       ? 'px-6 py-3 text-base min-h-[48px]' 
                       : 'px-8 py-4 lg:px-10 lg:py-4 text-lg lg:text-xl min-h-[52px] lg:min-h-[56px]'
                   }`}
                 >
                   <Calendar size={isMobile ? 18 : 20} className="lg:w-6 lg:h-6" />
-                  Daily Challenge
+                  {hasPlayedDailyToday ? 'Daily Challenge Completed' : 'Daily Challenge'}
                 </GradientButton>
               </motion.div>
             </motion.div>

@@ -30,10 +30,12 @@ const seededShuffle = <T>(array: T[], seed: string): T[] => {
   return newArray;
 };
 
-// Get today's date in YYYY-MM-DD format
+// Get today's date in EST timezone YYYY-MM-DD format
 const getTodayDateString = (): string => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
+  const estOffset = -5; // EST is UTC-5
+  const utcNow = new Date();
+  const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+  return estNow.toISOString().split('T')[0];
 };
 
 // Get daily challenge images for today
@@ -99,5 +101,76 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
     const allImages = await getAllImages();
     const shuffledImages = seededShuffle(allImages, todayString);
     return shuffledImages.slice(0, Math.min(5, allImages.length));
+  }
+};
+
+/**
+ * Get the start and end dates for today in EST timezone
+ * Used for daily challenge leaderboard filtering
+ */
+export const getESTDateRange = () => {
+  const estOffset = -5; // EST is UTC-5
+  const utcNow = new Date();
+  const estNow = new Date(utcNow.getTime() + (estOffset * 60 * 60 * 1000));
+  
+  // Start of today in EST (midnight EST)
+  const estStartOfDay = new Date(estNow.getFullYear(), estNow.getMonth(), estNow.getDate());
+  // Convert back to UTC
+  const utcStartOfDay = new Date(estStartOfDay.getTime() - (estOffset * 60 * 60 * 1000));
+  
+  // End of today in EST (midnight EST tomorrow)
+  const estEndOfDay = new Date(estNow.getFullYear(), estNow.getMonth(), estNow.getDate() + 1);
+  // Convert back to UTC
+  const utcEndOfDay = new Date(estEndOfDay.getTime() - (estOffset * 60 * 60 * 1000));
+  
+  return {
+    startDate: utcStartOfDay,
+    endDate: utcEndOfDay,
+    estDate: estNow.toISOString().split('T')[0] // YYYY-MM-DD format in EST
+  };
+};
+
+/**
+ * Check if a user has already played the daily challenge today
+ * @param userId - The user's ID
+ * @returns Promise<boolean> - True if user has already played today
+ */
+export const hasUserPlayedDailyChallengeToday = async (userId: string): Promise<boolean> => {
+  try {
+    const { startDate, endDate } = getESTDateRange();
+    
+    console.log('🔍 Checking if user has played daily challenge today:', {
+      userId: userId.slice(0, 8) + '...',
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    });
+
+    const { data: sessions, error } = await supabase
+      .from('game_sessions')
+      .select('id, completed_at, total_score')
+      .eq('user_id', userId)
+      .eq('game_mode', 'daily')
+      .gte('completed_at', startDate.toISOString())
+      .lt('completed_at', endDate.toISOString())
+      .not('completed_at', 'is', null)
+      .limit(1);
+
+    if (error) {
+      console.error('❌ Error checking daily challenge status:', error);
+      return false; // Allow play if we can't check
+    }
+
+    const hasPlayed = sessions && sessions.length > 0;
+    
+    if (hasPlayed) {
+      console.log('⚠️ User has already played daily challenge today');
+    } else {
+      console.log('✅ User has not played daily challenge today');
+    }
+
+    return hasPlayed;
+  } catch (error) {
+    console.error('💥 Error in hasUserPlayedDailyChallengeToday:', error);
+    return false; // Allow play if there's an error
   }
 };
