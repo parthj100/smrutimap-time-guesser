@@ -250,6 +250,7 @@ export const useGameSession = ({ onProfileUpdate }: UseGameSessionProps = {}) =>
 
   return {
     currentSession,
+    setCurrentSession,
     startGameSession,
     saveRoundResult,
     completeGameSession,

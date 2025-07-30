@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { GameImage } from "@/types/game";
+import { GameImage, GameSession } from "@/types/game";
 import { getAllImages } from "@/data/sampleData";
 
 // Create a deterministic random number generator using date as seed
@@ -202,7 +202,7 @@ export const hasUserPlayedDailyChallengeToday = async (userId: string): Promise<
 
     const { data: sessions, error } = await supabase
       .from('game_sessions')
-      .select('id, completed_at, total_score')
+      .select('id, completed_at, total_score, rounds_completed')
       .eq('user_id', userId)
       .eq('game_mode', 'daily')
       .gte('completed_at', startDate.toISOString())
@@ -215,17 +215,68 @@ export const hasUserPlayedDailyChallengeToday = async (userId: string): Promise<
       return false; // Allow play if we can't check
     }
 
-    const hasPlayed = sessions && sessions.length > 0;
+    // Only consider daily challenge completed if user finished all 5 rounds
+    const hasCompletedAllRounds = sessions && sessions.length > 0 && sessions[0].rounds_completed >= 5;
     
-    if (hasPlayed) {
-      console.log('⚠️ User has already played daily challenge today');
+    if (hasCompletedAllRounds) {
+      console.log('⚠️ User has already completed daily challenge today (all 5 rounds)');
+    } else if (sessions && sessions.length > 0) {
+      console.log('🔄 User has incomplete daily challenge session (', sessions[0].rounds_completed, 'rounds completed) - allowing continuation');
     } else {
       console.log('✅ User has not played daily challenge today');
     }
 
-    return hasPlayed;
+    return hasCompletedAllRounds;
   } catch (error) {
     console.error('💥 Error in hasUserPlayedDailyChallengeToday:', error);
     return false; // Allow play if there's an error
+  }
+};
+
+/**
+ * Get the existing incomplete daily challenge session for a user
+ * @param userId - The user's ID
+ * @returns Promise<GameSession | null> - The incomplete session or null if none exists
+ */
+export const getIncompleteDailyChallengeSession = async (userId: string): Promise<GameSession | null> => {
+  try {
+    const { startDate, endDate } = getESTDateRange();
+    
+    console.log('🔍 Looking for incomplete daily challenge session:', {
+      userId: userId.slice(0, 8) + '...',
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    });
+
+    const { data: sessions, error } = await supabase
+      .from('game_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('game_mode', 'daily')
+      .gte('completed_at', startDate.toISOString())
+      .lt('completed_at', endDate.toISOString())
+      .not('completed_at', 'is', null)
+      .lt('rounds_completed', 5) // Only get sessions with less than 5 rounds completed
+      .limit(1);
+
+    if (error) {
+      console.error('❌ Error fetching incomplete daily challenge session:', error);
+      return null;
+    }
+
+    if (sessions && sessions.length > 0) {
+      console.log('🔄 Found incomplete daily challenge session:', {
+        sessionId: sessions[0].id,
+        roundsCompleted: sessions[0].rounds_completed,
+        totalScore: sessions[0].total_score
+      });
+      return sessions[0] as GameSession;
+    } else {
+      console.log('✅ No incomplete daily challenge session found');
+      return null;
+    }
+  } catch (error) {
+    console.error('💥 Error in getIncompleteDailyChallengeSession:', error);
+    return null;
   }
 };

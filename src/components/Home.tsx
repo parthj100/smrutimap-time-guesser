@@ -360,7 +360,7 @@ export const Home: React.FC<HomeProps> = ({
                   }`}
                 >
                   <Calendar size={isMobile ? 18 : 20} className="lg:w-6 lg:h-6" />
-                  {hasPlayedDailyToday ? 'Daily Challenge Completed (Click to Refresh)' : 'Daily Challenge'}
+                  {hasPlayedDailyToday ? 'Daily Challenge Completed' : 'Daily Challenge'}
                 </GradientButton>
               </motion.div>
             </motion.div>

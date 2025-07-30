@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getDailyChallengeImages, hasUserPlayedDailyChallengeToday } from '@/utils/dailyChallenge';
+import { getDailyChallengeImages, hasUserPlayedDailyChallengeToday, getIncompleteDailyChallengeSession } from '@/utils/dailyChallenge';
 import { resetImagePool } from '@/utils/imagePool';
-import { GameImage, GuessResult } from '@/types/game';
+import { GameImage, GuessResult, GameSession } from '@/types/game';
 import GameSummary from './GameSummary';
 import GameInstructions from './GameInstructions';
 import RoundResults from './RoundResults';
@@ -73,7 +73,7 @@ const Game: React.FC<GameProps> = ({
 
   // Authentication and session tracking - skip initialization in multiplayer mode
   const { user, profile } = useAuth({ skipInitialization: multiplayerMode });
-  const { currentSession, startGameSession, saveRoundResult, completeGameSession } = useGameSession({
+  const { currentSession, setCurrentSession, startGameSession, saveRoundResult, completeGameSession } = useGameSession({
     onProfileUpdate: async (userId: string) => {
       // Profile will be updated automatically by the auth system
       console.log('Profile update requested for:', userId);
@@ -97,6 +97,7 @@ const Game: React.FC<GameProps> = ({
   const [lastResult, setLastResult] = useState<any>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasPlayedDailyToday, setHasPlayedDailyToday] = useState(false);
+  const [resumingSession, setResumingSession] = useState<GameSession | null>(null);
 
   // Custom hooks
   const {
@@ -177,13 +178,33 @@ const Game: React.FC<GameProps> = ({
     if (pendingGameStart && isSuccess && gameImages && gameImages.length > 0) {
       console.log('🚀 Data is ready, starting game now with images:', gameImages);
       const { isTimedMode, timerType, isDaily } = pendingGameStart;
-      initializeGame(gameImages, isTimedMode, timerType);
+      
+      // Check if we're resuming a session
+      if (resumingSession && isDaily) {
+        console.log('🔄 Resuming from incomplete session:', {
+          sessionId: resumingSession.id,
+          roundsCompleted: resumingSession.rounds_completed,
+          nextRound: resumingSession.rounds_completed + 1
+        });
+        
+        // Initialize game starting from the next round
+        const startFromRound = resumingSession.rounds_completed + 1;
+        initializeGame(gameImages, isTimedMode, timerType, undefined, startFromRound);
+        
+        // Clear the resuming session state
+        setResumingSession(null);
+      } else {
+        // Start fresh game
+        initializeGame(gameImages, isTimedMode, timerType);
+      }
+      
       setGameMode('playing');
       setPendingGameStart(null);
       console.log('✅ Game started successfully');
 
       // Start game session if user is logged in and NOT in multiplayer mode
-      if (user && !multiplayerMode) {
+      // Note: We don't start a new session if we're resuming an existing one
+      if (user && !multiplayerMode && !resumingSession) {
         const gameMode = isDaily ? 'daily' : (isTimedMode ? 'timed' : 'random');
         console.log('👤 User is logged in, starting game session...');
         startGameSession(user.id, gameMode, gameImages.length).then(({ data, error }) => {
@@ -193,6 +214,8 @@ const Game: React.FC<GameProps> = ({
             console.log('✅ Game session started:', data);
           }
         });
+      } else if (resumingSession) {
+        console.log('🔄 Using existing session for resume:', resumingSession.id);
       } else if (multiplayerMode) {
         console.log('🎮 Multiplayer mode - skipping individual game session creation');
       } else {
@@ -206,7 +229,7 @@ const Game: React.FC<GameProps> = ({
         });
       }
     }
-  }, [pendingGameStart, isSuccess, gameImages, initializeGame, trackImageLoad, user, startGameSession]);
+  }, [pendingGameStart, isSuccess, gameImages, initializeGame, trackImageLoad, user, startGameSession, resumingSession]);
 
   // Effect to automatically start multiplayer games
   useEffect(() => {
@@ -379,9 +402,32 @@ const Game: React.FC<GameProps> = ({
         return;
       }
       
-      // User hasn't played today, proceed with daily challenge
-      setIsDailyChallenge(true);
-      startGame(false, 'per-round', true);
+      // Check if user has an incomplete daily challenge session to resume
+      const incompleteSession = await getIncompleteDailyChallengeSession(user.id);
+      
+      if (incompleteSession) {
+        console.log('🔄 Resuming incomplete daily challenge session:', {
+          sessionId: incompleteSession.id,
+          roundsCompleted: incompleteSession.rounds_completed,
+          totalScore: incompleteSession.total_score
+        });
+        
+        // Set the current session to the incomplete one
+        setCurrentSession(incompleteSession);
+        setResumingSession(incompleteSession);
+        
+        // Show a toast to inform the user they're resuming
+        toast.info(`Resuming daily challenge from round ${incompleteSession.rounds_completed + 1} of 5`);
+        
+        // Start the daily challenge with the existing session
+        setIsDailyChallenge(true);
+        startGame(false, 'per-round', true);
+      } else {
+        // User hasn't played today, start fresh daily challenge
+        console.log('🆕 Starting fresh daily challenge');
+        setIsDailyChallenge(true);
+        startGame(false, 'per-round', true);
+      }
       
     } catch (error) {
       console.error('Error checking daily challenge status:', error);

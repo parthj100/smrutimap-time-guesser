@@ -17,8 +17,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<LeaderboardFilters>({
-    timeframe: 'all-time',
-    gameMode: 'all',
+    timeframe: 'daily',
+    gameMode: 'daily',
     metric: 'best_single_game'
   });
   const { refreshAllProfiles } = useProfileContext();
@@ -389,7 +389,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
         });
 
         // For daily challenges, always sort by best single game score regardless of metric setting
-        if (filters.timeframe === 'daily-challenge') {
+        if (filters.gameMode === 'daily') {
           transformedEntries.sort((a: any, b: any) => {
             const aValue = a.best_single_game_score || 0;
             const bValue = b.best_single_game_score || 0;

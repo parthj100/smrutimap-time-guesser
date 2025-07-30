@@ -56,26 +56,31 @@ export const useGameState = () => {
     images: GameImage[], 
     isTimedMode: boolean = false, 
     timerType: 'per-round' | 'total-game' = 'per-round',
-    customTimerDuration?: number
+    customTimerDuration?: number,
+    startFromRound: number = 1
   ) => {
     if (!images || images.length === 0) {
       console.error('Cannot initialize game: no images provided');
       return;
     }
 
+    // Validate startFromRound
+    const validStartRound = Math.max(1, Math.min(startFromRound, images.length));
+    const imageIndex = validStartRound - 1; // Convert to 0-based index
+
     const initialTimeRemaining = isTimedMode 
       ? (customTimerDuration || (timerType === 'per-round' ? GAME_CONSTANTS.TIMERS.PER_ROUND_TIME : GAME_CONSTANTS.TIMERS.TOTAL_GAME_TIME))
       : 0;
 
     setGameState({
-      currentRound: 1,
+      currentRound: validStartRound,
       totalRounds: Math.min(images.length, GAME_CONSTANTS.GAME_RULES.DEFAULT_TOTAL_ROUNDS),
-      currentImage: images[0],
+      currentImage: images[imageIndex],
       results: [],
       isGuessing: true,
       hasGuessed: false,
       gameOver: false,
-      usedImageIds: [images[0].id],
+      usedImageIds: images.slice(0, validStartRound).map(img => img.id), // Include all images up to current round
       isTimedMode,
       timerType,
       timeRemaining: initialTimeRemaining,
@@ -90,9 +95,9 @@ export const useGameState = () => {
     setTotalGameScore(0);
 
     // Preload next images for better performance
-    if (images.length > 1) {
-      const imagesToPreload = images.slice(1, Math.min(images.length, GAME_CONSTANTS.GAME_RULES.IMAGE_PRELOAD_COUNT + 1));
-      preloadNextGameImages(images, 0);
+    if (images.length > validStartRound) {
+      const imagesToPreload = images.slice(validStartRound, Math.min(images.length, validStartRound + GAME_CONSTANTS.GAME_RULES.IMAGE_PRELOAD_COUNT));
+      preloadNextGameImages(images, imageIndex);
     }
   }, []);
 
