@@ -129,122 +129,194 @@ export class AdminService {
 
   // Get dashboard statistics
   static async getDashboardStats(): Promise<AdminDashboardStats> {
-    const today = new Date().toISOString().split('T')[0];
-    
-    // Get total users
-    const { count: totalUsers } = await supabase
-      .from('user_profiles')
-      .select('*', { count: 'exact', head: true });
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Get total users
+      const { count: totalUsers, error: usersError } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true });
 
-    // Get total games played
-    const { count: totalGamesPlayed } = await supabase
-      .from('game_sessions')
-      .select('*', { count: 'exact', head: true });
+      if (usersError) {
+        console.error('Error fetching total users:', usersError);
+      }
 
-    // Get today's visitors (including anonymous)
-    const { data: todayVisitors } = await supabase
-      .from('analytics_visitors')
-      .select('*')
-      .eq('visit_date', today);
+      // Get total games played
+      const { count: totalGamesPlayed, error: gamesError } = await supabase
+        .from('game_sessions')
+        .select('*', { count: 'exact', head: true });
 
-    // Get today's unique visitors (by session)
-    const { data: todayUniqueVisitors } = await supabase
-      .from('analytics_visitors')
-      .select('session_id')
-      .eq('visit_date', today);
+      if (gamesError) {
+        console.error('Error fetching total games:', gamesError);
+      }
 
-    // Get today's anonymous visitors (no user_id)
-    const { data: todayAnonymousVisitors } = await supabase
-      .from('analytics_visitors')
-      .select('session_id')
-      .eq('visit_date', today)
-      .is('user_id', null);
+      // Get today's visitors (including anonymous)
+      const { data: todayVisitors, error: visitorsError } = await supabase
+        .from('analytics_visitors')
+        .select('*')
+        .eq('visit_date', today);
 
-    // Get today's registered visitors
-    const { data: todayRegisteredVisitors } = await supabase
-      .from('analytics_visitors')
-      .select('session_id')
-      .eq('visit_date', today)
-      .not('user_id', 'is', null);
+      if (visitorsError) {
+        console.error('Error fetching today\'s visitors:', visitorsError);
+      }
 
-    // Get today's games
-    const { count: todayGamesPlayed } = await supabase
-      .from('game_sessions')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', `${today}T00:00:00`)
-      .lte('created_at', `${today}T23:59:59`);
+      // Get today's unique visitors (by session)
+      const { data: todayUniqueVisitors, error: uniqueError } = await supabase
+        .from('analytics_visitors')
+        .select('session_id')
+        .eq('visit_date', today);
 
-    // Get today's new users
-    const { count: todayNewUsers } = await supabase
-      .from('user_profiles')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', `${today}T00:00:00`)
-      .lte('created_at', `${today}T23:59:59`);
+      if (uniqueError) {
+        console.error('Error fetching unique visitors:', uniqueError);
+      }
 
-    // Get total score
-    const { data: totalScoreData } = await supabase
-      .from('user_profiles')
-      .select('total_score');
+      // Get today's anonymous visitors (no user_id)
+      const { data: todayAnonymousVisitors, error: anonymousError } = await supabase
+        .from('analytics_visitors')
+        .select('session_id')
+        .eq('visit_date', today)
+        .is('user_id', null);
 
-    const totalScore = totalScoreData?.reduce((sum, user) => sum + (user.total_score || 0), 0) || 0;
+      if (anonymousError) {
+        console.error('Error fetching anonymous visitors:', anonymousError);
+      }
 
-    return {
-      totalUsers: totalUsers || 0,
-      totalGamesPlayed: totalGamesPlayed || 0,
-      totalScore,
-      todayVisitors: todayVisitors?.length || 0,
-      todayUniqueVisitors: new Set(todayUniqueVisitors?.map(v => v.session_id) || []).size,
-      todayAnonymousVisitors: new Set(todayAnonymousVisitors?.map(v => v.session_id) || []).size,
-      todayRegisteredVisitors: new Set(todayRegisteredVisitors?.map(v => v.session_id) || []).size,
-      todayGamesPlayed: todayGamesPlayed || 0,
-      todayNewUsers: todayNewUsers || 0,
-      activeUsers: 0 // TODO: Implement active users tracking
-    };
+      // Get today's registered visitors
+      const { data: todayRegisteredVisitors, error: registeredError } = await supabase
+        .from('analytics_visitors')
+        .select('session_id')
+        .eq('visit_date', today)
+        .not('user_id', 'is', null);
+
+      if (registeredError) {
+        console.error('Error fetching registered visitors:', registeredError);
+      }
+
+      // Get today's games
+      const { count: todayGamesPlayed, error: todayGamesError } = await supabase
+        .from('game_sessions')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', `${today}T00:00:00`)
+        .lte('created_at', `${today}T23:59:59`);
+
+      if (todayGamesError) {
+        console.error('Error fetching today\'s games:', todayGamesError);
+      }
+
+      // Get today's new users
+      const { count: todayNewUsers, error: newUsersError } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', `${today}T00:00:00`)
+        .lte('created_at', `${today}T23:59:59`);
+
+      if (newUsersError) {
+        console.error('Error fetching today\'s new users:', newUsersError);
+      }
+
+      // Get total score
+      const { data: totalScoreData, error: scoreError } = await supabase
+        .from('user_profiles')
+        .select('total_score');
+
+      if (scoreError) {
+        console.error('Error fetching total score:', scoreError);
+      }
+
+      const totalScore = totalScoreData?.reduce((sum, user) => sum + (user.total_score || 0), 0) || 0;
+
+      // Calculate active users (users who played games in the last 7 days)
+      const { count: activeUsers, error: activeError } = await supabase
+        .from('game_sessions')
+        .select('user_id', { count: 'exact', head: true })
+        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+
+      if (activeError) {
+        console.error('Error fetching active users:', activeError);
+      }
+
+      return {
+        totalUsers: totalUsers || 0,
+        totalGamesPlayed: totalGamesPlayed || 0,
+        totalScore,
+        todayVisitors: todayVisitors?.length || 0,
+        todayUniqueVisitors: new Set(todayUniqueVisitors?.map(v => v.session_id) || []).size,
+        todayAnonymousVisitors: new Set(todayAnonymousVisitors?.map(v => v.session_id) || []).size,
+        todayRegisteredVisitors: new Set(todayRegisteredVisitors?.map(v => v.session_id) || []).size,
+        todayGamesPlayed: todayGamesPlayed || 0,
+        todayNewUsers: todayNewUsers || 0,
+        activeUsers: activeUsers || 0
+      };
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      return {
+        totalUsers: 0,
+        totalGamesPlayed: 0,
+        totalScore: 0,
+        todayVisitors: 0,
+        todayUniqueVisitors: 0,
+        todayAnonymousVisitors: 0,
+        todayRegisteredVisitors: 0,
+        todayGamesPlayed: 0,
+        todayNewUsers: 0,
+        activeUsers: 0
+      };
+    }
   }
 
   // Get all users with stats
   static async getUsers(): Promise<AdminUserStats[]> {
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select(`
-        user_id,
-        username,
-        display_name,
-        total_games_played,
-        total_score,
-        created_at,
-        is_admin
-      `)
-      .order('total_score', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select(`
+          user_id,
+          username,
+          display_name,
+          total_games_played,
+          total_score,
+          created_at,
+          is_admin
+        `)
+        .order('total_score', { ascending: false });
 
-    if (error) throw error;
+      if (error) throw error;
 
-    return data?.map(user => ({
-      userId: user.user_id,
-      username: user.username,
-      displayName: user.display_name,
-      gamesPlayed: user.total_games_played || 0,
-      totalScore: user.total_score || 0,
-      averageScore: user.total_games_played > 0 ? Math.round(user.total_score / user.total_games_played) : 0,
-      lastActive: user.created_at, // TODO: Add last_active field
-      isAdmin: user.is_admin || false
-    })) || [];
+      return data?.map(user => ({
+        userId: user.user_id,
+        username: user.username,
+        displayName: user.display_name,
+        gamesPlayed: user.total_games_played || 0,
+        totalScore: user.total_score || 0,
+        averageScore: user.total_games_played > 0 ? Math.round(user.total_score / user.total_games_played) : 0,
+        lastActive: user.created_at, // TODO: Add last_active field
+        isAdmin: user.is_admin || false
+      })) || [];
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return [];
+    }
   }
 
   // Get visitor analytics
   static async getVisitorAnalytics(date?: string): Promise<VisitorAnalytics[]> {
-    const query = supabase
-      .from('analytics_visitors')
-      .select('*')
-      .order('visit_time', { ascending: false });
+    try {
+      const query = supabase
+        .from('analytics_visitors')
+        .select('*')
+        .order('visit_time', { ascending: false });
 
-    if (date) {
-      query.eq('visit_date', date);
+      if (date) {
+        query.eq('visit_date', date);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching visitor analytics:', error);
+      return [];
     }
-
-    const { data, error } = await query;
-    if (error) throw error;
-    return data || [];
   }
 
   // Get visitor analytics with detailed breakdown
@@ -256,63 +328,170 @@ export class AdminService {
     byPage: Record<string, number>;
     recentVisits: VisitorAnalytics[];
   }> {
-    const visitors = await this.getVisitorAnalytics(date);
-    const today = date || new Date().toISOString().split('T')[0];
-    const todayVisitors = visitors.filter(v => v.visit_date === today);
-    
-    const uniqueSessions = new Set(todayVisitors.map(v => v.session_id));
-    const anonymousVisitors = new Set(
-      todayVisitors.filter(v => !v.user_id).map(v => v.session_id)
-    );
-    const registeredVisitors = new Set(
-      todayVisitors.filter(v => v.user_id).map(v => v.session_id)
-    );
-    
-    // Group by page
-    const byPage: Record<string, number> = {};
-    todayVisitors.forEach(visitor => {
-      const page = visitor.page_visited || '/';
-      byPage[page] = (byPage[page] || 0) + 1;
-    });
+    try {
+      const visitors = await this.getVisitorAnalytics(date);
+      const today = date || new Date().toISOString().split('T')[0];
+      const todayVisitors = visitors.filter(v => v.visit_date === today);
+      
+      const uniqueSessions = new Set(todayVisitors.map(v => v.session_id));
+      const anonymousVisitors = new Set(
+        todayVisitors.filter(v => !v.user_id).map(v => v.session_id)
+      );
+      const registeredVisitors = new Set(
+        todayVisitors.filter(v => v.user_id).map(v => v.session_id)
+      );
+      
+      // Group by page
+      const byPage: Record<string, number> = {};
+      todayVisitors.forEach(visitor => {
+        const page = visitor.page_visited || '/';
+        byPage[page] = (byPage[page] || 0) + 1;
+      });
 
-    return {
-      total: todayVisitors.length,
-      unique: uniqueSessions.size,
-      anonymous: anonymousVisitors.size,
-      registered: registeredVisitors.size,
-      byPage,
-      recentVisits: visitors.slice(0, 20) // Last 20 visits
-    };
+      return {
+        total: todayVisitors.length,
+        unique: uniqueSessions.size,
+        anonymous: anonymousVisitors.size,
+        registered: registeredVisitors.size,
+        byPage,
+        recentVisits: visitors.slice(0, 20) // Last 20 visits
+      };
+    } catch (error) {
+      console.error('Error fetching detailed visitor analytics:', error);
+      return {
+        total: 0,
+        unique: 0,
+        anonymous: 0,
+        registered: 0,
+        byPage: {},
+        recentVisits: []
+      };
+    }
   }
 
-  // Get daily summary
+  // Get daily summary - generate from analytics_visitors if analytics_daily_summary is empty
   static async getDailySummary(days: number = 30): Promise<DailySummary[]> {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    try {
+      // First try to get from analytics_daily_summary table
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
 
-    const { data, error } = await supabase
-      .from('analytics_daily_summary')
-      .select('*')
-      .gte('date', startDate.toISOString().split('T')[0])
-      .order('date', { ascending: false });
+      const { data: summaryData, error: summaryError } = await supabase
+        .from('analytics_daily_summary')
+        .select('*')
+        .gte('date', startDate.toISOString().split('T')[0])
+        .order('date', { ascending: false });
 
-    if (error) throw error;
-    return data || [];
+      if (!summaryError && summaryData && summaryData.length > 0) {
+        return summaryData;
+      }
+
+      // If analytics_daily_summary is empty, generate from analytics_visitors
+      console.log('Generating daily summary from analytics_visitors...');
+      
+      const { data: visitors, error: visitorsError } = await supabase
+        .from('analytics_visitors')
+        .select('*')
+        .gte('visit_date', startDate.toISOString().split('T')[0])
+        .order('visit_date', { ascending: false });
+
+      if (visitorsError) {
+        console.error('Error fetching visitors for daily summary:', visitorsError);
+        return [];
+      }
+
+      // Group by date
+      const dailyStats: Record<string, DailySummary> = {};
+      
+      visitors?.forEach(visitor => {
+        const date = visitor.visit_date;
+        if (!dailyStats[date]) {
+          dailyStats[date] = {
+            id: `generated_${date}`,
+            date,
+            total_visitors: 0,
+            unique_visitors: 0,
+            returning_visitors: 0,
+            new_users: 0,
+            games_played: 0,
+            created_at: new Date().toISOString()
+          };
+        }
+        dailyStats[date].total_visitors++;
+      });
+
+      // Get unique visitors per day
+      const uniqueSessions = new Map<string, Set<string>>();
+      visitors?.forEach(visitor => {
+        const date = visitor.visit_date;
+        if (!uniqueSessions.has(date)) {
+          uniqueSessions.set(date, new Set());
+        }
+        uniqueSessions.get(date)!.add(visitor.session_id);
+      });
+
+      // Update unique visitors count
+      Object.keys(dailyStats).forEach(date => {
+        dailyStats[date].unique_visitors = uniqueSessions.get(date)?.size || 0;
+      });
+
+      // Get games played per day
+      const { data: games, error: gamesError } = await supabase
+        .from('game_sessions')
+        .select('created_at')
+        .gte('created_at', startDate.toISOString());
+
+      if (!gamesError && games) {
+        games.forEach(game => {
+          const date = game.created_at.split('T')[0];
+          if (dailyStats[date]) {
+            dailyStats[date].games_played++;
+          }
+        });
+      }
+
+      // Get new users per day
+      const { data: newUsers, error: newUsersError } = await supabase
+        .from('user_profiles')
+        .select('created_at')
+        .gte('created_at', startDate.toISOString());
+
+      if (!newUsersError && newUsers) {
+        newUsers.forEach(user => {
+          const date = user.created_at.split('T')[0];
+          if (dailyStats[date]) {
+            dailyStats[date].new_users++;
+          }
+        });
+      }
+
+      return Object.values(dailyStats).sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+
+    } catch (error) {
+      console.error('Error fetching daily summary:', error);
+      return [];
+    }
   }
 
   // Track visitor
   static async trackVisitor(page: string, sessionId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    await supabase
-      .from('analytics_visitors')
-      .insert({
-        user_id: user?.id || null,
-        session_id: sessionId,
-        page_visited: page,
-        visit_date: new Date().toISOString().split('T')[0],
-        visit_time: new Date().toISOString()
-      });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      await supabase
+        .from('analytics_visitors')
+        .insert({
+          user_id: user?.id || null,
+          session_id: sessionId,
+          page_visited: page,
+          visit_date: new Date().toISOString().split('T')[0],
+          visit_time: new Date().toISOString()
+        });
+    } catch (error) {
+      console.error('Error tracking visitor:', error);
+    }
   }
 
   // Track visitor with enhanced data
@@ -323,39 +502,54 @@ export class AdminService {
     referrer: string,
     timestamp: string
   ): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    await supabase
-      .from('analytics_visitors')
-      .insert({
-        user_id: user?.id || null,
-        session_id: sessionId,
-        page_visited: page,
-        visit_date: timestamp.split('T')[0],
-        visit_time: timestamp,
-        user_agent: userAgent,
-        referrer: referrer
-      });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      await supabase
+        .from('analytics_visitors')
+        .insert({
+          user_id: user?.id || null,
+          session_id: sessionId,
+          page_visited: page,
+          visit_date: timestamp.split('T')[0],
+          visit_time: timestamp,
+          user_agent: userAgent,
+          referrer: referrer
+        });
+    } catch (error) {
+      console.error('Error tracking enhanced visitor:', error);
+    }
   }
 
   // Reset user stats
   static async resetUserStats(userId: string): Promise<void> {
-    const { error } = await supabase
-      .from('user_profiles')
-      .update({
-        total_score: 0,
-        total_games_played: 0,
-        average_score: 0,
-        best_single_game_score: 0
-      })
-      .eq('user_id', userId);
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          total_score: 0,
+          total_games_played: 0,
+          average_score: 0,
+          best_single_game_score: 0
+        })
+        .eq('user_id', userId);
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error resetting user stats:', error);
+      throw error;
+    }
   }
 
   // Ban/Unban user
   static async toggleUserBan(userId: string, banned: boolean): Promise<void> {
-    // TODO: Add banned field to user_profiles table
-    console.log(`User ${userId} ${banned ? 'banned' : 'unbanned'}`);
+    try {
+      // TODO: Add banned field to user_profiles table
+      console.log(`User ${userId} ${banned ? 'banned' : 'unbanned'}`);
+      // For now, just log the action
+    } catch (error) {
+      console.error('Error toggling user ban:', error);
+      throw error;
+    }
   }
 } 

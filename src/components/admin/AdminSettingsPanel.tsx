@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { 
   Settings, 
   Shield, 
@@ -12,11 +13,25 @@ import {
   Users, 
   Database,
   Save,
-  RefreshCw
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle
 } from 'lucide-react';
+import { AdminService } from '@/services/adminService';
+
+interface GameSettings {
+  maintenanceMode: boolean;
+  allowNewRegistrations: boolean;
+  maxPlayersPerRoom: number;
+  defaultRounds: number;
+  defaultTimePerRound: number;
+  enableAnalytics: boolean;
+  enableMultiplayer: boolean;
+  enableLeaderboard: boolean;
+}
 
 export const AdminSettingsPanel: React.FC = () => {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<GameSettings>({
     maintenanceMode: false,
     allowNewRegistrations: true,
     maxPlayersPerRoom: 8,
@@ -28,17 +43,49 @@ export const AdminSettingsPanel: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Load settings from localStorage on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('adminGameSettings');
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        setSettings(prev => ({ ...prev, ...parsed }));
+      } catch (error) {
+        console.error('Error loading saved settings:', error);
+      }
+    }
+  }, []);
+
+  // Track changes
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('adminGameSettings');
+    if (savedSettings) {
+      const parsed = JSON.parse(savedSettings);
+      setHasChanges(JSON.stringify(settings) !== JSON.stringify(parsed));
+    } else {
+      setHasChanges(true);
+    }
+  }, [settings]);
 
   const handleSave = async () => {
     setLoading(true);
-    // TODO: Implement settings save
-    setTimeout(() => {
+    try {
+      // Save to localStorage for now (in a real app, this would go to database)
+      localStorage.setItem('adminGameSettings', JSON.stringify(settings));
+      toast.success('Settings saved successfully!');
+      setHasChanges(false);
+    } catch (error) {
+      toast.error('Failed to save settings');
+      console.error('Error saving settings:', error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleReset = () => {
-    setSettings({
+    const defaultSettings = {
       maintenanceMode: false,
       allowNewRegistrations: true,
       maxPlayersPerRoom: 8,
@@ -47,7 +94,36 @@ export const AdminSettingsPanel: React.FC = () => {
       enableAnalytics: true,
       enableMultiplayer: true,
       enableLeaderboard: true
-    });
+    };
+    setSettings(defaultSettings);
+    localStorage.removeItem('adminGameSettings');
+    toast.success('Settings reset to defaults');
+  };
+
+  const handleDatabaseOperation = async (operation: string) => {
+    setLoading(true);
+    try {
+      switch (operation) {
+        case 'backup':
+          toast.info('Database backup feature would be implemented here');
+          break;
+        case 'clean':
+          toast.info('Data cleanup feature would be implemented here');
+          break;
+        case 'reset_stats':
+          toast.info('Stats reset feature would be implemented here');
+          break;
+        case 'clear_sessions':
+          toast.info('Session cleanup feature would be implemented here');
+          break;
+        default:
+          toast.error('Unknown operation');
+      }
+    } catch (error) {
+      toast.error(`Failed to perform ${operation}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -218,22 +294,53 @@ export const AdminSettingsPanel: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button variant="outline" className="justify-start">
+            <Button 
+              variant="outline" 
+              className="justify-start"
+              onClick={() => handleDatabaseOperation('backup')}
+              disabled={loading}
+            >
               <Shield className="h-4 w-4 mr-2" />
               Backup Database
             </Button>
-            <Button variant="outline" className="justify-start">
+            <Button 
+              variant="outline" 
+              className="justify-start"
+              onClick={() => handleDatabaseOperation('clean')}
+              disabled={loading}
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               Clean Old Data
             </Button>
-            <Button variant="outline" className="justify-start">
+            <Button 
+              variant="outline" 
+              className="justify-start"
+              onClick={() => handleDatabaseOperation('reset_stats')}
+              disabled={loading}
+            >
               <Users className="h-4 w-4 mr-2" />
               Reset All Stats
             </Button>
-            <Button variant="outline" className="justify-start">
+            <Button 
+              variant="outline" 
+              className="justify-start"
+              onClick={() => handleDatabaseOperation('clear_sessions')}
+              disabled={loading}
+            >
               <Gamepad2 className="h-4 w-4 mr-2" />
               Clear Game Sessions
             </Button>
+          </div>
+          
+          {/* Warning about database operations */}
+          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <span className="text-sm text-amber-800">
+                Database operations are currently informational only. In a production environment, 
+                these would perform actual database operations.
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -243,18 +350,26 @@ export const AdminSettingsPanel: React.FC = () => {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                Settings Modified
-              </Badge>
+              {hasChanges ? (
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Settings Modified
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Settings Saved
+                </Badge>
+              )}
               <span className="text-sm text-gray-600">
-                Click save to apply changes
+                {hasChanges ? 'Click save to apply changes' : 'All changes saved'}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={handleReset} variant="outline">
+              <Button onClick={handleReset} variant="outline" disabled={loading}>
                 Reset
               </Button>
-              <Button onClick={handleSave} disabled={loading}>
+              <Button onClick={handleSave} disabled={loading || !hasChanges}>
                 <Save className="h-4 w-4 mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
