@@ -38,6 +38,16 @@ const getTodayDateString = (): string => {
   return easternTime.toISOString().split('T')[0];
 };
 
+// Get a unique seed for today's daily challenge to ensure it's different from yesterday
+const getTodayChallengeSeed = (): string => {
+  const todayString = getTodayDateString();
+  // Add a timestamp component to make it unique for today's reset
+  const now = new Date();
+  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+  const timeComponent = Math.floor(easternTime.getTime() / (1000 * 60 * 60 * 24)); // Days since epoch
+  return `${todayString}-${timeComponent}`;
+};
+
 // Get daily challenge images for today
 export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
   const todayString = getTodayDateString();
@@ -76,8 +86,9 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
       return allImages;
     }
     
-    // Use date as seed for deterministic randomization
-    const shuffledImages = seededShuffle(allImages, todayString);
+    // Use unique seed for today's challenge to ensure it's different from yesterday
+    const challengeSeed = getTodayChallengeSeed();
+    const shuffledImages = seededShuffle(allImages, challengeSeed);
     const selectedImages = shuffledImages.slice(0, 5);
     const selectedImageIds = selectedImages.map(img => img.id);
     
@@ -99,7 +110,8 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
     console.error('Error in getDailyChallengeImages:', error);
     // Fallback: use seeded randomization with all images
     const allImages = await getAllImages();
-    const shuffledImages = seededShuffle(allImages, todayString);
+    const challengeSeed = getTodayChallengeSeed();
+    const shuffledImages = seededShuffle(allImages, challengeSeed);
     return shuffledImages.slice(0, Math.min(5, allImages.length));
   }
 };
