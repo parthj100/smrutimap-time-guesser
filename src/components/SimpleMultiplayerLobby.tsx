@@ -101,6 +101,11 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
     });
   }, [participants, isHost, isStarting]);
 
+  // Prefer database player list for lobby display to avoid presence sync edge-cases
+  const displayedParticipantIds = Object.keys(playerNames).length > 0 
+    ? Object.keys(playerNames) 
+    : participants;
+
   return (
     <div className="min-h-screen bg-white relative">
       {/* Navigation Buttons - Fixed positioning in corners */}
@@ -168,10 +173,10 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
           {/* Players List */}
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900 text-center">
-              Players ({participants.length}) 👥
+              Players ({displayedParticipantIds.length}) 👥
             </h3>
             <div className="space-y-3">
-              {participants.map((participantId, index) => {
+              {displayedParticipantIds.map((participantId, index) => {
                 const isCurrentUser = participantId === user?.id;
                 const isRoomHost = participantId === room.host_user_id;
                 const displayName = playerNames[participantId] || `Player ${index + 1}`;
@@ -199,7 +204,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
                 );
               })}
               
-              {participants.length === 0 && (
+              {displayedParticipantIds.length === 0 && (
                 <div className="text-center py-8">
                   <p className="text-gray-500 text-lg">No players connected</p>
                 </div>
@@ -229,20 +234,20 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
             {isHost ? (
               <Button 
                 onClick={handleStartGame} 
-                disabled={isStarting || participants.length < 1}
+                disabled={isStarting || displayedParticipantIds.length < 1}
                 className="w-full h-16 text-xl font-bold bg-[#ea384c] hover:bg-[#d32f42] text-white rounded-xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isStarting ? (
                   'Starting game...'
-                ) : participants.length < 1 ? (
+                ) : displayedParticipantIds.length < 1 ? (
                   <>
                     <Users className="h-6 w-6 mr-3" />
-                    Waiting for players... ({participants.length}/1)
+                    Waiting for players... ({displayedParticipantIds.length}/1)
                   </>
                 ) : (
                   <>
                     <Play className="h-6 w-6 mr-3" />
-                    Start Game! ({participants.length} players) 🚀
+                    Start Game! ({displayedParticipantIds.length} players) 🚀
                   </>
                 )}
               </Button>

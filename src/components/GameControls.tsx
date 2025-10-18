@@ -13,6 +13,7 @@ interface GameControlsProps {
   isTimedMode: boolean;
   onSubmitGuess: () => void;
   onNextRound: () => void;
+  isSpectator?: boolean;
 }
 
 const GameControls: React.FC<GameControlsProps> = ({
@@ -24,7 +25,8 @@ const GameControls: React.FC<GameControlsProps> = ({
   totalRounds,
   isTimedMode,
   onSubmitGuess,
-  onNextRound
+  onNextRound,
+  isSpectator
 }) => {
   if (hasGuessed) {
     return (
@@ -49,14 +51,16 @@ const GameControls: React.FC<GameControlsProps> = ({
           </div>
         )}
         
-        <div className="text-center">
-          <EnhancedButton 
-            onClick={onNextRound} 
-            className="bg-[#ea384c] hover:bg-red-600 text-white px-10 py-3 rounded-md text-lg"
-          >
-            {currentRound >= totalRounds ? "See Final Results" : "Next Round"}
-          </EnhancedButton>
-        </div>
+        {!isSpectator && (
+          <div className="text-center">
+            <EnhancedButton 
+              onClick={onNextRound} 
+              className="bg-[#ea384c] hover:bg-red-600 text-white px-10 py-3 rounded-md text-lg"
+            >
+              {currentRound >= totalRounds ? "See Final Results" : "Next Round"}
+            </EnhancedButton>
+          </div>
+        )}
       </div>
     );
   }

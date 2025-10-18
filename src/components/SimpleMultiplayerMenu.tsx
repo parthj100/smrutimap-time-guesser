@@ -7,7 +7,7 @@ import { ArrowLeft, Users, Plus, LogIn, Home } from 'lucide-react';
 interface SimpleMultiplayerMenuProps {
   onBack: () => void;
   onCreateRoom: (displayName: string, settings: { rounds: number; timePerRound: number }) => Promise<{ success: boolean; error?: string }>;
-  onJoinRoom: (roomCode: string, displayName: string) => Promise<{ success: boolean; error?: string }>;
+  onJoinRoom: (roomCode: string, displayName: string, isSpectator?: boolean) => Promise<{ success: boolean; error?: string }>;
   onHome: () => void;
 }
 
@@ -26,6 +26,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
     rounds: 5,
     timePerRound: 60
   });
+  const [joinAsSpectator, setJoinAsSpectator] = useState(false);
 
   const handleCreateRoom = async () => {
     if (!displayName.trim()) {
@@ -63,7 +64,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
     setError('');
     
     try {
-      const result = await onJoinRoom(roomCode, displayName);
+      const result = await onJoinRoom(roomCode, displayName, joinAsSpectator);
       if (!result.success) {
         setError(result.error || 'Failed to join room');
       }
@@ -254,6 +255,19 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                   className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:ring-0 placeholder-gray-400 uppercase tracking-widest"
                 />
                 <p className="text-sm text-gray-500 mt-2">Ask your friend for the room code</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  id="spectator-toggle"
+                  type="checkbox"
+                  checked={joinAsSpectator}
+                  onChange={(e) => setJoinAsSpectator(e.target.checked)}
+                  className="h-5 w-5 rounded border-gray-300 text-[#ea384c] focus:ring-[#ea384c]"
+                />
+                <label htmlFor="spectator-toggle" className="text-gray-700">
+                  Join as spectator (view-only)
+                </label>
               </div>
 
               {error && (
