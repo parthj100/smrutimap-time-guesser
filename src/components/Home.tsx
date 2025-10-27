@@ -9,9 +9,6 @@ import { Leaderboard } from './Leaderboard';
 import { FeedbackForm } from './FeedbackForm';
 import PhotoSubmissionForm from './PhotoSubmissionForm';
 import { useBreakpoint } from '@/hooks/useResponsive';
-import { DiwaliBanner } from './Diwali/DiwaliBanner';
-import { FloatingParticles } from './Diwali/FloatingParticles';
-import { Fireworks } from './Diwali/Fireworks';
 
 interface HomeProps {
   onPlayClick?: () => void;
@@ -134,10 +131,6 @@ export const Home: React.FC<HomeProps> = ({
 
   return (
     <div className="relative flex flex-col items-center justify-center h-screen w-full">
-      {/* Festive Effects */}
-      <FloatingParticles />
-      <Fireworks />
-      
       {/* Corner Buttons - Improved Mobile Layout */}
       {isMobile ? (
         // Mobile: Better spaced layout with improved touch targets
@@ -292,9 +285,6 @@ export const Home: React.FC<HomeProps> = ({
         animate="visible"
       >
         <div className={`flex flex-col items-center w-full max-w-6xl ${isMobile ? 'max-w-sm' : ''}`}>
-          {/* Diwali Banner - Above Logo */}
-          <DiwaliBanner isMobile={isMobile} />
-          
           {/* Logo - Better responsive sizing */}
           <motion.div variants={itemVariants}>
             <img 
