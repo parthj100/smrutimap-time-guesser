@@ -47,16 +47,11 @@ const getYesterdayDateString = (): string => {
   return yesterday.toISOString().split('T')[0];
 };
 
-// Get a unique seed for today's daily challenge to ensure it's different from yesterday
+// Seed for today's challenge. Must be a pure function of the date so every
+// player computes the same image set even when the daily_challenges row
+// hasn't been stored yet (or the insert races between clients).
 const getTodayChallengeSeed = (): string => {
-  const todayString = getTodayDateString();
-  // Use current timestamp in milliseconds to ensure uniqueness
-  const now = new Date();
-  const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
-  const timestamp = easternTime.getTime();
-  // Add some randomness to make it even more unique
-  const randomComponent = Math.floor(Math.random() * 1000000);
-  return `${todayString}-${timestamp}-${randomComponent}`;
+  return `smrutimap-daily-${getTodayDateString()}`;
 };
 
 // Get daily challenge images for today
@@ -135,17 +130,18 @@ export const getDailyChallengeImages = async (): Promise<GameImage[]> => {
     const selectedImages = shuffledImages.slice(0, 5);
     const selectedImageIds = selectedImages.map(img => img.id);
     
-    // Try to store the daily challenge (will fail due to RLS, but that's ok for now)
-    try {
-      await supabase
-        .from('daily_challenges')
-        .insert({
-          challenge_date: todayString,
-          image_ids: selectedImageIds
-        });
+    // Store the challenge so later players reuse the exact set. Selection is
+    // deterministic, so losing this insert race to another client is harmless.
+    const { error: insertError } = await supabase
+      .from('daily_challenges')
+      .insert({
+        challenge_date: todayString,
+        image_ids: selectedImageIds
+      });
+    if (insertError) {
+      console.log('Could not store daily challenge (another client may have stored it first)');
+    } else {
       console.log('Daily challenge stored successfully');
-    } catch (insertError) {
-      console.log('Could not store daily challenge (expected with current RLS)');
     }
     
     return selectedImages;

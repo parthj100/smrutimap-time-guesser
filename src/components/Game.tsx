@@ -13,7 +13,7 @@ import GameHeader from './GameHeader';
 import GameContent from './GameContent';
 import GameControls from './GameControls';
 import InfiniteImageBackground from './InfiniteImageBackground';
-import MultiplayerGame from './multiplayer/MultiplayerGame';
+import { SimpleMultiplayerContainer } from './SimpleMultiplayerContainer';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Home as HomeIcon, ArrowRight } from 'lucide-react';
 import { toast } from "sonner";
@@ -744,8 +744,8 @@ const Game: React.FC<GameProps> = ({
 
       {/* Show multiplayer */}
       {gameMode === 'simple_multiplayer' && (
-        <MultiplayerGame 
-          onBack={handleBackFromMultiplayer} 
+        <SimpleMultiplayerContainer
+          onBack={handleBackFromMultiplayer}
           onHome={() => setGameMode('home')}
         />
       )}

@@ -156,66 +156,22 @@ export const useGameSession = ({ onProfileUpdate }: UseGameSessionProps = {}) =>
   };
 
   const updateUserStats = async (
-    userId: string, 
-    gameScore: number, 
+    userId: string,
+    gameScore: number,
     roundsCompleted: number
   ) => {
     console.log('📊 Updating user stats for user:', userId, 'Score:', gameScore, 'Rounds:', roundsCompleted);
-    
-    // Get current user stats
-    const { data: profileData, error: fetchError, timedOut: fetchTimeout } = await safeQuery(
-      async () => {
-        return await supabase
-          .from('user_profiles' as any)
-          .select('*')
-          .eq('user_id', userId)
-          .single();
-      },
-      { operation: 'Fetch user profile for stats update', timeoutMs: 3000 }
-    );
 
-    if (fetchTimeout) {
-      console.error('⏱️ Profile fetch for stats update timed out');
-      return { data: null, error: new Error('Profile fetch timed out') };
-    }
-
-    if (fetchError || profileData?.error) {
-      console.error('❌ Error fetching profile for stats update:', fetchError || profileData?.error);
-      return { data: null, error: fetchError || profileData?.error };
-    }
-
-    if (!profileData?.data) {
-      console.error('❌ No profile found for user:', userId);
-      return { data: null, error: new Error('Profile not found') };
-    }
-
-    const currentProfile = profileData.data as any;
-    const newGamesPlayed = (currentProfile.total_games_played || 0) + 1;
-    const newTotalScore = (currentProfile.total_score || 0) + gameScore;
-    const newAverageScore = newTotalScore / newGamesPlayed;
-    const newBestScore = Math.max(currentProfile.best_single_game_score || 0, gameScore);
-
-    console.log('📈 Calculated new stats:', {
-      games: newGamesPlayed,
-      totalScore: newTotalScore,
-      avgScore: newAverageScore,
-      bestScore: newBestScore
-    });
-
+    // Single atomic RPC: the database increments stats in one statement, so
+    // concurrent game completions can't clobber each other. The function also
+    // enforces user_uuid = auth.uid() server-side.
     const { data: updateData, error: updateError, timedOut: updateTimeout } = await safeQuery(
       async () => {
-        return await supabase
-          .from('user_profiles' as any)
-          .update({
-            total_games_played: newGamesPlayed,
-            total_score: newTotalScore,
-            average_score: newAverageScore,
-            best_single_game_score: newBestScore,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('user_id', userId)
-          .select()
-          .single();
+        return await supabase.rpc('update_user_stats', {
+          user_uuid: userId,
+          game_score: Math.round(gameScore),
+          rounds_completed: roundsCompleted,
+        });
       },
       { operation: 'Update user stats', timeoutMs: 5000 }
     );
@@ -230,7 +186,7 @@ export const useGameSession = ({ onProfileUpdate }: UseGameSessionProps = {}) =>
       return { data: null, error: updateError || updateData?.error };
     }
 
-    console.log('✅ User stats updated successfully:', updateData?.data);
+    console.log('✅ User stats updated successfully');
 
     // Call the onProfileUpdate callback
     if (onProfileUpdate) {

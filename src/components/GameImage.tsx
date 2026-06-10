@@ -22,8 +22,9 @@ const useProgressiveImage = (src: string) => {
       setImageError(false);
       setRetryCount(prev => prev + 1);
       
-      // Force reload with cache-busting parameter
-      const retryUrl = `${src}?retry=${retryCount + 1}&t=${Date.now()}`;
+      // Force reload with cache-busting parameter (Drive URLs already carry a query string)
+      const separator = src.includes('?') ? '&' : '?';
+      const retryUrl = `${src}${separator}retry=${retryCount + 1}&t=${Date.now()}`;
       setCurrentSrc(retryUrl);
       
       const img = new Image();

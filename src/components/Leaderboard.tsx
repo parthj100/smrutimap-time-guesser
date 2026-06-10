@@ -248,8 +248,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
           };
         });
 
-        // For daily challenges, always sort by best single game score regardless of metric setting
-        if (filters.timeframe === 'daily-challenge') {
+        // For the daily timeframe, always sort by best single game score regardless of metric setting
+        if (filters.timeframe === 'daily') {
           transformedEntries.sort((a: any, b: any) => {
             const aValue = a.best_single_game_score || 0;
             const bValue = b.best_single_game_score || 0;

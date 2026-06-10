@@ -119,10 +119,19 @@ export const GAME_CONSTANTS = {
 } as const;
 
 // Environment Configuration
+// Keys must come from the environment (.env locally, dashboard vars on Render/Vercel).
+const requireEnv = (name: string): string => {
+  const value = import.meta.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+};
+
 export const ENV_CONFIG = {
-  SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL || "https://rhxbadjyjjjrjpvfhpap.supabase.co",
-  SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoeGJhZGp5ampqcmpwdmZocGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NDUyMTUsImV4cCI6MjA2MzUyMTIxNX0.Z7sfOz6dgSgjKyJspwoYPz4gbJwYRe8zxpNYV_YeonA",
-  GOOGLE_MAPS_API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyBdrreySEkWF2MGQAgo1v33zEi_n_ifPtQ",
+  SUPABASE_URL: requireEnv('VITE_SUPABASE_URL'),
+  SUPABASE_ANON_KEY: requireEnv('VITE_SUPABASE_ANON_KEY'),
+  GOOGLE_MAPS_API_KEY: requireEnv('VITE_GOOGLE_MAPS_API_KEY'),
   IS_DEVELOPMENT: import.meta.env.DEV,
   IS_PRODUCTION: import.meta.env.PROD,
 } as const;
