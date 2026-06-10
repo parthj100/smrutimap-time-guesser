@@ -47,7 +47,12 @@ const Timer: React.FC<TimerProps> = ({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <div
+      className={`relative ${className}`}
+      role="timer"
+      aria-live={showWarning ? 'assertive' : 'off'}
+      aria-label={`Time remaining: ${formatTime(timeRemaining)}`}
+    >
       <div className={`relative flex items-center justify-center ${showWarning ? 'animate-pulse' : ''}`}>
         {/* Circular progress */}
         <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">

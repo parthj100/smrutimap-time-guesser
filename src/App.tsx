@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import { queryClient } from "@/lib/queryClient";
 import { useSkipLinks } from "@/hooks/useAccessibility";
 import { useEffect, Suspense, lazy } from "react";
@@ -44,6 +45,9 @@ const App = () => {
 
   return (
     <ErrorBoundary>
+      {/* reducedMotion="user" makes every framer-motion animation respect the
+          OS "reduce motion" setting without per-component changes. */}
+      <MotionConfig reducedMotion="user">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <ProfileProvider>
@@ -68,6 +72,7 @@ const App = () => {
           </ProfileProvider>
         </TooltipProvider>
       </QueryClientProvider>
+      </MotionConfig>
     </ErrorBoundary>
   );
 };

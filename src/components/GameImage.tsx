@@ -256,6 +256,7 @@ const GameImage: React.FC<GameImageProps> = React.memo(({
               onClick={() => setIsFullscreen(true)}
               className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-110 z-10"
               title="View fullscreen"
+              aria-label="View image fullscreen"
             >
               <Maximize2 size={20} />
             </button>
@@ -313,6 +314,7 @@ const GameImage: React.FC<GameImageProps> = React.memo(({
               onClick={() => setIsFullscreen(false)}
               className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110 z-10"
               title="Close fullscreen"
+              aria-label="Close fullscreen"
             >
               <X size={24} />
             </button>

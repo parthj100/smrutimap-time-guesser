@@ -5,6 +5,7 @@ import { LeaderboardEntry, LeaderboardFilters } from '@/types/game';
 import { Trophy, Medal, Award, Calendar, Clock, Target, Users, X, Star, Crown, Zap } from 'lucide-react';
 import { safeQuery, testDatabaseConnectivity } from '@/utils/databaseUtils';
 import { useProfileContext } from '@/contexts/ProfileContext';
+import { useKeyboardNavigation } from '@/hooks/useAccessibility';
 
 
 interface LeaderboardProps {
@@ -24,6 +25,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
     metric: 'total_score'
   });
   const { refreshAllProfiles } = useProfileContext();
+
+  // Close on Escape for keyboard users.
+  useKeyboardNavigation(undefined, isOpen ? onClose : undefined);
 
 
 
@@ -284,10 +288,17 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-purple-900/30 via-blue-900/30 to-indigo-900/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
       <AnimatePresence>
-        <motion.div 
+        <motion.div
           className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-white/20"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Leaderboard"
+          onClick={(e) => e.stopPropagation()}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -309,6 +320,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
               </div>
               <motion.button
               onClick={onClose}
+                aria-label="Close leaderboard"
                 className="text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
