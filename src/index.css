@@ -152,86 +152,37 @@
   box-shadow: 0 2px 10px rgba(234, 56, 76, 0.3);
 }
 
-.gradient-button-variant {
-  background: linear-gradient(135deg, #ff8a00 0%, #ffb347 50%, #ff8a00 100%);
+/* Unified red scale. Play uses the base .gradient-button (brightest/primary);
+   these step down in intensity for clear hierarchy without other hues. They
+   inherit the shimmer, animation, and hover lift from the base class. */
+.gradient-button-secondary {
+  background: linear-gradient(135deg, #d64a5a 0%, #f07d8a 50%, #d64a5a 100%);
   background-size: 200% 200%;
-  box-shadow: 0 4px 15px rgba(255, 138, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(214, 74, 90, 0.3);
 }
 
-.gradient-button-variant:hover {
-  box-shadow: 0 6px 20px rgba(255, 138, 0, 0.4);
+.gradient-button-secondary:hover {
+  box-shadow: 0 6px 20px rgba(214, 74, 90, 0.4);
 }
 
-.gradient-button-blue {
-  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #3b82f6 100%);
+.gradient-button-tertiary {
+  background: linear-gradient(135deg, #c25563 0%, #d98090 50%, #c25563 100%);
   background-size: 200% 200%;
-  animation: gradientShift 3s ease infinite;
-  border: none;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(194, 85, 99, 0.3);
 }
 
-.gradient-button-blue::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+.gradient-button-tertiary:hover {
+  box-shadow: 0 6px 20px rgba(194, 85, 99, 0.4);
 }
 
-.gradient-button-blue:hover::before {
-  left: 100%;
-}
-
-.gradient-button-blue:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-}
-
-.gradient-button-blue:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
-}
-
-.gradient-button-purple {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #8b5cf6 100%);
+.gradient-button-muted {
+  background: linear-gradient(135deg, #a8525e 0%, #c47e8a 50%, #a8525e 100%);
   background-size: 200% 200%;
-  animation: gradientShift 3s ease infinite;
-  border: none;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(168, 82, 94, 0.3);
 }
 
-.gradient-button-purple::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.gradient-button-purple:hover::before {
-  left: 100%;
-}
-
-.gradient-button-purple:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
-}
-
-.gradient-button-purple:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+.gradient-button-muted:hover {
+  box-shadow: 0 6px 20px rgba(168, 82, 94, 0.4);
 }
 
 @keyframes gradientShift {

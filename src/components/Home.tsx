@@ -317,12 +317,12 @@ export const Home: React.FC<HomeProps> = ({
                 <GradientButton 
                   onClick={handlePlayClick}
                   className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full font-poppins ${
-                    isMobile 
-                      ? 'px-6 py-3 text-base min-h-[48px]' 
-                      : 'px-8 py-4 lg:px-10 lg:py-4 text-lg lg:text-xl min-h-[52px] lg:min-h-[56px]'
+                    isMobile
+                      ? 'px-6 py-3.5 text-lg min-h-[52px]'
+                      : 'px-8 py-5 lg:px-10 lg:py-5 text-xl lg:text-2xl min-h-[56px] lg:min-h-[64px]'
                   }`}
                 >
-                  <Play size={isMobile ? 18 : 20} className="lg:w-6 lg:h-6" />
+                  <Play size={isMobile ? 20 : 24} className="lg:w-7 lg:h-7" />
                   Play
                 </GradientButton>
               </motion.div>
@@ -338,9 +338,9 @@ export const Home: React.FC<HomeProps> = ({
                 whileTap={hasPlayedDailyToday ? {} : { scale: 0.95 }}
                 className={isMobile ? 'w-full max-w-xs' : 'w-full max-w-sm'}
               >
-                <GradientButton 
+                <GradientButton
                   onClick={handleDailyChallengeClick}
-                  variant="variant"
+                  variant="secondary"
                   disabled={false}
                   className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg transition-all duration-300 w-full font-poppins ${
                     hasPlayedDailyToday 
@@ -368,9 +368,9 @@ export const Home: React.FC<HomeProps> = ({
                 whileTap={{ scale: 0.95 }}
                 className={isMobile ? 'w-full max-w-xs' : 'w-full max-w-sm'}
               >
-                <GradientButton 
+                <GradientButton
                   onClick={handleTutorialClick}
-                  variant="blue"
+                  variant="tertiary"
                   className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full font-poppins ${
                     isMobile 
                       ? 'px-6 py-3 text-base min-h-[48px]' 
@@ -394,9 +394,9 @@ export const Home: React.FC<HomeProps> = ({
                   whileTap={{ scale: 0.95 }}
                   className={isMobile ? 'w-full max-w-xs' : 'w-full max-w-sm'}
                 >
-                  <GradientButton 
+                  <GradientButton
                     onClick={handleMultiplayerClick}
-                    variant="purple"
+                    variant="muted"
                     className={`flex items-center justify-center gap-2 rounded-full text-white font-bold drop-shadow-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full font-poppins ${
                       isMobile 
                         ? 'px-6 py-3 text-base min-h-[48px]' 
