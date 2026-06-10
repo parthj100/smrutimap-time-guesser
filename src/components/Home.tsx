@@ -133,15 +133,14 @@ export const Home: React.FC<HomeProps> = ({
     <div className="relative flex flex-col items-center justify-center h-screen w-full">
       {/* Corner Buttons - Improved Mobile Layout */}
       {isMobile ? (
-        // Mobile: Better spaced layout with improved touch targets
-        <motion.div 
-          className="fixed top-3 left-3 right-3 z-50 flex justify-between items-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-        >
-          {/* Left side - Leaderboard */}
+        // Mobile: four-corner layout so nothing collides with the sign-in pill.
+        // Trophy top-left, UserHeader top-right (rendered below), Camera bottom-left, Feedback bottom-right.
+        <>
           <motion.div
+            className="fixed top-3 left-3 z-50"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -149,43 +148,37 @@ export const Home: React.FC<HomeProps> = ({
               onClick={() => setShowLeaderboard(true)}
               variant="outline"
               size="sm"
+              aria-label="View leaderboard"
               className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
             >
               <Trophy size={16} />
             </Button>
           </motion.div>
-          
-          {/* Right side - Actions with better spacing */}
-          <div className="flex items-center gap-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+
+          <div className="fixed bottom-3 left-3 z-50">
+            <Button
+              onClick={() => setShowPhotoSubmissionForm(true)}
+              variant="outline"
+              size="sm"
+              aria-label="Submit photos"
+              className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
             >
-              <Button
-                onClick={() => setShowPhotoSubmissionForm(true)}
-                variant="outline"
-                size="sm"
-                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
-              >
-                <Camera size={16} />
-              </Button>
-            </motion.div>
-            
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                onClick={() => setShowFeedbackForm(true)}
-                variant="outline"
-                size="sm"
-                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
-              >
-                <MessageSquare size={16} />
-              </Button>
-            </motion.div>
+              <Camera size={16} />
+            </Button>
           </div>
-        </motion.div>
+
+          <div className="fixed bottom-3 right-3 z-50">
+            <Button
+              onClick={() => setShowFeedbackForm(true)}
+              variant="outline"
+              size="sm"
+              aria-label="Send feedback"
+              className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+            >
+              <MessageSquare size={16} />
+            </Button>
+          </div>
+        </>
       ) : (
         // Desktop: Corner layout with enhanced effects
         <>
@@ -269,8 +262,8 @@ export const Home: React.FC<HomeProps> = ({
           <UserHeader onShowLeaderboard={() => setShowLeaderboard(true)} />
         </motion.div>
       ) : (
-        // Mobile: Original positioning
-        <div className="fixed top-3 right-16 z-40">
+        // Mobile: top-right corner, clear of the trophy (top-left) and bottom action buttons
+        <div className="fixed top-3 right-3 z-50">
         <UserHeader onShowLeaderboard={() => setShowLeaderboard(true)} />
       </div>
       )}

@@ -718,7 +718,7 @@ const Game: React.FC<GameProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] overflow-x-hidden">
       {/* Single persistent carousel for home and instructions modes */}
       {showCarousel && <InfiniteImageBackground />}
 
@@ -952,7 +952,7 @@ const Game: React.FC<GameProps> = ({
             animate={{ opacity: isTransitioning ? 0 : 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full max-w-full mx-auto h-screen flex flex-col py-4 px-6"
+            className="w-full max-w-full mx-auto min-h-screen lg:h-screen flex flex-col py-4 px-6"
           >
           <GameHeader
             isDailyChallenge={isDailyChallenge}

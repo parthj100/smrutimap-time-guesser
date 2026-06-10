@@ -101,17 +101,19 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
     onSubmitGuess();
   };
 
-  // Responsive layout classes
-  const containerClasses = isMobile 
-    ? "flex flex-col gap-3 flex-grow h-full" 
+  // Responsive layout classes.
+  // Mobile is a natural vertical scroll (image -> year selector -> map), with
+  // bottom padding so content clears the fixed mobile Submit button in Game.tsx.
+  const containerClasses = isMobile
+    ? "flex flex-col gap-3 pb-28"
     : "flex gap-8 flex-grow";
 
-  const leftColumnClasses = isMobile 
-    ? "w-full flex-1 min-h-0" 
+  const leftColumnClasses = isMobile
+    ? "w-full"
     : "flex-1 relative";
 
-  const rightColumnClasses = isMobile 
-    ? "w-full flex-1 min-h-0 flex flex-col" 
+  const rightColumnClasses = isMobile
+    ? "w-full flex flex-col"
     : "flex-1 flex flex-col";
 
   return (
@@ -128,8 +130,8 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {/* Image container with enhanced loading states */}
-        <motion.div 
-          className={`w-full relative ${isMobile ? 'h-full' : ''}`}
+        <motion.div
+          className="w-full relative"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
@@ -141,10 +143,10 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
           />
         </motion.div>
         
-        {/* Desktop Year selector OR Mobile overlay */}
+        {/* Year selector — shown inline below the image on both mobile and desktop */}
         <AnimatePresence>
-          {!isMobile && !hasGuessed && (
-            <motion.div 
+          {!hasGuessed && (
+            <motion.div
               className="mt-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -161,8 +163,8 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <motion.div 
-                  className="text-5xl font-bold drop-shadow-sm"
+                <motion.div
+                  className="text-4xl sm:text-5xl font-bold drop-shadow-sm"
                   key={yearGuess || GAME_CONSTANTS.YEAR_RANGE.DEFAULT}
                   initial={{ scale: 1.1 }}
                   animate={{ scale: 1 }}
@@ -258,7 +260,7 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
         {/* Map container - Mobile gets more space */}
         <motion.div 
           className="rounded-xl overflow-hidden shadow-lg border-2 border-gray-300 bg-white relative" 
-          style={{ height: isMobile ? '100%' : GAME_CONSTANTS.UI.MAP_HEIGHT }}
+          style={{ height: isMobile ? '50vh' : GAME_CONSTANTS.UI.MAP_HEIGHT, minHeight: isMobile ? '320px' : undefined }}
           role="application"
           aria-label="Interactive map for location selection"
           initial={{ opacity: 0, scale: 0.95 }}
@@ -273,81 +275,8 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
             guessedLocation={locationGuess} 
           />
 
-          {/* Mobile: Year Slider Overlay on Map */}
-          <AnimatePresence>
-            {isMobile && !hasGuessed && (
-              <motion.div 
-                className="absolute bottom-4 left-4 right-4 z-20"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
-              >
-                <motion.div 
-                  className="bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex flex-col space-y-3">
-                    <label className="text-lg font-semibold text-gray-800 text-center">
-                      Year: <motion.span 
-                        className="text-[#ea384c] font-bold"
-                        key={yearGuess || GAME_CONSTANTS.YEAR_RANGE.DEFAULT}
-                        initial={{ scale: 1.2 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {yearGuess || GAME_CONSTANTS.YEAR_RANGE.DEFAULT}
-                      </motion.span>
-                    </label>
-                    <input
-                      type="range"
-                      min={GAME_CONSTANTS.YEAR_RANGE.MIN}
-                      max={GAME_CONSTANTS.YEAR_RANGE.MAX}
-                      value={yearGuess || GAME_CONSTANTS.YEAR_RANGE.DEFAULT}
-                      onChange={(e) => onYearSelected(parseInt(e.target.value))}
-                      className="w-full h-10 bg-gray-200 rounded-lg appearance-none cursor-pointer touch-slider"
-                      style={{
-                        background: `linear-gradient(to right, #ea384c 0%, #ea384c ${((yearGuess || GAME_CONSTANTS.YEAR_RANGE.DEFAULT) - GAME_CONSTANTS.YEAR_RANGE.MIN) / (GAME_CONSTANTS.YEAR_RANGE.MAX - GAME_CONSTANTS.YEAR_RANGE.MIN) * 100}%, #e5e7eb ${((yearGuess || GAME_CONSTANTS.YEAR_RANGE.DEFAULT) - GAME_CONSTANTS.YEAR_RANGE.MIN) / (GAME_CONSTANTS.YEAR_RANGE.MAX - GAME_CONSTANTS.YEAR_RANGE.MIN) * 100}%, #e5e7eb 100%)`
-                      }}
-                    />
-                    <div className="flex justify-between text-sm text-gray-600 font-medium">
-                      <span>{GAME_CONSTANTS.YEAR_RANGE.MIN}</span>
-                      <span>{GAME_CONSTANTS.YEAR_RANGE.MAX}</span>
-                    </div>
-                    
-                    {/* Mobile Submit Button */}
-                    <motion.div
-                      className="mt-3"
-                      whileHover={{ scale: locationGuess ? 1.02 : 1 }}
-                      whileTap={{ scale: locationGuess ? 0.98 : 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <EnhancedButton 
-                        onClick={handleSubmitGuess} 
-                        disabled={!locationGuess} 
-                        animationType="pulse" 
-                        className={`w-full py-2 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center shadow-lg border-2 focus:ring-4 focus:ring-red-200 focus:outline-none text-lg ${
-                          locationGuess 
-                            ? "bg-[#ea384c] hover:bg-red-600 text-white border-red-600 hover:shadow-xl" 
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400 shadow-sm"
-                        }`}
-                        aria-label={locationGuess ? "Submit your guess" : "Select a location first to submit guess"}
-                      >
-                        <motion.span 
-                          className="drop-shadow-sm"
-                          animate={locationGuess ? { scale: [1, 1.05, 1] } : {}}
-                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          Make Guess
-                        </motion.span>
-                      </EnhancedButton>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Mobile year selector now renders inline above the map (not as an
+              overlay), and the mobile Submit lives in the fixed bar in Game.tsx. */}
 
           {/* Mobile: Results Overlay */}
           <AnimatePresence>

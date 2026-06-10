@@ -17,9 +17,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<LeaderboardFilters>({
-    timeframe: 'daily',
-    gameMode: 'daily',
-    metric: 'best_single_game'
+    // Open on the populated overall ranking rather than today's daily challenge,
+    // which is usually empty and made the leaderboard look broken on first open.
+    timeframe: 'all-time',
+    gameMode: 'all',
+    metric: 'total_score'
   });
   const { refreshAllProfiles } = useProfileContext();
 

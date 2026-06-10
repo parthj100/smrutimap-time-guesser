@@ -62,22 +62,22 @@ const GameHeader: React.FC<GameHeaderProps> = React.memo(({
   }), [isDailyChallenge]);
 
   return (
-    <div className="flex items-center justify-between mb-6 px-6 pt-2">
-      <div className="flex items-center">
-        <button 
-          onClick={onGoHome} 
+    <div className="flex items-center justify-between mb-6 px-3 sm:px-6 pt-2 gap-2">
+      <div className="flex items-center min-w-0">
+        <button
+          onClick={onGoHome}
           className="hover:scale-105 hover:opacity-90 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#ea384c] focus:ring-opacity-50 rounded-lg"
           aria-label="Go to home page"
         >
-          <img 
-            src="/Smruti-map.png" 
+          <img
+            src="/Smruti-map.png"
             alt={challengeStyles.logoAlt}
-            className="h-20 lg:h-28 xl:h-32 w-auto"
+            className="h-12 sm:h-16 lg:h-28 xl:h-32 w-auto"
           />
         </button>
       </div>
-      
-      <div className="flex items-center gap-6">
+
+      <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 flex-shrink-0">
         {/* Multiplayer Status */}
         {multiplayerState && (
           <div className="bg-blue-600 text-white rounded-lg px-4 py-2 text-sm">
@@ -111,21 +111,21 @@ const GameHeader: React.FC<GameHeaderProps> = React.memo(({
         )}
         
         {/* Round and Score Counter with Progress Indicator */}
-        <div className={`${challengeStyles.containerClass} text-white rounded-lg px-8 py-3 mr-2`}>
+        <div className={`${challengeStyles.containerClass} text-white rounded-lg px-4 py-2 sm:px-6 lg:px-8 lg:py-3`}>
           <div className="flex flex-col items-center">
-            <div className="font-bold pb-1 text-4xl lg:text-5xl xl:text-6xl font-space">
+            <div className="font-bold pb-1 text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-space">
               {currentRound}/{totalRounds}
             </div>
             {formattedScore && (
-              <div className="font-semibold text-base lg:text-lg font-inter">
+              <div className="font-semibold text-sm sm:text-base lg:text-lg font-inter">
                 {formattedScore}
               </div>
             )}
-            <div className="mt-2 w-16">
-              <ProgressIndicator 
-                currentStep={currentRound} 
-                totalSteps={totalRounds} 
-                showNumbers={false} 
+            <div className="mt-2 w-12 sm:w-16">
+              <ProgressIndicator
+                currentStep={currentRound}
+                totalSteps={totalRounds}
+                showNumbers={false}
               />
             </div>
           </div>

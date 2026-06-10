@@ -347,16 +347,16 @@ const MapSelector: React.FC<MapSelectorProps> = ({
           </div>
         )}
         
-        {/* Click instruction overlay */}
+        {/* Click instruction overlay — bottom-center, clear of Google's top map controls */}
         {!isDisabled && !guessedLocation && (
-          <div className="absolute top-4 right-4 z-10 bg-[#ea384c]/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm animate-pulse">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1.5rem)] text-center bg-[#ea384c]/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm animate-pulse">
             🎯 Click anywhere on the map to place your guess
           </div>
         )}
-        
+
         {/* Guess confirmation overlay */}
         {!isDisabled && guessedLocation && (
-          <div className="absolute top-4 right-4 z-10 bg-green-500/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm border-2 border-white/30">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1.5rem)] text-center bg-green-500/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm border-2 border-white/30">
             ✅ Location selected! Click elsewhere to move it or press Enter to submit
           </div>
         )}
