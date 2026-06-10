@@ -45,7 +45,7 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-[#eee9da] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-cream flex items-center justify-center p-6">
           <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-800 mb-2">
@@ -58,7 +58,7 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="space-y-3">
               <Button 
                 onClick={this.handleReset}
-                className="w-full bg-[#ea384c] hover:bg-red-600 text-white"
+                className="w-full bg-brand hover:bg-red-600 text-white"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Try Again

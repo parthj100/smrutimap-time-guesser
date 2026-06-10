@@ -718,7 +718,7 @@ const Game: React.FC<GameProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark overflow-x-hidden">
       {/* Single persistent carousel for home and instructions modes */}
       {showCarousel && <InfiniteImageBackground />}
 
@@ -806,12 +806,12 @@ const Game: React.FC<GameProps> = ({
       
       {/* Multiplayer final leaderboard */}
       {multiplayerMode && multiplayerState && gameOverView === 'leaderboard' && multiplayerState.gameStatus === 'finished' && (
-        <div className="w-full min-h-screen bg-[#eee9da] p-3 lg:p-6">
+        <div className="w-full min-h-screen bg-cream p-3 lg:p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6 lg:mb-8">
             <button 
               onClick={onMultiplayerExit || (() => {})}
-              className="hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ea384c] focus:ring-opacity-50 rounded-lg"
+              className="hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-opacity-50 rounded-lg"
               aria-label="Go to home page"
             >
               <img 
@@ -832,7 +832,7 @@ const Game: React.FC<GameProps> = ({
 
             <Button 
               onClick={onMultiplayerExit || (() => {})}
-              className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-poppins"
+              className="bg-brand hover:bg-brand-dark text-white px-6 lg:px-8 xl:px-10 py-3 lg:py-4 xl:py-5 rounded-xl text-base lg:text-lg xl:text-xl font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl font-poppins"
             >
               Back to Menu
             </Button>
@@ -840,7 +840,7 @@ const Game: React.FC<GameProps> = ({
 
           {/* Final Leaderboard */}
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-lg border border-[#ea384c]/30">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-lg border border-brand/30">
               <div className="space-y-4">
                 <MultiplayerFinalStandings
                   results={gameState.results}
@@ -899,7 +899,7 @@ const Game: React.FC<GameProps> = ({
       {gameMode === 'playing' && !gameState.currentImage && (
         <div className="w-full h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="text-4xl font-bold text-[#ea384c] mb-4">SMRUTIMAP</div>
+            <div className="text-4xl font-bold text-brand mb-4">SMRUTIMAP</div>
             <div className="text-xl">Starting game...</div>
           </div>
         </div>
@@ -1017,7 +1017,7 @@ const Game: React.FC<GameProps> = ({
           <Button
             onClick={handleSubmitGuess}
             disabled={!locationGuess}
-            className="w-full bg-[#ea384c] hover:bg-red-600 text-white font-bold py-4 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-lg min-h-[56px]"
+            className="w-full bg-brand hover:bg-red-600 text-white font-bold py-4 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-lg min-h-[56px]"
             >
               <motion.span
                 animate={locationGuess ? { scale: [1, 1.05, 1] } : {}}

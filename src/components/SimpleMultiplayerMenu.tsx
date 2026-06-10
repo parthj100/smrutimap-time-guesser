@@ -83,7 +83,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
         <div className="fixed top-6 left-6 z-10">
           <Button
             onClick={() => setView('menu')}
-            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+            className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back
@@ -93,7 +93,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
         <div className="fixed top-6 right-6 z-10">
           <Button
             onClick={onHome}
-            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+            className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
           >
             <Home className="h-5 w-5 mr-2" />
             Home
@@ -104,7 +104,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
         <div className="flex items-center justify-center min-h-screen p-6">
           <div className="max-w-lg w-full space-y-8">
             <div className="text-center space-y-6">
-              <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
+              <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto">
                 <Plus size={40} className="text-white" />
               </div>
               
@@ -129,7 +129,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   maxLength={20}
-                  className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:ring-0 placeholder-gray-400"
+                  className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:ring-0 placeholder-gray-400"
                 />
                 <p className="text-sm text-gray-500 mt-2">This is how other players will see you</p>
               </div>
@@ -145,7 +145,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                     max="10"
                     value={settings.rounds}
                     onChange={(e) => setSettings(prev => ({ ...prev, rounds: parseInt(e.target.value) || 5 }))}
-                    className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:ring-0"
+                    className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:ring-0"
                   />
                 </div>
                 <div>
@@ -158,7 +158,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                     max="180"
                     value={settings.timePerRound}
                     onChange={(e) => setSettings(prev => ({ ...prev, timePerRound: parseInt(e.target.value) || 60 }))}
-                    className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:ring-0"
+                    className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:ring-0"
                   />
                   <p className="text-sm text-gray-500 mt-1">seconds per round</p>
                 </div>
@@ -173,7 +173,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               <Button 
                 onClick={handleCreateRoom} 
                 disabled={isLoading}
-                className="w-full h-16 text-xl font-bold bg-[#ea384c] hover:bg-[#d32f42] text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
+                className="w-full h-16 text-xl font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isLoading ? 'Creating room...' : 'Create Room 🚀'}
               </Button>
@@ -191,7 +191,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
         <div className="fixed top-6 left-6 z-10">
           <Button
             onClick={() => setView('menu')}
-            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+            className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back
@@ -201,7 +201,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
         <div className="fixed top-6 right-6 z-10">
           <Button
             onClick={onHome}
-            className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+            className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
           >
             <Home className="h-5 w-5 mr-2" />
             Home
@@ -212,7 +212,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
         <div className="flex items-center justify-center min-h-screen p-6">
           <div className="max-w-lg w-full space-y-8">
             <div className="text-center space-y-6">
-              <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
+              <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto">
                 <LogIn size={40} className="text-white" />
               </div>
               
@@ -237,7 +237,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   maxLength={20}
-                  className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:ring-0 placeholder-gray-400"
+                  className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:ring-0 placeholder-gray-400"
                 />
                 <p className="text-sm text-gray-500 mt-2">This is how other players will see you</p>
               </div>
@@ -252,7 +252,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                   value={roomCode}
                   onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                   maxLength={6}
-                  className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:ring-0 placeholder-gray-400 uppercase tracking-widest"
+                  className="h-14 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:ring-0 placeholder-gray-400 uppercase tracking-widest"
                 />
                 <p className="text-sm text-gray-500 mt-2">Ask your friend for the room code</p>
               </div>
@@ -263,7 +263,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                   type="checkbox"
                   checked={joinAsSpectator}
                   onChange={(e) => setJoinAsSpectator(e.target.checked)}
-                  className="h-5 w-5 rounded border-gray-300 text-[#ea384c] focus:ring-[#ea384c]"
+                  className="h-5 w-5 rounded border-gray-300 text-brand focus:ring-brand"
                 />
                 <label htmlFor="spectator-toggle" className="text-gray-700">
                   Join as spectator (view-only)
@@ -279,7 +279,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               <Button 
                 onClick={handleJoinRoom} 
                 disabled={isLoading}
-                className="w-full h-16 text-xl font-bold bg-[#ea384c] hover:bg-[#d32f42] text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
+                className="w-full h-16 text-xl font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isLoading ? 'Joining room...' : 'Join Room 🎮'}
               </Button>
@@ -296,7 +296,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
       <div className="fixed top-6 left-6 z-10">
         <Button
           onClick={onBack}
-          className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+          className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
           Back
@@ -306,7 +306,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
       <div className="fixed top-6 right-6 z-10">
         <Button
           onClick={onHome}
-          className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+          className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
         >
           <Home className="h-5 w-5 mr-2" />
           Home
@@ -317,7 +317,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
       <div className="flex items-center justify-center min-h-screen p-6">
         <div className="max-w-lg w-full space-y-8">
           <div className="text-center space-y-6">
-            <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
+            <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto">
               <Users size={40} className="text-white" />
             </div>
             
@@ -334,37 +334,37 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
           <div className="space-y-4">
             <button
               onClick={() => setView('create')}
-              className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-[#ea384c] hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
+              className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
                 <span className="text-3xl">🎮</span>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#ea384c] transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Create a Room
                   </h3>
                   <p className="text-gray-600 text-sm mt-1">
                     Start a new game and invite friends with a room code
                   </p>
                 </div>
-                <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ea384c] transition-colors" />
+                <Plus className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
 
             <button
               onClick={() => setView('join')}
-              className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-[#ea384c] hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
+              className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
                 <span className="text-3xl">🔑</span>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#ea384c] transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Join a Room
                   </h3>
                   <p className="text-gray-600 text-sm mt-1">
                     Enter a room code to join an existing game
                   </p>
                 </div>
-                <LogIn className="w-6 h-6 text-gray-400 group-hover:text-[#ea384c] transition-colors" />
+                <LogIn className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
           </div>

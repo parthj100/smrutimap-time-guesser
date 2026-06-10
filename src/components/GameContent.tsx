@@ -155,7 +155,7 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
             >
               {/* Year display box - enhanced visual styling */}
               <motion.div 
-                className="bg-[#ea384c] text-white py-3 px-6 text-center rounded-xl mb-3 flex items-center justify-center shadow-lg border-2 border-red-600 transition-all duration-200 hover:shadow-xl" 
+                className="bg-brand text-white py-3 px-6 text-center rounded-xl mb-3 flex items-center justify-center shadow-lg border-2 border-red-600 transition-all duration-200 hover:shadow-xl" 
                 style={{ height: GAME_CONSTANTS.UI.YEAR_DISPLAY_HEIGHT }}
                 role="status"
                 aria-live="polite"
@@ -239,7 +239,7 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
                   transition={{ delay: 0.4 }}
                 >
                   <span className="font-semibold">Your year guess: </span> 
-                  <span className="font-bold text-[#ea384c]">{yearGuess}</span>
+                  <span className="font-bold text-brand">{yearGuess}</span>
                   <span className="ml-2">
                     ({yearDifference.diff} years {yearDifference.direction})
                   </span>
@@ -310,7 +310,7 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
                       transition={{ delay: 0.6 }}
                     >
                       <span className="font-semibold">Your guess: </span> 
-                      <span className="font-bold text-[#ea384c]">{yearGuess}</span>
+                      <span className="font-bold text-brand">{yearGuess}</span>
                       <span className="block text-sm mt-1">
                         ({yearDifference.diff} years {yearDifference.direction})
                       </span>
@@ -344,7 +344,7 @@ const GameContent: React.FC<GameContentProps> = React.memo(({
                     animationType="pulse" 
                     className={`w-full py-3 px-6 rounded-xl font-bold transition-all duration-300 flex items-center justify-center shadow-lg border-2 focus:ring-4 focus:ring-red-200 focus:outline-none text-5xl ${
                       locationGuess 
-                        ? "bg-[#ea384c] hover:bg-red-600 text-white border-red-600 hover:shadow-xl" 
+                        ? "bg-brand hover:bg-red-600 text-white border-red-600 hover:shadow-xl" 
                         : "bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400 shadow-sm"
                     }`}
                     style={{ height: GAME_CONSTANTS.UI.SUBMIT_BUTTON_HEIGHT }}

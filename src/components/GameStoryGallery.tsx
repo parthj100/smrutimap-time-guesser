@@ -102,7 +102,7 @@ const Photo: React.FC<{
         />
         
         {/* Round number badge */}
-        <div className="absolute top-4 left-4 bg-[#ea384c] text-white rounded-full w-10 h-10 flex items-center justify-center text-base font-bold shadow-lg z-10">
+        <div className="absolute top-4 left-4 bg-brand text-white rounded-full w-10 h-10 flex items-center justify-center text-base font-bold shadow-lg z-10">
           {roundInfo.roundNumber}
         </div>
 
@@ -287,7 +287,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark flex flex-col">
       {/* Background grid pattern */}
       <div className="absolute inset-0 max-md:hidden top-[200px] -z-10 h-[300px] w-full bg-transparent bg-[linear-gradient(to_right,#57534e_1px,transparent_1px),linear-gradient(to_bottom,#57534e_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-10 [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
       
@@ -335,7 +335,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 30 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Your Game <span className="text-[#ea384c]">Story</span>
+            Your Game <span className="text-brand">Story</span>
           </motion.h1>
 
           {/* Score Summary */}
@@ -352,7 +352,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
                 animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.8 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <div className="text-3xl font-bold text-[#ea384c] mb-1">
+                <div className="text-3xl font-bold text-brand mb-1">
                   {Math.round(finalScore)}
                 </div>
                 <div className="text-sm text-gray-600 font-medium">Total Score</div>
@@ -362,7 +362,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
                 animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.8 }}
                 transition={{ duration: 0.6, delay: 0.9 }}
               >
-                <div className="text-3xl font-bold text-[#ea384c] mb-1">
+                <div className="text-3xl font-bold text-brand mb-1">
                   {results.length}
                 </div>
                 <div className="text-sm text-gray-600 font-medium">Rounds Completed</div>
@@ -372,7 +372,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
                 animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.8 }}
                 transition={{ duration: 0.6, delay: 1.0 }}
               >
-                <div className="text-3xl font-bold text-[#ea384c] mb-1">
+                <div className="text-3xl font-bold text-brand mb-1">
                   {isTimedMode ? formatTime(totalTimeUsed) : `${Math.round(finalScore / results.length)}`}
                 </div>
                 <div className="text-sm text-gray-600 font-medium">
@@ -465,7 +465,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
           >
             <Button
               onClick={onViewDetailedBreakdown}
-              className="bg-[#ea384c] hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 min-w-[200px]"
+              className="bg-brand hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 min-w-[200px]"
             >
               View Detailed Map
               <motion.div
@@ -485,7 +485,7 @@ export const GameStoryGallery: React.FC<GameStoryGalleryProps> = ({
               <Button
                 onClick={onPlayAgain}
                 variant="outline"
-                className="border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 min-w-[200px]"
+                className="border-brand text-brand hover:bg-brand hover:text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 min-w-[200px]"
               >
                 <Trophy size={20} />
                 View Leaderboard

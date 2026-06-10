@@ -57,7 +57,7 @@ const GameHeader: React.FC<GameHeaderProps> = React.memo(({
 
   // Memoize challenge type styling
   const challengeStyles = useMemo(() => ({
-    containerClass: isDailyChallenge ? 'bg-orange-500' : 'bg-[#ea384c]',
+    containerClass: isDailyChallenge ? 'bg-orange-500' : 'bg-brand',
     logoAlt: 'SMRUTIMAP Logo'
   }), [isDailyChallenge]);
 
@@ -66,7 +66,7 @@ const GameHeader: React.FC<GameHeaderProps> = React.memo(({
       <div className="flex items-center min-w-0">
         <button
           onClick={onGoHome}
-          className="hover:scale-105 hover:opacity-90 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#ea384c] focus:ring-opacity-50 rounded-lg"
+          className="hover:scale-105 hover:opacity-90 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand focus:ring-opacity-50 rounded-lg"
           aria-label="Go to home page"
         >
           <img

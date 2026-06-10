@@ -101,7 +101,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose, userId }) => {
                 <div className="mt-2">
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
-                      className="bg-[#ea384c] h-2 rounded-full transition-all duration-300"
+                      className="bg-brand h-2 rounded-full transition-all duration-300"
                       style={{ width: `${poolStats.poolProgress}%` }}
                     ></div>
                   </div>
@@ -119,7 +119,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose, userId }) => {
             <button
               onClick={handleResetImagePool}
               disabled={loading}
-              className="bg-[#ea384c] hover:bg-red-600 disabled:bg-red-300 text-white px-4 py-2 rounded transition-colors"
+              className="bg-brand hover:bg-red-600 disabled:bg-red-300 text-white px-4 py-2 rounded transition-colors"
             >
               {loading ? 'Resetting...' : 'Reset Image Pool'}
             </button>

@@ -284,7 +284,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                     <div
                       key={index}
                       className={`w-2 h-2 rounded-full transition-colors ${
-                        index <= currentStepNumber ? 'bg-[#ea384c]' : 'bg-gray-300'
+                        index <= currentStepNumber ? 'bg-brand' : 'bg-gray-300'
                       }`}
                     />
                   ))}
@@ -302,7 +302,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                     e.stopPropagation();
                     onNext();
                   }}
-                  className="bg-[#ea384c] hover:bg-red-600 text-white px-3 py-1 text-xs"
+                  className="bg-brand hover:bg-red-600 text-white px-3 py-1 text-xs"
                 >
                   Next
                 </Button>
@@ -333,7 +333,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center text-white text-sm font-bold">
                       {currentStepNumber + 1}
                     </div>
                     <h3 className="font-semibold text-lg text-gray-900">{step.title}</h3>
@@ -353,7 +353,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                   <div className="flex items-center gap-4 mb-3">
                     <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-xs">
                       <div 
-                        className="bg-[#ea384c] h-2 rounded-full transition-all duration-300"
+                        className="bg-brand h-2 rounded-full transition-all duration-300"
                         style={{ width: `${((currentStepNumber + 1) / totalSteps) * 100}%` }}
                       />
                     </div>
@@ -403,7 +403,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                   <Button
                     onClick={onNext}
                     size="sm"
-                    className="bg-[#ea384c] hover:bg-red-600 text-white flex items-center gap-1"
+                    className="bg-brand hover:bg-red-600 text-white flex items-center gap-1"
                   >
                     {isLastStep ? 'Complete' : 'Next'}
                     {!isLastStep && <ArrowRight className="w-3 h-3" />}

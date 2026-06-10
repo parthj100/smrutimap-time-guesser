@@ -144,23 +144,23 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
                     setCategory(option.value);
                     nextStep();
                   }}
-                  className={`group relative p-6 rounded-2xl border-2 transition-all duration-200 text-left hover:border-[#ea384c] hover:shadow-lg hover:scale-[1.02] ${
+                  className={`group relative p-6 rounded-2xl border-2 transition-all duration-200 text-left hover:border-brand hover:shadow-lg hover:scale-[1.02] ${
                     category === option.value 
-                      ? 'border-[#ea384c] bg-red-50' 
+                      ? 'border-brand bg-red-50' 
                       : 'border-gray-200 bg-white hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-center space-x-4">
                     <span className="text-3xl">{option.emoji}</span>
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#ea384c] transition-colors">
+                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                         {option.label}
                       </h3>
                       <p className="text-gray-600 text-sm mt-1">
                         {option.description}
                       </p>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#ea384c] transition-colors" />
+                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-brand transition-colors" />
                   </div>
                 </button>
               ))}
@@ -187,7 +187,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
                 placeholder="Type your message here..."
                 rows={6}
                 maxLength={2000}
-                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none resize-none transition-colors placeholder-gray-400"
+                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none resize-none transition-colors placeholder-gray-400"
                 autoFocus
               />
               <div className="flex justify-between items-center text-sm text-gray-500">
@@ -208,7 +208,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               <Button
                 onClick={nextStep}
                 disabled={!feedback.trim()}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -235,7 +235,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400 text-center"
+                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors placeholder-gray-400 text-center"
                 autoFocus
               />
               <p className="text-sm text-gray-500 text-center">
@@ -254,7 +254,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -313,7 +313,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -369,7 +369,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
           <div className="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 p-6">
             <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center">
                   <MessageSquare size={16} className="text-white" />
             </div>
                 <span className="font-semibold text-gray-700">SmrutiMap Feedback</span>
@@ -388,7 +388,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
             {/* Progress Bar */}
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-[#ea384c] to-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
+                className="bg-gradient-to-r from-brand to-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
           </div>

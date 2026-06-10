@@ -161,7 +161,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
         return (
           <div className="text-center space-y-8">
             <div className="space-y-6">
-              <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
+              <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto">
                 <Camera size={40} className="text-white" />
               </div>
               
@@ -190,7 +190,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
 
               <Button
                 onClick={nextStep}
-                className="px-8 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white text-lg font-medium"
+                className="px-8 py-3 rounded-xl bg-brand hover:bg-red-600 text-white text-lg font-medium"
               >
                 Get Started
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -215,10 +215,10 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               {!photoPreview ? (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center hover:border-[#ea384c] hover:bg-red-50 transition-all cursor-pointer group"
+                  className="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center hover:border-brand hover:bg-red-50 transition-all cursor-pointer group"
                 >
                   <div className="space-y-4">
-                    <div className="w-16 h-16 bg-gray-100 group-hover:bg-[#ea384c] rounded-full flex items-center justify-center mx-auto transition-colors">
+                    <div className="w-16 h-16 bg-gray-100 group-hover:bg-brand rounded-full flex items-center justify-center mx-auto transition-colors">
                       <Upload className="w-8 h-8 text-gray-600 group-hover:text-white transition-colors" />
                     </div>
                     <div>
@@ -284,7 +284,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               <Button
                 onClick={nextStep}
                 disabled={!formData.photoFile}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -313,7 +313,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                   value={formData.submitterName || ''}
                   onChange={(e) => updateFormData('submitterName', e.target.value)}
                   placeholder="Enter your full name"
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
+                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors placeholder-gray-400"
                   autoFocus
                 />
               </div>
@@ -325,7 +325,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                   value={formData.email || ''}
                   onChange={(e) => updateFormData('email', e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
+                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors placeholder-gray-400"
                 />
                 <p className="text-sm text-gray-500 mt-2">
                   We'll contact you if we need more details about your photo
@@ -345,7 +345,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               <Button
                 onClick={nextStep}
                 disabled={!formData.submitterName?.trim() || !formData.email?.trim()}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -373,7 +373,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                 placeholder="e.g., Main Street, Downtown Springfield, Illinois, USA near the old courthouse..."
                 rows={5}
                 maxLength={500}
-                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none resize-none transition-colors placeholder-gray-400"
+                className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none resize-none transition-colors placeholder-gray-400"
                 autoFocus
               />
               <div className="flex justify-between items-center text-sm text-gray-500">
@@ -411,7 +411,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               <Button
                 onClick={nextStep}
                 disabled={!formData.locationDescription?.trim()}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -444,7 +444,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                   placeholder="e.g., 1985"
                   min="1800"
                   max={new Date().getFullYear()}
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none transition-colors placeholder-gray-400"
+                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors placeholder-gray-400"
                 />
               </div>
 
@@ -457,9 +457,9 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                     <button
                       key={option.value}
                       onClick={() => updateFormData('yearConfidence', option.value)}
-                      className={`p-4 rounded-2xl border-2 transition-all text-left hover:border-[#ea384c] hover:shadow-lg ${
+                      className={`p-4 rounded-2xl border-2 transition-all text-left hover:border-brand hover:shadow-lg ${
                         formData.yearConfidence === option.value 
-                          ? 'border-[#ea384c] bg-red-50' 
+                          ? 'border-brand bg-red-50' 
                           : 'border-gray-200 bg-white hover:bg-gray-50'
                       }`}
                     >
@@ -487,7 +487,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -519,7 +519,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                   placeholder="Tell us about what's happening in the photo, who took it, or any interesting story behind it..."
                   rows={4}
                   maxLength={1000}
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none resize-none transition-colors placeholder-gray-400"
+                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none resize-none transition-colors placeholder-gray-400"
                 />
                 <div className="text-sm text-gray-500 mt-2">
                   {(formData.description || '').length}/1000 characters
@@ -536,7 +536,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                   placeholder="What visual clues help identify when this photo was taken? (cars, clothing, architecture, signs, etc.)"
                   rows={4}
                   maxLength={1000}
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-[#ea384c] focus:outline-none resize-none transition-colors placeholder-gray-400"
+                  className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none resize-none transition-colors placeholder-gray-400"
                 />
                 <div className="text-sm text-gray-500 mt-2">
                   {(formData.cluesDescription || '').length}/1000 characters
@@ -555,7 +555,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -655,7 +655,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 py-3 rounded-xl bg-[#ea384c] hover:bg-red-600 text-white disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-brand hover:bg-red-600 text-white disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -678,7 +678,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
         return (
           <div className="text-center space-y-8">
             <div className="space-y-6">
-              <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
+              <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto">
                 <div className="w-8 h-8 animate-spin rounded-full border-3 border-white border-t-transparent" />
               </div>
               
@@ -756,7 +756,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#ea384c] rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center">
                   <Camera size={16} className="text-white" />
                 </div>
                 <span className="font-semibold text-gray-700">Submit Photo</span>
@@ -775,7 +775,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
             {/* Progress Bar */}
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-[#ea384c] to-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
+                className="bg-gradient-to-r from-brand to-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>

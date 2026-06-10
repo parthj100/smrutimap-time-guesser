@@ -219,7 +219,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
-              <User className="w-7 h-7 text-[#ea384c]" />
+              <User className="w-7 h-7 text-brand" />
             </div>
             <h2 className="text-2xl font-semibold mb-4">
               Welcome to SmrutiMap!
@@ -233,7 +233,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   setIsLogin(false);
                   nextStep();
                 }}
-                className="w-full bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition"
+                className="w-full bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition"
               >
                 Create Account
               </button>
@@ -254,7 +254,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
-              <LogIn className="w-7 h-7 text-[#ea384c]" />
+              <LogIn className="w-7 h-7 text-brand" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold mb-2">
@@ -329,7 +329,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={handleStepSubmit}
                 disabled={loading || !formData.username.trim() || (isLogin && !formData.password.trim())}
-                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -345,7 +345,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
-              <User className="w-7 h-7 text-[#ea384c]" />
+              <User className="w-7 h-7 text-brand" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold mb-2">
@@ -390,7 +390,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={handleStepSubmit}
                 disabled={!formData.displayName.trim()}
-                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue
               </button>
@@ -402,7 +402,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
-              <MapPin className="w-7 h-7 text-[#ea384c]" />
+              <MapPin className="w-7 h-7 text-brand" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold mb-2">
@@ -447,7 +447,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={handleStepSubmit}
                 disabled={!formData.center.trim()}
-                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue
               </button>
@@ -459,7 +459,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
-              <Lock className="w-7 h-7 text-[#ea384c]" />
+              <Lock className="w-7 h-7 text-brand" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold mb-2">
@@ -531,7 +531,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={handleStepSubmit}
                 disabled={loading || !formData.password.trim() || !formData.confirmPassword.trim()}
-                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
+                className="flex-1 bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
               >
                 {loading ? (
                   <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -547,7 +547,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
-              <CheckCircle className="w-7 h-7 text-[#ea384c]" />
+              <CheckCircle className="w-7 h-7 text-brand" />
             </div>
             <div>
               <h2 className="text-2xl font-semibold mb-2">
@@ -588,7 +588,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={handleStepSubmit}
                 disabled={loading}
-                className="flex-1 bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
+                className="flex-1 bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition disabled:opacity-50"
               >
                 {loading ? (
                   <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -631,7 +631,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             
             <button
               onClick={handleModalClose}
-              className="w-full bg-gradient-to-b from-[#ea384c] to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition"
+              className="w-full bg-gradient-to-b from-brand to-red-600 text-white font-medium py-3 rounded-xl shadow hover:brightness-105 cursor-pointer transition"
             >
               Get Started
             </button>
@@ -667,7 +667,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <div className="w-full mb-6">
               <div className="w-full bg-gray-200 rounded-full h-1">
                 <div
-                  className="bg-[#ea384c] h-1 rounded-full transition-all duration-300"
+                  className="bg-brand h-1 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>

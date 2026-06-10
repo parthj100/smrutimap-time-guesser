@@ -149,7 +149,7 @@ export const Home: React.FC<HomeProps> = ({
               variant="outline"
               size="sm"
               aria-label="View leaderboard"
-              className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+              className="bg-brand hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
             >
               <Trophy size={16} />
             </Button>
@@ -161,7 +161,7 @@ export const Home: React.FC<HomeProps> = ({
               variant="outline"
               size="sm"
               aria-label="Submit photos"
-              className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+              className="bg-brand hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
             >
               <Camera size={16} />
             </Button>
@@ -173,7 +173,7 @@ export const Home: React.FC<HomeProps> = ({
               variant="outline"
               size="sm"
               aria-label="Send feedback"
-              className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
+              className="bg-brand hover:bg-red-600 text-white transition-all duration-300 rounded-full min-h-[40px] min-w-[40px] p-2 shadow-md hover:shadow-lg"
             >
               <MessageSquare size={16} />
             </Button>
@@ -196,7 +196,7 @@ export const Home: React.FC<HomeProps> = ({
               <Button
                 onClick={() => setShowLeaderboard(true)}
                 variant="outline"
-                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
+                className="bg-brand hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
               >
                 <Trophy size={18} />
                 Leaderboard
@@ -218,7 +218,7 @@ export const Home: React.FC<HomeProps> = ({
               <Button
                 onClick={() => setShowPhotoSubmissionForm(true)}
                 variant="outline"
-                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
+                className="bg-brand hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
               >
                 <Camera size={18} />
                 Submit Photos
@@ -240,7 +240,7 @@ export const Home: React.FC<HomeProps> = ({
               <Button
                 onClick={() => setShowFeedbackForm(true)}
                 variant="outline"
-                className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
+                className="bg-brand hover:bg-red-600 text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl font-work"
               >
                 <MessageSquare size={18} />
                 Feedback
@@ -293,7 +293,7 @@ export const Home: React.FC<HomeProps> = ({
           
           {/* Title - Improved variable font sizing with CSS clamp */}
           <motion.div 
-            className="text-[#ea384c] font-bold tracking-tighter leading-none drop-shadow-2xl text-shadow-lg text-center mb-6 lg:mb-8 text-responsive-hero font-space"
+            className="text-brand font-bold tracking-tighter leading-none drop-shadow-2xl text-shadow-lg text-center mb-6 lg:mb-8 text-responsive-hero font-space"
             variants={itemVariants}
           >
             SMRUTIMAP

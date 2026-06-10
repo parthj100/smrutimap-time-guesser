@@ -84,7 +84,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
         <div className="flex items-center gap-3">
           <Button
             onClick={() => setShowAuthModal(true)}
-            className="bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 rounded-full px-6 py-2 shadow-lg hover:shadow-xl"
+            className="bg-brand hover:bg-red-600 text-white transition-all duration-300 rounded-full px-6 py-2 shadow-lg hover:shadow-xl"
             disabled={loading}
           >
             {loading ? 'Loading...' : 'Sign In / Sign Up'}
@@ -110,7 +110,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="w-10 h-10 p-0 rounded-full bg-[#ea384c] hover:bg-red-600 text-white transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="w-10 h-10 p-0 rounded-full bg-brand hover:bg-red-600 text-white transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <span className="text-sm font-bold">
               {userInitial}
@@ -120,7 +120,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
         
         <DropdownMenuContent align="end" className="w-64 bg-white border border-gray-200 shadow-xl rounded-xl p-2">
           {/* User Info Section */}
-          <div className="px-3 py-3 bg-gradient-to-r from-[#ea384c] to-red-600 text-white rounded-lg mb-2">
+          <div className="px-3 py-3 bg-gradient-to-r from-brand to-red-600 text-white rounded-lg mb-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 text-white rounded-full flex items-center justify-center text-lg font-bold">
                 {userInitial}
@@ -145,7 +145,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
                 <button
                   onClick={handleRefreshProfile}
                   disabled={isRefreshing}
-                  className="flex items-center gap-1 px-2 py-1 text-xs bg-[#ea384c] text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1 px-2 py-1 text-xs bg-brand text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
                 >
                   <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />
                   {isRefreshing ? 'Syncing...' : 'Refresh'}
@@ -154,7 +154,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
               
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex items-center gap-2">
-                  <Target size={16} className="text-[#ea384c]" />
+                  <Target size={16} className="text-brand" />
                   <div>
                     <div className="font-semibold text-gray-800">{profile.total_games_played || 0}</div>
                     <div className="text-gray-600 text-xs">Games</div>
@@ -200,7 +200,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
                 <button
                   onClick={handleRefreshProfile}
                   disabled={isRefreshing}
-                  className="mt-2 w-full flex items-center justify-center gap-1 px-2 py-1 text-xs bg-[#ea384c] text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
+                  className="mt-2 w-full flex items-center justify-center gap-1 px-2 py-1 text-xs bg-brand text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50"
                 >
                   <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />
                   {isRefreshing ? 'Syncing...' : 'Refresh Profile'}
@@ -213,7 +213,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
 
           <DropdownMenuItem 
             onClick={() => setShowProfileEdit(true)}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-brand hover:text-white transition-colors cursor-pointer"
           >
             <User size={18} />
             <span>View Profile</span>
@@ -221,7 +221,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
 
           <DropdownMenuItem
             onClick={onShowLeaderboard}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-brand hover:text-white transition-colors cursor-pointer"
           >
             <Trophy size={18} />
             <span>View Leaderboard</span>
@@ -229,7 +229,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
 
           <DropdownMenuItem
             onClick={() => setShowSettings(true)}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-brand hover:text-white transition-colors cursor-pointer"
           >
             <Settings size={18} />
             <span>Settings</span>

@@ -219,7 +219,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = fal
   // Intro screen
   if (currentPhase === 'intro') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark flex items-center justify-center p-6">
         <motion.div
           className="max-w-2xl mx-auto text-center"
           initial={{ opacity: 0, y: 20 }}
@@ -233,7 +233,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = fal
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="w-24 h-24 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <div className="w-24 h-24 bg-brand rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
               <GraduationCap className="w-12 h-12 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-800 mb-4">Learn to Play SmrutiMap</h1>
@@ -283,7 +283,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = fal
           >
             <Button
               onClick={handleStartTutorial}
-              className="bg-[#ea384c] hover:bg-red-600 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-brand hover:bg-red-600 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
             >
               Start Tutorial
             </Button>
@@ -321,7 +321,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = fal
   // Tutorial steps with overlay - using real game components
   if (currentPhase === 'steps') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark overflow-hidden">
         {/* Game Header - Same as actual game */}
         <GameHeader
           isDailyChallenge={false}
@@ -363,7 +363,7 @@ const Tutorial: React.FC<TutorialProps> = ({ onComplete, onExit, skipIntro = fal
               <div className="mt-4" data-tutorial="year-selector">
                 {/* Year display box */}
                 <div 
-                  className="bg-[#ea384c] text-white py-3 px-6 text-center rounded-xl mb-3 flex items-center justify-center shadow-lg border-2 border-red-600"
+                  className="bg-brand text-white py-3 px-6 text-center rounded-xl mb-3 flex items-center justify-center shadow-lg border-2 border-red-600"
                   style={{ height: GAME_CONSTANTS.UI.YEAR_DISPLAY_HEIGHT }}
                   role="status"
                   aria-live="polite"

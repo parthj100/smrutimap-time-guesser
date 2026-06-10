@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -72,6 +71,16 @@ export default {
 					accent: '#FFD700',
 					background: '#11052C',
 					text: '#F5F5F5',
+				},
+				// Brand tokens (replace hardcoded hex across components)
+				brand: {
+					DEFAULT: '#ea384c',
+					dark: '#d32f42',
+				},
+				cream: {
+					DEFAULT: '#eee9da',
+					light: '#f8f5f0',
+					dark: '#e8e0d0',
 				}
 			},
 			borderRadius: {

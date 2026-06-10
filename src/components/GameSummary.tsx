@@ -242,7 +242,7 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
     >
       {/* Main map area with actual Google Maps */}
       <motion.div 
-        className="relative w-full bg-[#eee9da] h-screen rounded-xl overflow-hidden"
+        className="relative w-full bg-cream h-screen rounded-xl overflow-hidden"
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
@@ -257,7 +257,7 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
         >
           {/* Score display with timing info */}
           <motion.div 
-            className="bg-[#ea384c] text-white py-3 px-6 rounded-lg shadow-lg"
+            className="bg-brand text-white py-3 px-6 rounded-lg shadow-lg"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
@@ -288,7 +288,7 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
           {results.map((result, index) => (
             <motion.div 
               key={index} 
-              className="flex items-center bg-[#ea384c]/95 text-white rounded-lg overflow-hidden shadow-lg backdrop-blur-sm"
+              className="flex items-center bg-brand/95 text-white rounded-lg overflow-hidden shadow-lg backdrop-blur-sm"
               initial={{ opacity: 0, x: -30, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ 
@@ -386,7 +386,7 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
             whileTap={{ scale: 0.95 }}
           >
             <Button 
-              className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-8 py-3 rounded-lg shadow-lg font-semibold text-lg transition-all duration-200" 
+              className="bg-brand hover:bg-brand-dark text-white px-8 py-3 rounded-lg shadow-lg font-semibold text-lg transition-all duration-200" 
               onClick={handleExitClick}
             >
               Back to Home
@@ -407,7 +407,7 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
         <AnimatePresence>
           {!mapReady && (
             <motion.div 
-              className="absolute inset-0 flex items-center justify-center bg-[#eee9da]"
+              className="absolute inset-0 flex items-center justify-center bg-cream"
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
@@ -422,7 +422,7 @@ const GameSummary: React.FC<GameSummaryProps> = ({ results, onPlayAgain, onGoHom
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 >
-                  <Navigation className="mb-3 mx-auto text-[#ea384c]" size={32} />
+                  <Navigation className="mb-3 mx-auto text-brand" size={32} />
                 </motion.div>
                 <p className="text-gray-700 font-medium">Loading map view...</p>
               </motion.div>

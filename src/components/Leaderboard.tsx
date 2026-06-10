@@ -305,7 +305,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
           exit="exit"
         >
         {/* Header */}
-          <div className="bg-gradient-to-r from-[#ea384c] via-red-500 to-pink-600 text-white p-8">
+          <div className="bg-gradient-to-r from-brand via-red-500 to-pink-600 text-white p-8">
             <motion.div 
               className="flex items-center justify-between"
               variants={itemVariants}
@@ -415,7 +415,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
                 className="flex flex-col items-center justify-center py-16"
                 variants={itemVariants}
               >
-                <div className="w-12 h-12 animate-spin rounded-full border-2 border-[#ea384c] border-t-transparent mb-4"></div>
+                <div className="w-12 h-12 animate-spin rounded-full border-2 border-brand border-t-transparent mb-4"></div>
                 <span className="text-gray-600 text-lg">Loading leaderboard...</span>
                 <span className="text-gray-400 text-sm mt-2">Fetching the latest rankings</span>
               </motion.div>

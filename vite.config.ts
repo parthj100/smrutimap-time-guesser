@@ -45,7 +45,6 @@ export default defineConfig(({ mode }) => ({
           
           // UI and component libraries
           'ui-vendor': [
-            '@radix-ui/react-toast', 
             '@radix-ui/react-dialog',
             '@radix-ui/react-tooltip',
             '@radix-ui/react-slider',
@@ -94,7 +93,6 @@ export default defineConfig(({ mode }) => ({
             'cmdk',
             'input-otp',
             'lucide-react',
-            'next-themes',
             'react-day-picker',
             'react-resizable-panels',
             'sonner',

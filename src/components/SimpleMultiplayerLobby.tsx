@@ -112,7 +112,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
       <div className="fixed top-6 left-6 z-10">
         <Button
           onClick={handleLeave}
-          className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+          className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
           Back
@@ -122,7 +122,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
       <div className="fixed top-6 right-6 z-10">
         <Button
           onClick={handleHome}
-          className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+          className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-bold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
         >
           <Home className="h-5 w-5 mr-2" />
           Home
@@ -134,7 +134,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
         <div className="max-w-lg w-full space-y-8">
           {/* Room Info */}
           <div className="text-center space-y-6">
-            <div className="w-20 h-20 bg-[#ea384c] rounded-full flex items-center justify-center mx-auto">
+            <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto">
               <Users size={40} className="text-white" />
             </div>
             
@@ -150,7 +150,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
               <div className="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-300">
                 <p className="text-sm text-gray-600 mb-3">Room Code</p>
                 <div className="flex items-center justify-center gap-4">
-                  <span className="text-4xl font-bold font-mono tracking-widest text-[#ea384c] bg-white px-6 py-3 rounded-xl border-2 border-gray-200">
+                  <span className="text-4xl font-bold font-mono tracking-widest text-brand bg-white px-6 py-3 rounded-xl border-2 border-gray-200">
                     {room.room_code}
                   </span>
                   <Button
@@ -183,7 +183,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
                 
                 return (
                   <div key={participantId} className="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
-                    <div className="w-12 h-12 bg-[#ea384c] rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-brand rounded-full flex items-center justify-center">
                       <span className="text-white font-bold text-lg">
                         {displayName.charAt(0).toUpperCase()}
                       </span>
@@ -235,7 +235,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
               <Button 
                 onClick={handleStartGame} 
                 disabled={isStarting || displayedParticipantIds.length < 1}
-                className="w-full h-16 text-xl font-bold bg-[#ea384c] hover:bg-[#d32f42] text-white rounded-xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
+                className="w-full h-16 text-xl font-bold bg-brand hover:bg-brand-dark text-white rounded-xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isStarting ? (
                   'Starting game...'
@@ -254,7 +254,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
             ) : (
               <div className="text-center py-8">
                 <div className="animate-pulse">
-                  <Clock className="h-12 w-12 text-[#ea384c] mx-auto mb-3" />
+                  <Clock className="h-12 w-12 text-brand mx-auto mb-3" />
                 </div>
                 <p className="text-gray-600 text-lg">
                   Waiting for host to start the game...

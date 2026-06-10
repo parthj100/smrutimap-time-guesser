@@ -28,10 +28,10 @@ const CustomImages = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#eee9da] p-6">
+    <div className="min-h-screen bg-cream p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-[#ea384c]">Custom Images Manager</h1>
+          <h1 className="text-4xl font-bold text-brand">Custom Images Manager</h1>
           <Button onClick={() => navigate('/')} variant="outline">
             Back to Game
           </Button>
@@ -39,7 +39,7 @@ const CustomImages = () => {
 
         {loading ? (
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ea384c] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand mx-auto mb-4"></div>
             <p className="text-lg">Loading images...</p>
           </div>
         ) : (

@@ -15,7 +15,7 @@ export const LoadingSpinner: React.FC<{
 
   return (
     <Loader2 
-      className={`animate-spin text-[#ea384c] ${sizeClasses[size]} ${className}`} 
+      className={`animate-spin text-brand ${sizeClasses[size]} ${className}`} 
     />
   );
 };
@@ -107,7 +107,7 @@ export const GameCardSkeleton: React.FC = () => (
 export const FullPageLoading: React.FC<{
   message?: string;
 }> = ({ message = 'Loading...' }) => (
-  <div className="min-h-screen bg-[#eee9da] flex items-center justify-center">
+  <div className="min-h-screen bg-cream flex items-center justify-center">
     <div className="text-center">
       <LoadingSpinner size="lg" className="mb-4" />
       <p className="text-lg text-gray-600">{message}</p>
@@ -134,7 +134,7 @@ export const ErrorState: React.FC<{
     {showRetry && onRetry && (
       <Button 
         onClick={onRetry}
-        className="bg-[#ea384c] hover:bg-red-600 text-white"
+        className="bg-brand hover:bg-red-600 text-white"
       >
         <RefreshCw className="w-4 h-4 mr-2" />
         Try Again
@@ -195,7 +195,7 @@ export const ProgressBar: React.FC<{
     </div>
     <div className="w-full bg-gray-200 rounded-full h-2">
       <div 
-        className="bg-[#ea384c] h-2 rounded-full transition-all duration-300 ease-out"
+        className="bg-brand h-2 rounded-full transition-all duration-300 ease-out"
         style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
       />
     </div>

@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { fixUserStatsFromSessions } from '@/utils/databaseUtils';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useProfileContext } from '@/contexts/ProfileContext';
@@ -41,7 +41,6 @@ interface ProfileFormData {
 
 const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
   const { profile, user, refreshProfile } = useAuth();
-  const { toast } = useToast();
   const { isAdmin } = useAdmin();
   const { refreshAllProfiles } = useProfileContext();
   
@@ -141,27 +140,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
         
         if (error.code === '23505') {
           setErrors({ username: 'This username is already taken' });
-          toast({
-            title: "Username already taken",
+          toast.error("Username already taken", {
             description: "Please choose a different username.",
-            variant: "destructive"
           });
         } else if (error.code === '42703') {
           // Column doesn't exist error
-          toast({
-            title: "Database Migration Required",
+          toast.error("Database Migration Required", {
             description: "The center field needs to be added to the database. Please contact support or run the migration.",
-            variant: "destructive"
           });
         } else {
           // Show more detailed error information
           const errorMessage = error.message || 'Unknown error occurred';
           console.error('Full error details:', error);
           
-          toast({
-            title: "Update failed",
+          toast.error("Update failed", {
             description: `Error: ${errorMessage}. Check console for details.`,
-            variant: "destructive"
           });
         }
         return;
@@ -177,17 +170,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
       
       setIsEditing(false);
       
-      toast({
-        title: "Profile updated!",
+      toast.success("Profile updated!", {
         description: "Your profile has been successfully updated across the system.",
       });
 
     } catch (error) {
       console.error('💥 Unexpected error updating profile:', error);
-      toast({
-        title: "Update failed",
+      toast.error("Update failed", {
         description: "An unexpected error occurred. Please try again.",
-        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
@@ -220,16 +210,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
       const fixResult = await fixUserStatsFromSessions(user.id);
       if (fixResult.success) {
         console.log('✅ Stats fixed successfully:', fixResult.correctedStats);
-        toast({
-          title: "Stats Updated",
+        toast.success("Stats Updated", {
           description: "Your profile stats have been refreshed and synchronized.",
         });
       } else {
         console.warn('⚠️ Stats fix failed:', fixResult.error);
-        toast({
-          title: "Refresh Complete",
+        toast.error("Refresh Complete", {
           description: "Profile refreshed, but some stats may need manual review.",
-          variant: "destructive",
         });
       }
       
@@ -239,10 +226,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
       
     } catch (error) {
       console.error('❌ Profile refresh failed:', error);
-      toast({
-        title: "Refresh Failed",
+      toast.error("Refresh Failed", {
         description: "Unable to refresh your profile. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsRefreshing(false);
@@ -264,7 +249,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
         >
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#ea384c] rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-brand rounded-full flex items-center justify-center">
                 <User size={20} className="text-white" />
               </div>
               <div>
@@ -283,7 +268,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
           </div>
           <div className="p-6 flex items-center justify-center min-h-[300px]">
             <div className="text-center">
-              <div className="w-8 h-8 mx-auto mb-4 animate-spin rounded-full border-2 border-[#ea384c] border-t-transparent" />
+              <div className="w-8 h-8 mx-auto mb-4 animate-spin rounded-full border-2 border-brand border-t-transparent" />
               <p className="text-gray-600">Loading profile...</p>
             </div>
           </div>
@@ -311,7 +296,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#ea384c] rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-brand rounded-full flex items-center justify-center">
               <User size={20} className="text-white" />
             </div>
             <div>
@@ -336,7 +321,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Profile Header */}
-          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#ea384c] to-red-600 text-white rounded-xl">
+          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-brand to-red-600 text-white rounded-xl">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-2xl font-bold">
               {userInitial}
             </div>
@@ -440,7 +425,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
                       value={formData.center}
                       onChange={(e) => updateFormData('center', e.target.value)}
                       placeholder="Enter your center location"
-                      className="focus:border-[#ea384c] focus:ring-[#ea384c]"
+                      className="focus:border-brand focus:ring-brand"
                     />
                     <p className="text-xs text-gray-500">Enter the name of your center or location</p>
                   </div>
@@ -516,7 +501,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Target size={20} className="text-[#ea384c]" />
+                    <Target size={20} className="text-brand" />
                     <div>
                       <div className="font-semibold text-gray-800">{profile.total_games_played || 0}</div>
                       <div className="text-gray-600 text-sm">Games Played</div>
@@ -603,7 +588,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
               <Button
                 onClick={handleSave}
                 disabled={isSubmitting}
-                className="flex-1 bg-[#ea384c] hover:bg-red-600"
+                className="flex-1 bg-brand hover:bg-red-600"
               >
                 {isSubmitting ? (
                   <>

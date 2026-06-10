@@ -40,13 +40,13 @@ const InfiniteImageBackground: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] opacity-50" />
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-gradient-to-br from-cream-light to-cream-dark opacity-50" />
     );
   }
 
   if (images.length === 0) {
     return (
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] opacity-50" />
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-gradient-to-br from-cream-light to-cream-dark opacity-50" />
     );
   }
 
@@ -54,7 +54,7 @@ const InfiniteImageBackground: React.FC = () => {
     <div className="fixed inset-0 z-0 pointer-events-none">
       <DraggableContainer 
         variant="masonry" 
-        className="bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0]"
+        className="bg-gradient-to-br from-cream-light to-cream-dark"
         autoScroll={true}
         scrollSpeed={1.0}
         disableDrag={true}

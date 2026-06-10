@@ -69,7 +69,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
           <Button 
             onClick={onGoBack}
             variant="outline"
-            className="bg-white/95 backdrop-blur-sm border-[#ea384c] text-[#ea384c] hover:bg-[#ea384c] hover:text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl"
+            className="bg-white/95 backdrop-blur-sm border-brand text-brand hover:bg-brand hover:text-white transition-all duration-300 flex items-center gap-2 rounded-full px-4 py-2 shadow-lg hover:shadow-xl"
           >
             <ArrowLeft size={18} />
             Back to Home
@@ -102,7 +102,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                     className="h-16 lg:h-20 xl:h-24 w-auto drop-shadow-2xl"
                   />
                   <motion.div
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-[#ea384c] rounded-full flex items-center justify-center"
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-brand rounded-full flex items-center justify-center"
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
@@ -110,7 +110,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                   </motion.div>
                 </div>
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#ea384c] mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-brand mb-4">
                 Choose Your Game Mode
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
@@ -131,13 +131,13 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                 onClick={() => setSelectedMode('normal')}
                 className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 min-h-[380px] flex flex-col ${
                   selectedMode === 'normal' 
-                    ? 'border-[#ea384c] bg-red-50/80 shadow-md' 
+                    ? 'border-brand bg-red-50/80 shadow-md' 
                     : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                 }`}
               >
                 <div className="flex items-start gap-4 mb-4 flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    selectedMode === 'normal' ? 'bg-[#ea384c]' : 'bg-blue-100'
+                    selectedMode === 'normal' ? 'bg-brand' : 'bg-blue-100'
                   }`}>
                     <Brain size={24} className={selectedMode === 'normal' ? 'text-white' : 'text-blue-600'} />
                   </div>
@@ -179,7 +179,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <div className="flex items-center gap-2 text-[#ea384c] font-medium text-sm">
+                        <div className="flex items-center gap-2 text-brand font-medium text-sm">
                           <Play size={14} />
                           <span>Ready to start your smruti journey</span>
                         </div>
@@ -320,7 +320,7 @@ const GameInstructions: React.FC<GameInstructionsProps> = ({ onStart, onGoBack }
               className={`${
                 selectedMode === 'timed' 
                   ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600' 
-                  : 'bg-gradient-to-r from-[#ea384c] to-[#d32f42] hover:from-red-600 hover:to-red-700'
+                  : 'bg-gradient-to-r from-brand to-brand-dark hover:from-red-600 hover:to-red-700'
               } transition-all duration-300 flex items-center gap-3 rounded-full px-12 py-4 text-white text-xl font-bold shadow-xl hover:shadow-2xl`}
             >
               {selectedMode === 'timed' ? <Timer size={24} /> : <Play size={24} />}

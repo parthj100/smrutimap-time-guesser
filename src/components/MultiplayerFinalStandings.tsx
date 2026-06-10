@@ -102,7 +102,7 @@ export const MultiplayerFinalStandings: React.FC<MultiplayerFinalStandingsProps>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl lg:text-3xl font-bold text-[#ea384c]">
+              <div className="text-2xl lg:text-3xl font-bold text-brand">
                 {player.totalPoints}
               </div>
               <div className="text-sm lg:text-base text-gray-600">

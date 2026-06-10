@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -22,7 +21,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
-  <div className="min-h-screen flex items-center justify-center bg-[#eee9da]">
+  <div className="min-h-screen flex items-center justify-center bg-cream">
     <div className="text-center">
       <LoadingSpinner size="lg" />
       <p className="mt-4 text-gray-600">Loading...</p>
@@ -52,7 +51,6 @@ const App = () => {
         <TooltipProvider>
           <ProfileProvider>
             <NetworkStatus />
-            <Toaster />
             <Sonner />
             <PerformanceMonitor enabled={process.env.NODE_ENV === 'development'} showMetrics={false} />
             <BrowserRouter>

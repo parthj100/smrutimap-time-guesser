@@ -43,7 +43,7 @@ const YearSelector: React.FC<YearSelectorProps> = ({
   return (
     <div className="w-full">
       {/* Year display */}
-      <div className="bg-[#ea384c] text-white py-3 px-6 text-center rounded-lg">
+      <div className="bg-brand text-white py-3 px-6 text-center rounded-lg">
         <div className="text-5xl font-bold font-space">{selectedYear}</div>
       </div>
       

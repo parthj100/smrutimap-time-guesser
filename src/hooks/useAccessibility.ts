@@ -221,7 +221,7 @@ export const useSkipLinks = () => {
     const skipLink = document.createElement('a');
     skipLink.href = `#${targetId}`;
     skipLink.textContent = text;
-    skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#ea384c] text-white px-4 py-2 rounded z-50';
+    skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-brand text-white px-4 py-2 rounded z-50';
     
     skipLink.addEventListener('click', (e) => {
       e.preventDefault();

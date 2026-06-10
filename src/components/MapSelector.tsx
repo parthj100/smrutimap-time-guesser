@@ -349,7 +349,7 @@ const MapSelector: React.FC<MapSelectorProps> = ({
         
         {/* Click instruction overlay — bottom-center, clear of Google's top map controls */}
         {!isDisabled && !guessedLocation && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1.5rem)] text-center bg-[#ea384c]/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm animate-pulse">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1.5rem)] text-center bg-brand/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm animate-pulse">
             🎯 Click anywhere on the map to place your guess
           </div>
         )}
@@ -365,7 +365,7 @@ const MapSelector: React.FC<MapSelectorProps> = ({
         {isDisabled && guessedLocation && actualLocation && (
           <div className="absolute bottom-0 left-0 w-full bg-white/90 p-3 text-center backdrop-blur-sm border-t border-gray-200">
             <p className="font-medium text-gray-800">
-              Your guess was <span className="font-bold text-[#ea384c]">{getDistanceBetweenPoints(guessedLocation, actualLocation).toFixed(1)} km</span> from the actual location
+              Your guess was <span className="font-bold text-brand">{getDistanceBetweenPoints(guessedLocation, actualLocation).toFixed(1)} km</span> from the actual location
             </p>
           </div>
         )}

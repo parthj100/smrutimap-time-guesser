@@ -308,9 +308,9 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#ea384c]/30 border-t-[#ea384c] rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-brand/30 border-t-brand rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 text-xl">Loading practice round...</p>
         </div>
       </div>
@@ -319,7 +319,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
 
   if (!practiceImage) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600 text-xl mb-4">Unable to load practice image</p>
           <Button onClick={onSkip}>Skip Practice</Button>
@@ -345,14 +345,14 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
   // If showing results, use the same layout as RoundResults
   if (hasGuessed && practiceImage?.location) {
     return (
-      <div className="w-full min-h-screen bg-[#eee9da] p-6">
+      <div className="w-full min-h-screen bg-cream p-6">
         {/* Header with logo and practice complete */}
         <div className="flex items-center justify-between mb-6">
           {/* Logo on the left */}
           <div className="flex items-center">
             <button 
               onClick={handleGoHome}
-              className="hover:scale-105 hover:opacity-90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ea384c] focus:ring-opacity-50 rounded-lg"
+              className="hover:scale-105 hover:opacity-90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-opacity-50 rounded-lg"
               aria-label="Go to home page"
             >
               <img 
@@ -370,7 +370,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
             </h1>
             <div className="w-full bg-gray-300 rounded-full h-2 max-w-lg mx-auto">
               <div 
-                className="bg-[#ea384c] h-2 rounded-full transition-all duration-500"
+                className="bg-brand h-2 rounded-full transition-all duration-500"
                 style={{ width: '100%' }}
               />
             </div>
@@ -380,7 +380,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
           <div className="flex items-center">
             <Button 
               onClick={handleComplete}
-              className="bg-[#ea384c] hover:bg-[#d32f42] text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-xl transition-all hover:scale-105"
+              className="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-xl transition-all hover:scale-105"
             >
               Complete Tutorial
             </Button>
@@ -390,7 +390,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
         {/* Main content area */}
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Description section */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border-4 border-[#ea384c]">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border-4 border-brand">
             <p className="text-lg text-gray-800 leading-relaxed text-center">
               {practiceImage.description || "Practice image from the tutorial"}
             </p>
@@ -400,7 +400,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#ea384c] text-white rounded-2xl p-8 shadow-xl"
+            className="bg-brand text-white rounded-2xl p-8 shadow-xl"
           >
             <div className="text-center mb-6">
               <div className="text-6xl font-bold mb-2">
@@ -455,7 +455,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
           {/* Image and Map side by side - same style as RoundResults */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Game Image with fixed aspect ratio */}
-            <div className="relative w-full aspect-[4/3] bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-[#ea384c]">
+            <div className="relative w-full aspect-[4/3] bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-brand">
               <div className="absolute inset-0 flex items-center justify-center p-2">
                 <img 
                   src={practiceImage.image_url} 
@@ -469,7 +469,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
             </div>
             
             {/* Map with identical fixed aspect ratio */}
-            <Card className="relative w-full aspect-[4/3] overflow-hidden shadow-xl border-4 border-[#ea384c]">
+            <Card className="relative w-full aspect-[4/3] overflow-hidden shadow-xl border-4 border-brand">
               <div className="absolute inset-0">
                 <div 
                   ref={mapRef} 
@@ -479,7 +479,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
                 {!mapReady && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                     <div className="text-center">
-                      <Navigation className="animate-spin mb-3 mx-auto text-[#ea384c]" size={32} />
+                      <Navigation className="animate-spin mb-3 mx-auto text-brand" size={32} />
                       <p className="text-gray-700 font-medium">Loading map...</p>
                     </div>
                   </div>
@@ -494,7 +494,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
 
   // Regular tutorial UI when not showing results
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e8e0d0] overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-cream-light to-cream-dark overflow-hidden">
       {/* Game Header - Same as actual game */}
       <GameHeader
         isDailyChallenge={false}
@@ -530,7 +530,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
               <div className="mt-4">
                 {/* Year display box */}
                 <div 
-                  className={`bg-[#ea384c] text-white py-3 px-6 text-center rounded-xl mb-3 flex items-center justify-center shadow-lg border-2 transition-all duration-200 hover:shadow-xl ${
+                  className={`bg-brand text-white py-3 px-6 text-center rounded-xl mb-3 flex items-center justify-center shadow-lg border-2 transition-all duration-200 hover:shadow-xl ${
                     currentStep === 'year' ? 'border-yellow-400 shadow-xl scale-105' : 'border-red-600'
                   }`}
                   style={{ height: GAME_CONSTANTS.UI.YEAR_DISPLAY_HEIGHT }}
@@ -606,7 +606,7 @@ const TutorialPracticeRound: React.FC<TutorialPracticeRoundProps> = ({
                     currentStep === 'submit' ? 'border-yellow-400 shadow-xl scale-105' : ''
                   } ${
                     locationGuess && yearGuess
-                      ? "bg-[#ea384c] hover:bg-red-600 text-white border-red-600 hover:shadow-xl" 
+                      ? "bg-brand hover:bg-red-600 text-white border-red-600 hover:shadow-xl" 
                       : "bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400 shadow-sm"
                   }`}
                   style={{ height: '80px' }}
