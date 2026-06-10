@@ -133,279 +133,51 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => 
         }
       }
 
-      if (filters.gameMode === 'all') {
-        // For "all modes", we need to query game_sessions for ALL modes within the timeframe
-        console.log('📊 Querying game sessions with timeframe filter');
-        
-        const { data: sessionsData, error: sessionsError, timedOut: sessionsTimeout } = await safeQuery(
-          async () => {
-            let sessionQuery = supabase
-              .from('game_sessions' as any)
-              .select('*')
-              .not('completed_at', 'is', null)
-              .order('completed_at', { ascending: false })
-              .limit(2000); // Higher limit for all modes
-
-            // Apply timeframe filters
-            if (startDate) {
-              sessionQuery = sessionQuery.gte('completed_at', startDate.toISOString());
-            }
-            if (endDate) {
-              sessionQuery = sessionQuery.lt('completed_at', endDate.toISOString());
-            }
-
-            console.log('📊 Executing query...');
-            return await sessionQuery;
-          },
-          { operation: 'Fetch game sessions for leaderboard', timeoutMs: 8000 }
-        );
-
-        queryError = sessionsError || sessionsData?.error;
-        timedOut = sessionsTimeout;
-        
-        console.log('✅ Query result:', { 
-          dataLength: sessionsData?.data?.length, 
-          error: queryError?.message,
-          timedOut,
-          timeframe: filters.timeframe,
-          gameMode: filters.gameMode,
-          startDate: startDate?.toISOString(),
-          endDate: endDate?.toISOString()
-        });
-
-        if (queryError) {
-          throw queryError;
-        }
-
-        if (!sessionsData?.data || sessionsData.data.length === 0) {
-          console.log('📭 No game sessions found for timeframe');
-          setEntries([]);
-          return;
-        }
-
-        // Get unique user IDs from sessions
-        const userIds = [...new Set(sessionsData.data.map((session: any) => session.user_id))];
-        console.log('👥 Found unique users:', userIds.length, 'User IDs:', userIds);
-
-        // Get user profiles for these users
-        const { data: profilesData, error: profilesError, timedOut: profilesTimeout } = await safeQuery(
-          async () => {
-            return await supabase
-              .from('user_profiles' as any)
-              .select('*')
-              .in('user_id', userIds);
-          },
-          { operation: 'Fetch user profiles', timeoutMs: 3000 }
-        );
-
-        if (profilesError || profilesTimeout) {
-          console.error('❌ Error fetching profiles:', profilesError);
-          throw profilesError || new Error('Profile fetch timed out');
-        }
-
-        if (!profilesData?.data) {
-          console.log('📭 No profiles found for session users');
-          setEntries([]);
-          return;
-        }
-
-        console.log('👤 Found profiles:', profilesData.data.length);
-
-        // Create a map of user sessions for easy lookup
-        const userSessionsMap = new Map();
-        sessionsData.data.forEach((session: any) => {
-          if (!userSessionsMap.has(session.user_id)) {
-            userSessionsMap.set(session.user_id, []);
-          }
-          userSessionsMap.get(session.user_id).push(session);
-        });
-
-        // Transform profiles with session data
-        const transformedEntries = profilesData.data.map((profile: any) => {
-          const userSessions = userSessionsMap.get(profile.user_id) || [];
-          
-          // Calculate metrics based on sessions in this timeframe
-          const totalScore = userSessions.reduce((sum: number, session: any) => sum + (session.total_score || 0), 0);
-          const totalGames = userSessions.length;
-          const averageScore = totalGames > 0 ? totalScore / totalGames : 0;
-          const bestSingleGame = userSessions.reduce((max: number, session: any) => Math.max(max, session.total_score || 0), 0);
-
-          return {
-            id: profile.id,
-            username: profile.username,
-            display_name: profile.display_name,
-            avatar_url: profile.avatar_url,
-            center: profile.center,
-            total_games_played: totalGames,
-            total_score: totalScore,
-            best_single_game_score: bestSingleGame,
-            average_score: averageScore,
-            best_daily_score: bestSingleGame,
-            games_this_week: totalGames,
-            score_this_week: totalScore,
-            games_this_month: totalGames,
-            score_this_month: totalScore,
-          };
-        });
-
-        // For the daily timeframe, always sort by best single game score regardless of metric setting
-        if (filters.timeframe === 'daily') {
-          transformedEntries.sort((a: any, b: any) => {
-            const aValue = a.best_single_game_score || 0;
-            const bValue = b.best_single_game_score || 0;
-            return bValue - aValue;
+      // Server-side aggregation via RPC. Replaces fetching up to 2000 raw
+      // game_sessions plus a separate user_profiles query and grouping in JS.
+      // The timeframe window (startDate/endDate) is still computed above, so the
+      // local-timezone behavior is unchanged; we just hand it to the RPC.
+      const { data: rpcResult, error: rpcError, timedOut: rpcTimeout } = await safeQuery(
+        async () => {
+          return await (supabase.rpc as any)('get_session_leaderboard', {
+            start_ts: startDate ? startDate.toISOString() : null,
+            end_ts: endDate ? endDate.toISOString() : null,
+            game_mode_filter: filters.gameMode,
+            limit_count: 100,
           });
-        } else {
-          // Sort by the selected metric for other timeframes
-          transformedEntries.sort((a: any, b: any) => {
-            const aValue = a[getDbColumnName(filters.metric)] || 0;
-            const bValue = b[getDbColumnName(filters.metric)] || 0;
-            return bValue - aValue;
-          });
-        }
+        },
+        { operation: 'Fetch leaderboard aggregation', timeoutMs: 8000 }
+      );
 
-        data = transformedEntries;
-
-      } else {
-        // For specific game modes, query game_sessions
-        console.log(`🎮 Querying game_sessions for mode: ${filters.gameMode}`);
-        
-        // Note: Previous issue was RLS policy limiting sessions to current user only
-        // Fixed by adding "Public can view completed sessions for leaderboard" policy
-        
-        const { data: sessionsData, error: sessionsError, timedOut: sessionsTimeout } = await safeQuery(
-          async () => {
-            // Build the query - more explicit approach
-            console.log('🔧 Building query for game mode:', filters.gameMode);
-            
-            let sessionQuery = supabase
-              .from('game_sessions' as any)
-              .select('*')
-              .eq('game_mode', filters.gameMode)
-              .not('completed_at', 'is', null)
-              .order('completed_at', { ascending: false })
-              .limit(1000);
-
-            // Apply timeframe filters
-            if (startDate) {
-              sessionQuery = sessionQuery.gte('completed_at', startDate.toISOString());
-            }
-            if (endDate) {
-              sessionQuery = sessionQuery.lt('completed_at', endDate.toISOString());
-            }
-
-            console.log('📊 Executing sessions query...');
-            return await sessionQuery;
-          },
-          { operation: `Fetch ${filters.gameMode} game sessions`, timeoutMs: 8000 } // Increased timeout
-        );
-
-        timedOut = sessionsTimeout;
-        queryError = sessionsError || sessionsData?.error;
-        
-        console.log('🎯 Game sessions query result:', { 
-          dataLength: sessionsData?.data?.length, 
-          error: queryError?.message,
-          timedOut,
-          gameMode: filters.gameMode,
-          timeframe: filters.timeframe,
-          startDate: startDate?.toISOString(),
-          endDate: endDate?.toISOString()
-        });
-
-        if (queryError) {
-          throw queryError;
-        }
-
-        if (!sessionsData?.data || sessionsData.data.length === 0) {
-          console.log('📭 No game sessions found for this mode/timeframe');
-          setEntries([]);
-          return;
-        }
-
-        // Get unique user IDs from sessions
-        const userIds = [...new Set(sessionsData.data.map((session: any) => session.user_id))];
-        console.log('👥 Found unique users:', userIds.length, 'User IDs:', userIds);
-
-        // Get user profiles for these users
-        const { data: profilesData, error: profilesError, timedOut: profilesTimeout } = await safeQuery(
-          async () => {
-            return await supabase
-              .from('user_profiles' as any)
-              .select('*')
-              .in('user_id', userIds);
-          },
-          { operation: 'Fetch user profiles for sessions', timeoutMs: 3000 }
-        );
-
-        if (profilesError || profilesTimeout) {
-          console.error('❌ Error fetching profiles for sessions:', profilesError);
-          throw profilesError || new Error('Profile fetch timed out');
-        }
-
-        if (!profilesData?.data) {
-          console.log('📭 No profiles found for session users');
-          setEntries([]);
-          return;
-        }
-        
-        console.log('👤 Found profiles:', profilesData.data.length);
-
-        // Create a map of user sessions for easy lookup
-        const userSessionsMap = new Map();
-        sessionsData.data.forEach((session: any) => {
-          if (!userSessionsMap.has(session.user_id)) {
-            userSessionsMap.set(session.user_id, []);
-          }
-          userSessionsMap.get(session.user_id).push(session);
-        });
-
-        // Transform profiles with session data
-        const transformedEntries = profilesData.data.map((profile: any) => {
-          const userSessions = userSessionsMap.get(profile.user_id) || [];
-          
-          // Calculate metrics based on sessions in this timeframe/mode
-          const totalScore = userSessions.reduce((sum: number, session: any) => sum + (session.total_score || 0), 0);
-          const totalGames = userSessions.length;
-          const averageScore = totalGames > 0 ? totalScore / totalGames : 0;
-          const bestSingleGame = userSessions.reduce((max: number, session: any) => Math.max(max, session.total_score || 0), 0);
-
-          return {
-            id: profile.id,
-            username: profile.username,
-            display_name: profile.display_name,
-            avatar_url: profile.avatar_url,
-            center: profile.center,
-            total_games_played: totalGames,
-            total_score: totalScore,
-            best_single_game_score: bestSingleGame,
-            average_score: averageScore,
-            best_daily_score: bestSingleGame,
-            games_this_week: totalGames,
-            score_this_week: totalScore,
-            games_this_month: totalGames,
-            score_this_month: totalScore,
-          };
-        });
-
-        // For daily challenges, always sort by best single game score regardless of metric setting
-        if (filters.gameMode === 'daily') {
-          transformedEntries.sort((a: any, b: any) => {
-            const aValue = a.best_single_game_score || 0;
-            const bValue = b.best_single_game_score || 0;
-            return bValue - aValue;
-          });
-        } else {
-          // Sort by the selected metric for other timeframes
-          transformedEntries.sort((a: any, b: any) => {
-            const aValue = a[getDbColumnName(filters.metric)] || 0;
-            const bValue = b[getDbColumnName(filters.metric)] || 0;
-            return bValue - aValue;
-          });
-        }
-
-        data = transformedEntries;
+      timedOut = rpcTimeout;
+      queryError = rpcError || rpcResult?.error;
+      if (queryError) {
+        throw queryError;
       }
+
+      // Postgres bigint/numeric come over the wire as strings; coerce to numbers
+      // so downstream math and display match the previous client-side behavior.
+      const aggregated = (((rpcResult?.data as any[]) || [])).map((row: any) => ({
+        id: row.id,
+        username: row.username,
+        display_name: row.display_name,
+        avatar_url: row.avatar_url,
+        center: row.center,
+        total_games_played: Number(row.total_games_played) || 0,
+        total_score: Number(row.total_score) || 0,
+        best_single_game_score: Number(row.best_single_game_score) || 0,
+        average_score: Number(row.average_score) || 0,
+      }));
+
+      // Preserve the original ranking rules: the daily view always ranks by best
+      // single game regardless of the selected metric; other views use the metric.
+      const sortByBest =
+        (filters.gameMode === 'all' && filters.timeframe === 'daily') ||
+        (filters.gameMode !== 'all' && filters.gameMode === 'daily');
+      const sortColumn = sortByBest ? 'best_single_game_score' : getDbColumnName(filters.metric);
+      aggregated.sort((a: any, b: any) => (b[sortColumn] || 0) - (a[sortColumn] || 0));
+
+      data = aggregated;
 
       if (!data || data.length === 0) {
         console.log('📭 No leaderboard data found');
