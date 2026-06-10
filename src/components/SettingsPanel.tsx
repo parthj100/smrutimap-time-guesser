@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { toast } from 'sonner';
 import { resetImagePool, getPoolStats } from '@/utils/imagePool';
+import { useKeyboardNavigation } from '@/hooks/useAccessibility';
 
 interface SettingsPanelProps {
   onClose: () => void;
@@ -8,6 +10,7 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose, userId }) => {
+  useKeyboardNavigation(undefined, onClose);
   const [poolStats, setPoolStats] = useState<{
     availableImages: number;
     usedImages: number;
@@ -33,25 +36,35 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose, userId }) => {
     setLoading(true);
     try {
       await resetImagePool(userId);
-      alert('Image pool reset! You\'ll see fresh images on your next game.');
-      
+      toast.success("Image pool reset! You'll see fresh images on your next game.");
+
       // Refresh stats after reset
       const stats = await getPoolStats(userId);
       setPoolStats(stats);
     } catch (error) {
-      alert('Failed to reset image pool. Please try again.');
+      toast.error('Failed to reset image pool. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg p-6 max-w-md w-full"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Settings"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Settings</h2>
           <button
             onClick={onClose}
+            aria-label="Close settings"
             className="text-gray-500 hover:text-gray-700"
           >
             <X size={24} />
@@ -87,8 +100,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose, userId }) => {
                 {/* Progress Bar */}
                 <div className="mt-2">
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+                    <div
+                      className="bg-[#ea384c] h-2 rounded-full transition-all duration-300"
                       style={{ width: `${poolStats.poolProgress}%` }}
                     ></div>
                   </div>
@@ -106,7 +119,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose, userId }) => {
             <button
               onClick={handleResetImagePool}
               disabled={loading}
-              className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded transition-colors"
+              className="bg-[#ea384c] hover:bg-red-600 disabled:bg-red-300 text-white px-4 py-2 rounded transition-colors"
             >
               {loading ? 'Resetting...' : 'Reset Image Pool'}
             </button>

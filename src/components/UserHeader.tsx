@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { User, Trophy, LogOut, Crown, Target, Calendar, Edit3, RefreshCw } from 'lucide-react';
+import { User, Trophy, LogOut, Crown, Target, Calendar, Edit3, RefreshCw, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from './auth/AuthModal';
 import ProfileView from './ProfileView';
+import SettingsPanel from './SettingsPanel';
 import { fixUserStatsFromSessions } from '@/utils/databaseUtils';
 import { useProfileContext } from '@/contexts/ProfileContext';
 
@@ -16,6 +17,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
   const { user, profile, signOut, loading, refreshProfile } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { refreshUserProfile } = useProfileContext();
 
@@ -217,12 +219,20 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
             <span>View Profile</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem 
+          <DropdownMenuItem
             onClick={onShowLeaderboard}
             className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
           >
             <Trophy size={18} />
             <span>View Leaderboard</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => setShowSettings(true)}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#ea384c] hover:text-white transition-colors cursor-pointer"
+          >
+            <Settings size={18} />
+            <span>Settings</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -237,10 +247,14 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <ProfileView 
-        isOpen={showProfileEdit} 
+      <ProfileView
+        isOpen={showProfileEdit}
         onClose={() => setShowProfileEdit(false)}
       />
+
+      {showSettings && (
+        <SettingsPanel userId={user?.id} onClose={() => setShowSettings(false)} />
+      )}
     </div>
   );
 }; 
