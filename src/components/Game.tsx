@@ -14,6 +14,7 @@ import GameContent from './GameContent';
 import GameControls from './GameControls';
 import InfiniteImageBackground from './InfiniteImageBackground';
 import { SimpleMultiplayerContainer } from './SimpleMultiplayerContainer';
+import { MultiplayerFinalStandings } from './MultiplayerFinalStandings';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Home as HomeIcon, ArrowRight } from 'lucide-react';
 import { toast } from "sonner";
@@ -841,95 +842,13 @@ const Game: React.FC<GameProps> = ({
           <div className="max-w-4xl mx-auto">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-lg border border-[#ea384c]/30">
               <div className="space-y-4">
-                {(() => {
-                  // Create leaderboard using proper scoring calculation
-                  const playerScores = [];
-                  
-                  // Add current player's score from local game results
-                  const currentPlayerTotal = gameState.results.reduce((sum, result) => {
-                    if (result.scaledScore !== undefined) {
-                      return sum + result.scaledScore;
-                    }
-                    if (result.displayYearScore !== undefined && result.displayLocationScore !== undefined) {
-                      return sum + result.displayYearScore + result.displayLocationScore + (result.timeBonus || 0);
-                    }
-                    return sum + (result.totalScore * 100) + (result.timeBonus || 0);
-                  }, 0);
-                  
-                  // Get current user's display name
-                  const currentUserDisplayName = multiplayerState.playerNames?.[multiplayerState.currentUserId || ''];
-                  const currentUserLabel = currentUserDisplayName ? `You (${currentUserDisplayName})` : 'You';
-                  
-                  playerScores.push({
-                    userId: multiplayerState.currentUserId || 'current',
-                    totalPoints: Math.round(currentPlayerTotal),
-                    isCurrentUser: true,
-                    playerName: currentUserLabel
-                  });
-                  
-                  // Add other players' scores from multiplayer database (now using correct display scores)
-                  const multiplayerLeaderboard = multiplayerState.getLeaderboard?.() || [];
-                  multiplayerLeaderboard.forEach((entry) => {
-                    if (entry.userId !== multiplayerState.currentUserId) {
-                      // Database now stores display scores directly, no scaling needed
-                      const totalPoints = entry.totalPoints;
-                      // Get display name from player names map
-                      const displayName = multiplayerState.playerNames?.[entry.userId] || `Player ${playerScores.length}`;
-                      
-                      playerScores.push({
-                        userId: entry.userId,
-                        totalPoints: totalPoints,
-                        isCurrentUser: false,
-                        playerName: displayName
-                      });
-                    }
-                  });
-                  
-                  // Sort by total points
-                  playerScores.sort((a, b) => b.totalPoints - a.totalPoints);
-                  
-                  const getRankIcon = (rank: number) => {
-                    switch (rank) {
-                      case 1: return '🥇';
-                      case 2: return '🥈';
-                      case 3: return '🥉';
-                      default: return `#${rank}`;
-                    }
-                  };
-                  
-                  return playerScores.map((player, index) => (
-                    <div 
-                      key={player.userId}
-                      className={`p-4 lg:p-6 rounded-xl border-2 ${
-                        player.isCurrentUser ? 'bg-blue-50 border-blue-300 ring-2 ring-blue-200' : 'bg-gray-50 border-gray-200'
-                      } ${index === 0 ? 'ring-2 ring-yellow-400 bg-yellow-50' : ''} transition-all hover:scale-[1.02]`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <span className="text-3xl lg:text-4xl">{getRankIcon(index + 1)}</span>
-                          <div>
-                                                       <div className="text-xl lg:text-2xl font-bold text-gray-800">
-                             {player.playerName}
-                             {player.isCurrentUser && <span className="text-blue-600 ml-2">🎯</span>}
-                             {index === 0 && <span className="text-yellow-600 ml-2">👑</span>}
-                           </div>
-                            <div className="text-sm lg:text-base text-gray-600">
-                              {index === 0 ? 'Winner!' : `${Math.round(player.totalPoints / gameState.totalRounds)} pts/round average`}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl lg:text-3xl font-bold text-[#ea384c]">
-                            {player.totalPoints}
-                          </div>
-                          <div className="text-sm lg:text-base text-gray-600">
-                            total points
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ));
-                })()}
+                <MultiplayerFinalStandings
+                  results={gameState.results}
+                  totalRounds={gameState.totalRounds}
+                  currentUserId={multiplayerState.currentUserId}
+                  playerNames={multiplayerState.playerNames}
+                  getLeaderboard={multiplayerState.getLeaderboard}
+                />
               </div>
             </div>
           </div>
