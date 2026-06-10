@@ -4,7 +4,8 @@ import { GameImage, GameSession } from "@/types/game";
 import { getAllImages } from "@/data/sampleData";
 
 // Create a deterministic random number generator using date as seed
-const createSeededRandom = (seed: string) => {
+// Exported for tests: locks in the determinism guarantee.
+export const createSeededRandom = (seed: string) => {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
     const char = seed.charCodeAt(i);
@@ -19,7 +20,7 @@ const createSeededRandom = (seed: string) => {
 };
 
 // Shuffle array using seeded random
-const seededShuffle = <T>(array: T[], seed: string): T[] => {
+export const seededShuffle = <T>(array: T[], seed: string): T[] => {
   const newArray = [...array];
   const random = createSeededRandom(seed);
   
@@ -50,7 +51,7 @@ const getYesterdayDateString = (): string => {
 // Seed for today's challenge. Must be a pure function of the date so every
 // player computes the same image set even when the daily_challenges row
 // hasn't been stored yet (or the insert races between clients).
-const getTodayChallengeSeed = (): string => {
+export const getTodayChallengeSeed = (): string => {
   return `smrutimap-daily-${getTodayDateString()}`;
 };
 

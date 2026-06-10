@@ -12,7 +12,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.js",
-    "performance:test": "npm run build && npm run preview"
+    "performance:test": "npm run build && npm run preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -43,6 +46,7 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@sentry/react": "^8.55.2",
     "@supabase/supabase-js": "^2.49.10",
     "@tanstack/react-query": "^5.56.2",
     "@types/google.maps": "^3.58.1",
@@ -89,6 +93,7 @@
     "tailwindcss": "^3.4.11",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vitest": "^2.1.9"
   }
 }

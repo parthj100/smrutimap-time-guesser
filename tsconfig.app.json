@@ -14,12 +14,23 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
+    /* Type-safety. Enabled incrementally toward full `strict`.
+       Zero-error safety flags are on. The two remaining heavy flags are tracked
+       below with their current error counts so the migration can finish in
+       bounded chunks rather than one risky sweep:
+         - "noImplicitAny": 24 errors (mostly src/hooks/useSimpleMultiplayer.ts)
+         - "strictNullChecks": 55 errors (mostly adminService.ts, Game.tsx) */
     "strict": false,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "useUnknownInCatchVariables": true,
+    "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitAny": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": true,
 
     "baseUrl": ".",
     "paths": {
