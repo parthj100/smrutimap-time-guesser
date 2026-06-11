@@ -346,7 +346,6 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                     Start a new game and invite friends with a room code
                   </p>
                 </div>
-                <Plus className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
 
@@ -364,7 +363,6 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                     Enter a room code to join an existing game
                   </p>
                 </div>
-                <LogIn className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
           </div>

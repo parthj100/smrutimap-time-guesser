@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Swords } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import DuelHealthBar from './DuelHealthBar';
 import type { DuelPlayer } from '@/types/duel';
 
@@ -56,7 +56,6 @@ const DuelHud: React.FC<DuelHudProps> = ({
 
         <div className="flex flex-col items-center px-1 sm:px-4">
           <div className="flex items-center gap-2 text-gray-900">
-            <Swords size={16} className="text-brand hidden sm:block" />
             <span className="font-space font-bold whitespace-nowrap">
               Round {roundNumber}
             </span>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Eye, Home, LogIn, Plus, Swords } from 'lucide-react';
+import { ArrowLeft, Home, LogIn, Plus, Swords } from 'lucide-react';
 import { createDuel, joinDuel } from '@/services/duelService';
 
 type View = 'menu' | 'create' | 'join';
@@ -323,7 +323,7 @@ const DuelsPage: React.FC = () => {
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Duels ⚔️
+                Duels
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed">
                 Go head-to-head: same photo, one guess each. The sharper guess
@@ -350,7 +350,6 @@ const DuelsPage: React.FC = () => {
                     Get a code and challenge a friend on any device
                   </p>
                 </div>
-                <Plus className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
 
@@ -372,7 +371,6 @@ const DuelsPage: React.FC = () => {
                     Enter a code to face your challenger
                   </p>
                 </div>
-                <LogIn className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
 
@@ -394,7 +392,6 @@ const DuelsPage: React.FC = () => {
                     Watch a live duel without playing
                   </p>
                 </div>
-                <Eye className="w-6 h-6 text-gray-400 group-hover:text-brand transition-colors" />
               </div>
             </button>
           </div>
