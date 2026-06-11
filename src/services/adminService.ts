@@ -6,6 +6,9 @@ import type {
   DailySummary,
   AdminFeedbackItem,
   FeedbackStatus,
+  AdminPhotoSubmission,
+  PhotoSubmissionStatus,
+  ApprovePhotoSubmissionInput,
 } from '@/types/admin';
 
 export interface ActivityItem {
@@ -177,6 +180,54 @@ export class AdminService {
         p_id: id,
         p_status: status,
         p_notes: notes ?? null,
+      })
+    );
+  }
+
+  // --- Photo submissions (previously unreadable by admins) -------------------
+  static async getPhotoSubmissions(limit = 200): Promise<AdminPhotoSubmission[]> {
+    try {
+      return await unwrap<AdminPhotoSubmission[]>(
+        supabase.rpc('admin_list_photo_submissions', { p_limit: limit })
+      );
+    } catch (error) {
+      console.error('Error fetching photo submissions:', error);
+      return [];
+    }
+  }
+
+  // Approve a submission and publish it into the live game pool. Returns the
+  // new game_images id.
+  static async approvePhotoSubmission(
+    id: string,
+    input: ApprovePhotoSubmissionInput
+  ): Promise<string> {
+    const data = await unwrap<{ image_id: string }>(
+      supabase.rpc('admin_approve_photo_submission', {
+        p_id: id,
+        p_image_url: input.imageUrl,
+        p_year: input.year,
+        p_lat: input.lat,
+        p_lng: input.lng,
+        p_location_name: input.locationName,
+        p_description: input.description,
+        p_notes: input.notes ?? null,
+      })
+    );
+    return data.image_id;
+  }
+
+  static async setPhotoSubmissionStatus(
+    id: string,
+    status: Exclude<PhotoSubmissionStatus, 'approved'>,
+    opts: { notes?: string; rejectionReason?: string } = {}
+  ): Promise<void> {
+    await unwrap(
+      supabase.rpc('admin_set_photo_submission_status', {
+        p_id: id,
+        p_status: status,
+        p_notes: opts.notes ?? null,
+        p_rejection_reason: opts.rejectionReason ?? null,
       })
     );
   }

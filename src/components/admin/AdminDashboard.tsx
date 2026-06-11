@@ -15,6 +15,7 @@ import {
   Settings,
   Shield,
   MessageSquare,
+  Image as ImageIcon,
   RefreshCw
 } from 'lucide-react';
 import { AdminService } from '@/services/adminService';
@@ -24,6 +25,7 @@ import { AdminUsersPanel } from './AdminUsersPanel';
 import { AdminAnalyticsPanel } from './AdminAnalyticsPanel';
 import { AdminSettingsPanel } from './AdminSettingsPanel';
 import { AdminFeedbackPanel } from './AdminFeedbackPanel';
+import { AdminSubmissionsPanel } from './AdminSubmissionsPanel';
 
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<AdminDashboardStats | null>(null);
@@ -230,7 +232,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto bg-white shadow-sm border border-gray-200">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto bg-white shadow-sm border border-gray-200">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <BarChart3 className="h-4 w-4" />
               Overview
@@ -246,6 +248,10 @@ export const AdminDashboard: React.FC = () => {
             <TabsTrigger value="feedback" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <MessageSquare className="h-4 w-4" />
               Feedback
+            </TabsTrigger>
+            <TabsTrigger value="submissions" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
+              <ImageIcon className="h-4 w-4" />
+              Submissions
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <Settings className="h-4 w-4" />
@@ -332,6 +338,10 @@ export const AdminDashboard: React.FC = () => {
 
           <TabsContent value="feedback">
             <AdminFeedbackPanel />
+          </TabsContent>
+
+          <TabsContent value="submissions">
+            <AdminSubmissionsPanel />
           </TabsContent>
 
           <TabsContent value="settings">

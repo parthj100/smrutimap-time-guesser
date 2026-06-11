@@ -959,6 +959,19 @@ export type Database = {
       }
       _duel_resolve_round: { Args: { p_round_id: string }; Returns: undefined }
       _is_admin: { Args: never; Returns: boolean }
+      admin_approve_photo_submission: {
+        Args: {
+          p_description: string
+          p_id: string
+          p_image_url: string
+          p_lat: number
+          p_lng: number
+          p_location_name: string
+          p_notes?: string
+          p_year: number
+        }
+        Returns: Json
+      }
       admin_clean_old_analytics: { Args: { p_days?: number }; Returns: Json }
       admin_daily_summary: { Args: { p_days?: number }; Returns: Json }
       admin_list_feedback: { Args: { p_limit?: number }; Returns: Json }
@@ -969,8 +982,18 @@ export type Database = {
       admin_overview: { Args: never; Returns: Json }
       admin_recent_activity: { Args: { p_limit?: number }; Returns: Json }
       admin_reset_user_stats: { Args: { p_target: string }; Returns: Json }
+      admin_list_photo_submissions: { Args: { p_limit?: number }; Returns: Json }
       admin_set_feedback_status: {
         Args: { p_id: string; p_notes?: string; p_status: string }
+        Returns: Json
+      }
+      admin_set_photo_submission_status: {
+        Args: {
+          p_id: string
+          p_notes?: string
+          p_rejection_reason?: string
+          p_status: string
+        }
         Returns: Json
       }
       admin_set_user_ban: {

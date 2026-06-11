@@ -85,6 +85,41 @@ export interface AdminFeedbackItem {
   created_at: string;
 }
 
+export type PhotoSubmissionStatus =
+  | 'pending'
+  | 'reviewing'
+  | 'approved'
+  | 'rejected'
+  | 'needs_info';
+
+export interface AdminPhotoSubmission {
+  id: string;
+  submitter_name: string;
+  email: string | null;
+  photo_url: string;
+  location_description: string | null;
+  year_taken: number | null;
+  year_confidence: string | null;
+  description: string | null;
+  clues_description: string | null;
+  status: PhotoSubmissionStatus;
+  admin_notes: string | null;
+  rejection_reason: string | null;
+  approval_date: string | null;
+  user_id: string | null;
+  created_at: string;
+}
+
+export interface ApprovePhotoSubmissionInput {
+  imageUrl: string;
+  year: number;
+  lat: number;
+  lng: number;
+  locationName: string;
+  description: string;
+  notes?: string;
+}
+
 export interface AdminSettings {
   maintenanceMode: boolean;
   allowNewRegistrations: boolean;
