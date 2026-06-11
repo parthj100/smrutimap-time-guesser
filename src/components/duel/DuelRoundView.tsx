@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { CheckCircle2, Eye, Hourglass, Zap } from 'lucide-react';
-import GameImage from '@/components/GameImage';
 import MapSelector from '@/components/MapSelector';
 import YearSelector from '@/components/YearSelector';
 import DuelHud from './DuelHud';
+import DuelPhoto from './DuelPhoto';
 import { GAME_CONSTANTS } from '@/constants/gameConstants';
 import type { DuelRoundImage } from '@/services/duelService';
 import type { DuelPlayer, DuelRoundInfo, DuelGuess } from '@/types/duel';
@@ -109,50 +109,45 @@ const DuelRoundView: React.FC<DuelRoundViewProps> = ({
         <div className="flex justify-center mt-3 px-3 z-10">{statusPill}</div>
       )}
 
-      <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:overflow-hidden">
-        {/* Photo */}
-        <div className="min-h-[40vh] lg:min-h-0 lg:h-full rounded-2xl overflow-hidden bg-gray-900/5">
-          {image ? (
-            <GameImage imageUrl={image.image_url} />
-          ) : (
-            <div className="w-full h-full min-h-[40vh] flex items-center justify-center text-gray-400">
-              Loading photo…
-            </div>
-          )}
-        </div>
-
-        {/* Guess controls */}
-        <div className="flex flex-col gap-3 lg:h-full lg:overflow-hidden">
-          <div className="h-[45vh] lg:h-auto lg:flex-1 lg:min-h-0">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 flex flex-col gap-3 sm:gap-4 lg:min-h-0">
+        {/* Photo and map: same level, same size */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:flex-1 lg:min-h-0">
+          <div className="h-[40vh] lg:h-full lg:min-h-0">
+            <DuelPhoto imageUrl={image?.image_url ?? null} />
+          </div>
+          <div className="h-[45vh] lg:h-full lg:min-h-0">
             <MapSelector
               onLocationSelected={(lat, lng) => setLocation({ lat, lng })}
               isDisabled={iHaveGuessed || isSpectator || submitting}
               guessedLocation={lockedLocation}
             />
           </div>
+        </div>
 
-          {!isSpectator && (
-            <>
+        {/* Year + submit bar */}
+        {!isSpectator && (
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:items-center shrink-0">
+            <div className="flex-1 min-w-0">
               <YearSelector
                 onYearSelected={setYear}
                 isDisabled={iHaveGuessed || submitting}
               />
-              <Button
-                onClick={handleSubmit}
-                disabled={!location || iHaveGuessed || submitting}
-                className="w-full h-14 text-lg font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-lg transition-all disabled:opacity-50"
-              >
-                {iHaveGuessed
-                  ? 'Locked in ✓'
-                  : submitting
-                    ? 'Submitting…'
-                    : location
-                      ? 'Lock in guess'
-                      : 'Pick a location on the map'}
-              </Button>
-            </>
-          )}
-        </div>
+            </div>
+            <Button
+              onClick={handleSubmit}
+              disabled={!location || iHaveGuessed || submitting}
+              className="w-full lg:w-80 h-14 text-lg font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-lg transition-all disabled:opacity-50 shrink-0"
+            >
+              {iHaveGuessed
+                ? 'Locked in ✓'
+                : submitting
+                  ? 'Submitting…'
+                  : location
+                    ? 'Lock in guess'
+                    : 'Pick a location on the map'}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

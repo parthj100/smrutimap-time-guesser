@@ -21,6 +21,10 @@ const DuelResultsMap: React.FC<DuelResultsMapProps> = ({ actual, pins }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const overlaysRef = useRef<(google.maps.Marker | google.maps.Polyline)[]>([]);
+  // Parents rebuild `pins`/`actual` objects on every render (e.g. each
+  // countdown tick); only redraw overlays when the underlying data changes,
+  // otherwise the markers flicker.
+  const appliedSigRef = useRef('');
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -46,6 +50,14 @@ const DuelResultsMap: React.FC<DuelResultsMapProps> = ({ actual, pins }) => {
   useEffect(() => {
     const map = mapRef.current;
     if (!ready || !map) return;
+
+    const sig = JSON.stringify([
+      actual.lat,
+      actual.lng,
+      pins.map((p) => [p.lat, p.lng, p.color, p.label]),
+    ]);
+    if (sig === appliedSigRef.current) return;
+    appliedSigRef.current = sig;
 
     overlaysRef.current.forEach((o) => o.setMap(null));
     overlaysRef.current = [];
