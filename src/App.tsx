@@ -17,6 +17,8 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 const Index = lazy(() => import("./pages/Index"));
 const CustomImages = lazy(() => import("./pages/CustomImages"));
 const Admin = lazy(() => import("./pages/Admin"));
+const Duels = lazy(() => import("./pages/Duels"));
+const DuelPage = lazy(() => import("./pages/Duel"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading component for lazy-loaded routes
@@ -61,6 +63,8 @@ const App = () => {
                     <Route path="/" element={<Index />} />
                     <Route path="/custom-images" element={<CustomImages />} />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/duels" element={<Duels />} />
+                    <Route path="/duel/:code" element={<DuelPage />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

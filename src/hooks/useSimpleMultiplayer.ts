@@ -82,7 +82,9 @@ export const useSimpleMultiplayer = () => {
     const ch = sb.channel(`presence-room-${roomCode}`, {
       config: {
         presence: {
-          key: user.id
+          key: user.id,
+          // realtime-js 2.11 only relays presence when explicitly enabled.
+          enabled: true
         }
       }
     });

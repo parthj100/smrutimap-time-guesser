@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -79,7 +79,7 @@ export type Database = {
           city: string | null
           country: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           page_visited: string | null
           referrer: string | null
           session_id: string
@@ -92,7 +92,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           page_visited?: string | null
           referrer?: string | null
           session_id: string
@@ -105,7 +105,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           page_visited?: string | null
           referrer?: string | null
           session_id?: string
@@ -136,6 +136,289 @@ export type Database = {
           image_ids?: string[]
         }
         Relationships: []
+      }
+      duel_guesses: {
+        Row: {
+          distance_km: number | null
+          duel_id: string
+          guessed_lat: number | null
+          guessed_lng: number | null
+          guessed_year: number | null
+          id: string
+          is_timeout: boolean
+          location_score: number
+          player_id: string
+          round_id: string
+          submitted_at: string
+          total_score: number
+          year_score: number
+        }
+        Insert: {
+          distance_km?: number | null
+          duel_id: string
+          guessed_lat?: number | null
+          guessed_lng?: number | null
+          guessed_year?: number | null
+          id?: string
+          is_timeout?: boolean
+          location_score: number
+          player_id: string
+          round_id: string
+          submitted_at?: string
+          total_score: number
+          year_score: number
+        }
+        Update: {
+          distance_km?: number | null
+          duel_id?: string
+          guessed_lat?: number | null
+          guessed_lng?: number | null
+          guessed_year?: number | null
+          id?: string
+          is_timeout?: boolean
+          location_score?: number
+          player_id?: string
+          round_id?: string
+          submitted_at?: string
+          total_score?: number
+          year_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duel_guesses_duel_id_fkey"
+            columns: ["duel_id"]
+            isOneToOne: false
+            referencedRelation: "duels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duel_guesses_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "duel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duel_guesses_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "duel_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duel_player_secrets: {
+        Row: {
+          player_id: string
+          token: string
+        }
+        Insert: {
+          player_id: string
+          token?: string
+        }
+        Update: {
+          player_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duel_player_secrets_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: true
+            referencedRelation: "duel_players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duel_players: {
+        Row: {
+          display_name: string
+          duel_id: string
+          hp: number
+          id: string
+          is_host: boolean
+          joined_at: string
+          user_id: string | null
+        }
+        Insert: {
+          display_name: string
+          duel_id: string
+          hp: number
+          id?: string
+          is_host?: boolean
+          joined_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          display_name?: string
+          duel_id?: string
+          hp?: number
+          id?: string
+          is_host?: boolean
+          joined_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duel_players_duel_id_fkey"
+            columns: ["duel_id"]
+            isOneToOne: false
+            referencedRelation: "duels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duel_rounds: {
+        Row: {
+          base_deadline: string
+          damage: number | null
+          duel_id: string
+          guess_deadline: string | null
+          id: string
+          image_id: string
+          multiplier: number
+          next_round_at: string | null
+          resolved_at: string | null
+          round_number: number
+          score_diff: number | null
+          started_at: string
+          winner_player_id: string | null
+        }
+        Insert: {
+          base_deadline: string
+          damage?: number | null
+          duel_id: string
+          guess_deadline?: string | null
+          id?: string
+          image_id: string
+          multiplier?: number
+          next_round_at?: string | null
+          resolved_at?: string | null
+          round_number: number
+          score_diff?: number | null
+          started_at?: string
+          winner_player_id?: string | null
+        }
+        Update: {
+          base_deadline?: string
+          damage?: number | null
+          duel_id?: string
+          guess_deadline?: string | null
+          id?: string
+          image_id?: string
+          multiplier?: number
+          next_round_at?: string | null
+          resolved_at?: string | null
+          round_number?: number
+          score_diff?: number | null
+          started_at?: string
+          winner_player_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duel_rounds_duel_id_fkey"
+            columns: ["duel_id"]
+            isOneToOne: false
+            referencedRelation: "duels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duel_rounds_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "game_images"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duel_rounds_winner_player_id_fkey"
+            columns: ["winner_player_id"]
+            isOneToOne: false
+            referencedRelation: "duel_players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duel_secrets: {
+        Row: {
+          duel_id: string
+          image_ids: string[]
+        }
+        Insert: {
+          duel_id: string
+          image_ids: string[]
+        }
+        Update: {
+          duel_id?: string
+          image_ids?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duel_secrets_duel_id_fkey"
+            columns: ["duel_id"]
+            isOneToOne: true
+            referencedRelation: "duels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duels: {
+        Row: {
+          code: string
+          created_at: string
+          current_round: number
+          finish_reason: string | null
+          finished_at: string | null
+          guess_window_seconds: number
+          id: string
+          results_seconds: number
+          round_seconds: number
+          started_at: string | null
+          starting_hp: number
+          status: string
+          updated_at: string
+          winner_player_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          current_round?: number
+          finish_reason?: string | null
+          finished_at?: string | null
+          guess_window_seconds?: number
+          id?: string
+          results_seconds?: number
+          round_seconds?: number
+          started_at?: string | null
+          starting_hp?: number
+          status?: string
+          updated_at?: string
+          winner_player_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          current_round?: number
+          finish_reason?: string | null
+          finished_at?: string | null
+          guess_window_seconds?: number
+          id?: string
+          results_seconds?: number
+          round_seconds?: number
+          started_at?: string | null
+          starting_hp?: number
+          status?: string
+          updated_at?: string
+          winner_player_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duels_winner_fk"
+            columns: ["winner_player_id"]
+            isOneToOne: false
+            referencedRelation: "duel_players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feedback: {
         Row: {
@@ -245,162 +528,6 @@ export type Database = {
         }
         Relationships: []
       }
-      multiplayer_rooms: {
-        Row: {
-          code: string
-          created_at: string
-          current_players: number
-          finished_at: string | null
-          host_id: string
-          id: string
-          max_players: number
-          name: string
-          settings: Json
-          started_at: string | null
-          status: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          current_players?: number
-          finished_at?: string | null
-          host_id: string
-          id?: string
-          max_players?: number
-          name: string
-          settings?: Json
-          started_at?: string | null
-          status?: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          current_players?: number
-          finished_at?: string | null
-          host_id?: string
-          id?: string
-          max_players?: number
-          name?: string
-          settings?: Json
-          started_at?: string | null
-          status?: string
-        }
-        Relationships: []
-      }
-      multiplayer_round_results: {
-        Row: {
-          id: string
-          location_guess_lat: number
-          location_guess_lng: number
-          location_score: number
-          participant_id: string
-          round_number: number
-          session_id: string
-          submitted_at: string
-          time_taken: number
-          total_score: number
-          year_guess: number
-          year_score: number
-        }
-        Insert: {
-          id?: string
-          location_guess_lat: number
-          location_guess_lng: number
-          location_score?: number
-          participant_id: string
-          round_number: number
-          session_id: string
-          submitted_at?: string
-          time_taken?: number
-          total_score?: number
-          year_guess: number
-          year_score?: number
-        }
-        Update: {
-          id?: string
-          location_guess_lat?: number
-          location_guess_lng?: number
-          location_score?: number
-          participant_id?: string
-          round_number?: number
-          session_id?: string
-          submitted_at?: string
-          time_taken?: number
-          total_score?: number
-          year_guess?: number
-          year_score?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "multiplayer_round_results_participant_id_fkey"
-            columns: ["participant_id"]
-            isOneToOne: false
-            referencedRelation: "room_participants"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "multiplayer_round_results_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "multiplayer_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      multiplayer_sessions: {
-        Row: {
-          created_at: string
-          current_image_id: string | null
-          current_round: number
-          id: string
-          images: string[]
-          room_id: string
-          round_end_time: string | null
-          round_start_time: string | null
-          status: string
-          total_rounds: number
-        }
-        Insert: {
-          created_at?: string
-          current_image_id?: string | null
-          current_round?: number
-          id?: string
-          images?: string[]
-          room_id: string
-          round_end_time?: string | null
-          round_start_time?: string | null
-          status?: string
-          total_rounds: number
-        }
-        Update: {
-          created_at?: string
-          current_image_id?: string | null
-          current_round?: number
-          id?: string
-          images?: string[]
-          room_id?: string
-          round_end_time?: string | null
-          round_start_time?: string | null
-          status?: string
-          total_rounds?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "multiplayer_sessions_current_image_id_fkey"
-            columns: ["current_image_id"]
-            isOneToOne: false
-            referencedRelation: "game_images"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "multiplayer_sessions_room_id_fkey"
-            columns: ["room_id"]
-            isOneToOne: false
-            referencedRelation: "multiplayer_rooms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       photo_submissions: {
         Row: {
           admin_notes: string | null
@@ -463,50 +590,6 @@ export type Database = {
           year_taken?: number | null
         }
         Relationships: []
-      }
-      room_participants: {
-        Row: {
-          avatar_color: string
-          display_name: string
-          id: string
-          joined_at: string
-          last_seen: string | null
-          role: string
-          room_id: string
-          status: string
-          user_id: string | null
-        }
-        Insert: {
-          avatar_color: string
-          display_name: string
-          id?: string
-          joined_at?: string
-          last_seen?: string | null
-          role?: string
-          room_id: string
-          status?: string
-          user_id?: string | null
-        }
-        Update: {
-          avatar_color?: string
-          display_name?: string
-          id?: string
-          joined_at?: string
-          last_seen?: string | null
-          role?: string
-          room_id?: string
-          status?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "room_participants_room_id_fkey"
-            columns: ["room_id"]
-            isOneToOne: false
-            referencedRelation: "multiplayer_rooms"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       round_results: {
         Row: {
@@ -848,57 +931,142 @@ export type Database = {
       }
     }
     Functions: {
-      cleanup_expired_rooms: {
-        Args: Record<PropertyKey, never>
-        Returns: number
+      _duel_create_round: {
+        Args: { p_duel_id: string; p_round_number: number }
+        Returns: undefined
       }
-      generate_unique_room_code: {
-        Args: Record<PropertyKey, never>
+      _duel_effective_deadline: {
+        Args: { r: Database["public"]["Tables"]["duel_rounds"]["Row"] }
         Returns: string
       }
+      _duel_player_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          display_name: string
+          duel_id: string
+          hp: number
+          id: string
+          is_host: boolean
+          joined_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "duel_players"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      _duel_resolve_round: { Args: { p_round_id: string }; Returns: undefined }
+      cleanup_expired_rooms: { Args: never; Returns: number }
+      duel_advance_round: { Args: { p_duel_id: string }; Returns: Json }
+      duel_create: {
+        Args: { p_display_name: string; p_settings?: Json }
+        Returns: Json
+      }
+      duel_distance_km: {
+        Args: { lat1: number; lat2: number; lng1: number; lng2: number }
+        Returns: number
+      }
+      duel_get_state: {
+        Args: { p_code: string; p_token?: string }
+        Returns: Json
+      }
+      duel_join: {
+        Args: { p_code: string; p_display_name: string }
+        Returns: Json
+      }
+      duel_leave: { Args: { p_token: string }; Returns: Json }
+      duel_location_score_from_km: { Args: { p_km: number }; Returns: number }
+      duel_resolve_round: {
+        Args: { p_duel_id: string; p_round_number: number }
+        Returns: Json
+      }
+      duel_round_multiplier: { Args: { p_round: number }; Returns: number }
+      duel_round_results: {
+        Args: { p_duel_id: string; p_round_number: number }
+        Returns: Json
+      }
+      duel_rounds_summary: { Args: { p_duel_id: string }; Returns: Json }
+      duel_start: { Args: { p_token: string }; Returns: Json }
+      duel_submit_guess: {
+        Args: {
+          p_lat: number
+          p_lng: number
+          p_round_number: number
+          p_token: string
+          p_year: number
+        }
+        Returns: Json
+      }
+      duel_year_score: {
+        Args: { p_actual: number; p_guessed: number }
+        Returns: number
+      }
+      generate_unique_room_code: { Args: never; Returns: string }
       get_leaderboard: {
         Args: {
-          metric_type?: string
-          time_frame?: string
           game_mode_filter?: string
           limit_count?: number
+          metric_type?: string
+          time_frame?: string
         }
         Returns: {
-          id: string
-          username: string
-          display_name: string
           avatar_url: string
+          average_score: number
+          best_single_game_score: number
+          display_name: string
+          id: string
+          rank_position: number
           total_games_played: number
           total_score: number
-          best_single_game_score: number
-          average_score: number
-          rank_position: number
+          username: string
         }[]
       }
       get_multiplayer_game_images: {
         Args: { image_count?: number }
         Returns: string[]
       }
+      get_session_leaderboard: {
+        Args: {
+          end_ts?: string
+          game_mode_filter?: string
+          limit_count?: number
+          start_ts?: string
+        }
+        Returns: {
+          avatar_url: string
+          average_score: number
+          best_single_game_score: number
+          center: string
+          display_name: string
+          id: string
+          total_games_played: number
+          total_score: number
+          user_id: string
+          username: string
+        }[]
+      }
       get_user_by_username: {
         Args: { username_param: string }
         Returns: {
-          id: string
-          user_id: string
-          username: string
+          average_score: number
+          best_single_game_score: number
+          created_at: string
           display_name: string
+          id: string
           total_games_played: number
           total_score: number
-          best_single_game_score: number
-          average_score: number
-          created_at: string
           updated_at: string
+          user_id: string
+          username: string
         }[]
       }
       update_user_stats: {
         Args: {
-          user_uuid: string
           game_score: number
           rounds_completed: number
+          user_uuid: string
         }
         Returns: undefined
       }

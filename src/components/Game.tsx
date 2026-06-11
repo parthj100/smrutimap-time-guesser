@@ -13,7 +13,7 @@ import GameHeader from './GameHeader';
 import GameContent from './GameContent';
 import GameControls from './GameControls';
 import InfiniteImageBackground from './InfiniteImageBackground';
-import { SimpleMultiplayerContainer } from './SimpleMultiplayerContainer';
+import MultiplayerHub from './MultiplayerHub';
 import { MultiplayerFinalStandings } from './MultiplayerFinalStandings';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Home as HomeIcon, ArrowRight } from 'lucide-react';
@@ -743,9 +743,9 @@ const Game: React.FC<GameProps> = ({
         />
       )}
 
-      {/* Show multiplayer */}
+      {/* Show multiplayer (hub: Duels or Party Mode) */}
       {gameMode === 'simple_multiplayer' && (
-        <SimpleMultiplayerContainer
+        <MultiplayerHub
           onBack={handleBackFromMultiplayer}
           onHome={() => setGameMode('home')}
         />
