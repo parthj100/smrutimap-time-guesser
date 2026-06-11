@@ -67,6 +67,22 @@ export interface AdminUserStats {
   averageScore: number;
   lastActive: string;
   isAdmin: boolean;
+  banned: boolean;
+  bannedReason: string | null;
+}
+
+export type FeedbackStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+
+export interface AdminFeedbackItem {
+  id: string;
+  category: string;
+  message: string;
+  email: string | null;
+  status: FeedbackStatus;
+  admin_notes: string | null;
+  page_url: string | null;
+  user_id: string | null;
+  created_at: string;
 }
 
 export interface AdminSettings {

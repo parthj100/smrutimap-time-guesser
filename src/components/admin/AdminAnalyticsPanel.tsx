@@ -76,7 +76,7 @@ export const AdminAnalyticsPanel: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Card className="bg-white shadow-lg border-0">
+        <Card className="bg-white shadow-sm border border-gray-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
@@ -98,7 +98,7 @@ export const AdminAnalyticsPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Analytics Overview */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -195,7 +195,7 @@ export const AdminAnalyticsPanel: React.FC = () => {
       </Card>
 
       {/* Visitor Breakdown */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Eye className="h-5 w-5" />
@@ -288,7 +288,7 @@ export const AdminAnalyticsPanel: React.FC = () => {
       </Card>
 
       {/* Daily Summary Chart */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
@@ -323,7 +323,7 @@ export const AdminAnalyticsPanel: React.FC = () => {
       </Card>
 
       {/* Recent Visitors */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">

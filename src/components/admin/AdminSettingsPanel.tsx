@@ -6,15 +6,22 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { 
-  Settings, 
-  Shield, 
-  Gamepad2, 
-  Users, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Settings,
+  Gamepad2,
   Database,
   Save,
-  RefreshCw,
-  AlertTriangle,
+  Trash2,
   CheckCircle
 } from 'lucide-react';
 import { AdminService } from '@/services/adminService';
@@ -75,6 +82,8 @@ export const AdminSettingsPanel: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [initialSettings, setInitialSettings] = useState<AdminSettings | null>(null);
+  const [confirmClean, setConfirmClean] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
 
   // Load settings from database on component mount
   useEffect(() => {
@@ -149,36 +158,29 @@ export const AdminSettingsPanel: React.FC = () => {
     toast.success('Settings reset to defaults');
   };
 
-  const handleDatabaseOperation = async (operation: string) => {
-    setLoading(true);
+  const retentionDays = settings.analytics_settings.retentionDays || 90;
+
+  const handleCleanAnalytics = async () => {
+    setCleaning(true);
     try {
-      switch (operation) {
-        case 'backup':
-          toast.info('Database backup feature would be implemented here');
-          break;
-        case 'clean':
-          toast.info('Data cleanup feature would be implemented here');
-          break;
-        case 'reset_stats':
-          toast.info('Stats reset feature would be implemented here');
-          break;
-        case 'clear_sessions':
-          toast.info('Session cleanup feature would be implemented here');
-          break;
-        default:
-          toast.error('Unknown operation');
-      }
+      const deleted = await AdminService.cleanOldAnalytics(retentionDays);
+      toast.success(
+        deleted > 0
+          ? `Removed ${deleted.toLocaleString()} analytics ${deleted === 1 ? 'row' : 'rows'} older than ${retentionDays} days`
+          : `No analytics rows older than ${retentionDays} days`
+      );
+      setConfirmClean(false);
     } catch (error) {
-      toast.error(`Failed to perform ${operation}`);
+      toast.error(error instanceof Error ? error.message : 'Cleanup failed');
     } finally {
-      setLoading(false);
+      setCleaning(false);
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Game Settings */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Gamepad2 className="h-5 w-5" />
@@ -245,7 +247,7 @@ export const AdminSettingsPanel: React.FC = () => {
       </Card>
 
       {/* System Settings */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
@@ -357,69 +359,66 @@ export const AdminSettingsPanel: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Database Management */}
-      <Card className="bg-white shadow-lg border-0">
+      {/* Database Maintenance */}
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5" />
-            Database Management
+            <Database className="h-5 w-5 text-brand" />
+            Database Maintenance
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button 
-              variant="outline" 
-              className="justify-start"
-              onClick={() => handleDatabaseOperation('backup')}
-              disabled={loading}
-            >
-              <Shield className="h-4 w-4 mr-2" />
-              Backup Database
-            </Button>
-            <Button 
-              variant="outline" 
-              className="justify-start"
-              onClick={() => handleDatabaseOperation('clean')}
-              disabled={loading}
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Clean Old Data
-            </Button>
-            <Button 
-              variant="outline" 
-              className="justify-start"
-              onClick={() => handleDatabaseOperation('reset_stats')}
-              disabled={loading}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Reset All Stats
-            </Button>
-            <Button 
-              variant="outline" 
-              className="justify-start"
-              onClick={() => handleDatabaseOperation('clear_sessions')}
-              disabled={loading}
-            >
-              <Gamepad2 className="h-4 w-4 mr-2" />
-              Clear Game Sessions
-            </Button>
-          </div>
-          
-          {/* Warning about database operations */}
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
-              <span className="text-sm text-amber-800">
-                Database operations are currently informational only. In a production environment, 
-                these would perform actual database operations.
-              </span>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <div>
+              <p className="font-medium text-gray-900">Prune old analytics</p>
+              <p className="text-sm text-gray-600">
+                Permanently delete visitor-tracking rows older than{' '}
+                <span className="font-semibold">{retentionDays} days</span>{' '}
+                (set in Analytics retention). Game history and the leaderboard
+                are never touched.
+              </p>
             </div>
+            <Button
+              variant="outline"
+              className="text-brand border-brand/30 hover:bg-brand/5 shrink-0"
+              onClick={() => setConfirmClean(true)}
+              disabled={cleaning}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {cleaning ? 'Cleaning…' : 'Clean now'}
+            </Button>
           </div>
         </CardContent>
       </Card>
 
+      <AlertDialog open={confirmClean} onOpenChange={(o) => !o && setConfirmClean(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Prune analytics older than {retentionDays} days?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently deletes old visitor-tracking rows. It does not
+              affect users, game sessions, or the leaderboard. This cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={cleaning}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleCleanAnalytics();
+              }}
+              disabled={cleaning}
+              className="bg-brand hover:bg-brand-dark"
+            >
+              {cleaning ? 'Cleaning…' : 'Delete old analytics'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Actions */}
-      <Card className="bg-white shadow-lg border-0">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

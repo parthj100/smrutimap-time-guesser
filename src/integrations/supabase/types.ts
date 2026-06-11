@@ -958,6 +958,25 @@ export type Database = {
         }
       }
       _duel_resolve_round: { Args: { p_round_id: string }; Returns: undefined }
+      _is_admin: { Args: never; Returns: boolean }
+      admin_clean_old_analytics: { Args: { p_days?: number }; Returns: Json }
+      admin_daily_summary: { Args: { p_days?: number }; Returns: Json }
+      admin_list_feedback: { Args: { p_limit?: number }; Returns: Json }
+      admin_list_users: {
+        Args: { p_limit?: number; p_offset?: number; p_search?: string }
+        Returns: Json
+      }
+      admin_overview: { Args: never; Returns: Json }
+      admin_recent_activity: { Args: { p_limit?: number }; Returns: Json }
+      admin_reset_user_stats: { Args: { p_target: string }; Returns: Json }
+      admin_set_feedback_status: {
+        Args: { p_id: string; p_notes?: string; p_status: string }
+        Returns: Json
+      }
+      admin_set_user_ban: {
+        Args: { p_banned: boolean; p_reason?: string; p_target: string }
+        Returns: Json
+      }
       cleanup_expired_rooms: { Args: never; Returns: number }
       duel_advance_round: { Args: { p_duel_id: string }; Returns: Json }
       duel_create: {

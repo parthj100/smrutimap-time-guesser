@@ -8,21 +8,22 @@ import {
   Trophy, 
   TrendingUp, 
   Eye, 
-  Gamepad2, 
-  UserPlus, 
+  Gamepad2,
   Activity,
   BarChart3,
   Calendar,
   Settings,
   Shield,
+  MessageSquare,
   RefreshCw
 } from 'lucide-react';
 import { AdminService } from '@/services/adminService';
-import type { AdminDashboardStats, AdminUserStats, DailySummary } from '@/types/admin';
+import type { AdminDashboardStats } from '@/types/admin';
 import type { ActivityItem } from '@/services/adminService';
 import { AdminUsersPanel } from './AdminUsersPanel';
 import { AdminAnalyticsPanel } from './AdminAnalyticsPanel';
 import { AdminSettingsPanel } from './AdminSettingsPanel';
+import { AdminFeedbackPanel } from './AdminFeedbackPanel';
 
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<AdminDashboardStats | null>(null);
@@ -33,19 +34,21 @@ export const AdminDashboard: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   useEffect(() => {
-    loadDashboardStats();
-    
-    // Set up real-time updates every 30 seconds
+    loadDashboardStats(true);
+
+    // Background refresh every 30s — silent, so it never blanks the screen or
+    // interrupts an open dialog / active tab.
     const interval = setInterval(() => {
-      loadDashboardStats();
+      loadDashboardStats(false);
     }, 30000);
-    
+
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadDashboardStats = async () => {
+  const loadDashboardStats = async (initial = false) => {
     try {
-      setLoading(true);
+      if (initial) setLoading(true);
       const [dashboardStats, activity] = await Promise.all([
         AdminService.getDashboardStats(),
         AdminService.getRecentActivity(5)
@@ -53,17 +56,18 @@ export const AdminDashboard: React.FC = () => {
       setStats(dashboardStats);
       setRecentActivity(activity);
       setLastUpdated(new Date());
+      setError(null);
     } catch (err) {
-      setError('Failed to load dashboard stats');
+      if (initial) setError('Failed to load dashboard stats');
       console.error('Dashboard stats error:', err);
     } finally {
-      setLoading(false);
+      if (initial) setLoading(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className="min-h-screen bg-cream p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
@@ -80,7 +84,7 @@ export const AdminDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className="min-h-screen bg-cream p-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <h2 className="text-red-800 font-semibold mb-2">Error Loading Dashboard</h2>
@@ -123,13 +127,13 @@ export const AdminDashboard: React.FC = () => {
   if (!stats) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-cream">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center">
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -138,7 +142,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="bg-green-100 text-green-800">
+              <Badge variant="secondary" className="bg-brand/10 text-brand">
                 Admin Access
               </Badge>
               <div className="text-xs text-gray-500">
@@ -153,7 +157,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Users */}
-          <Card className="bg-white shadow-lg border-0">
+          <Card className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -168,7 +172,7 @@ export const AdminDashboard: React.FC = () => {
           </Card>
 
           {/* Today's Visitors */}
-          <Card className="bg-white shadow-lg border-0">
+          <Card className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -188,7 +192,7 @@ export const AdminDashboard: React.FC = () => {
           </Card>
 
           {/* Total Games */}
-          <Card className="bg-white shadow-lg border-0">
+          <Card className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -206,7 +210,7 @@ export const AdminDashboard: React.FC = () => {
           </Card>
 
           {/* Total Score */}
-          <Card className="bg-white shadow-lg border-0">
+          <Card className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -226,20 +230,24 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white shadow-lg">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto bg-white shadow-sm border border-gray-200">
+            <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <BarChart3 className="h-4 w-4" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
+            <TabsTrigger value="users" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <Users className="h-4 w-4" />
               Users
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <TrendingUp className="h-4 w-4" />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
+            <TabsTrigger value="feedback" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
+              <MessageSquare className="h-4 w-4" />
+              Feedback
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-white">
               <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>
@@ -248,7 +256,7 @@ export const AdminDashboard: React.FC = () => {
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Quick Stats */}
-              <Card className="bg-white shadow-lg border-0">
+              <Card className="bg-white shadow-sm border border-gray-200">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Activity className="h-5 w-5" />
@@ -278,7 +286,7 @@ export const AdminDashboard: React.FC = () => {
               </Card>
 
               {/* Recent Activity */}
-              <Card className="bg-white shadow-lg border-0">
+              <Card className="bg-white shadow-sm border border-gray-200">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
@@ -320,6 +328,10 @@ export const AdminDashboard: React.FC = () => {
 
           <TabsContent value="analytics">
             <AdminAnalyticsPanel />
+          </TabsContent>
+
+          <TabsContent value="feedback">
+            <AdminFeedbackPanel />
           </TabsContent>
 
           <TabsContent value="settings">
