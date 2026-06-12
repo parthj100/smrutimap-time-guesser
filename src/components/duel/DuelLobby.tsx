@@ -178,7 +178,7 @@ const DuelLobby: React.FC<DuelLobbyProps> = ({
             {starting
               ? 'Starting…'
               : full
-                ? 'Start Duel ⚔️'
+                ? 'Start Duel'
                 : 'Waiting for opponent…'}
           </Button>
         )}

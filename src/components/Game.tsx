@@ -823,7 +823,7 @@ const Game: React.FC<GameProps> = ({
             
             <div className="text-center flex-1 mx-6 lg:mx-12">
               <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800 mb-3 lg:mb-4 font-manrope">
-                🏆 Final Results
+                Final Results
               </h1>
               <div className="text-sm lg:text-base text-gray-600 mt-2 font-medium font-poppins">
                 Game Complete! Congratulations to all players!

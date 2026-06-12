@@ -141,14 +141,7 @@ export const SimpleMultiplayerRoundResults: React.FC<SimpleMultiplayerRoundResul
     return `Player ${index + 1}`;
   };
 
-  const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return `#${rank}`;
-    }
-  };
+  const getRankIcon = (rank: number) => `#${rank}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
@@ -246,19 +239,19 @@ export const SimpleMultiplayerRoundResults: React.FC<SimpleMultiplayerRoundResul
                       card: 'bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 shadow-xl shadow-yellow-100/50',
                       avatar: 'bg-gradient-to-br from-yellow-400 to-amber-500',
                       badge: 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white',
-                      rankIcon: '👑'
+                      rankIcon: '1'
                     };
                     if (rank === 2) return {
                       card: 'bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-200 shadow-xl shadow-slate-100/50',
                       avatar: 'bg-gradient-to-br from-slate-400 to-gray-500',
                       badge: 'bg-gradient-to-r from-slate-400 to-gray-500 text-white',
-                      rankIcon: '🥈'
+                      rankIcon: '2'
                     };
                     if (rank === 3) return {
                       card: 'bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 shadow-xl shadow-orange-100/50',
                       avatar: 'bg-gradient-to-br from-orange-400 to-amber-600',
                       badge: 'bg-gradient-to-r from-orange-400 to-amber-600 text-white',
-                      rankIcon: '🥉'
+                      rankIcon: '3'
                     };
                     return {
                       card: isCurrentUser 

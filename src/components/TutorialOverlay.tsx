@@ -345,7 +345,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                   
                   {step.hint && (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 max-w-2xl">
-                      <p className="text-yellow-800 text-sm">💡 {step.hint}</p>
+                      <p className="text-yellow-800 text-sm">{step.hint}</p>
                     </div>
                   )}
                   

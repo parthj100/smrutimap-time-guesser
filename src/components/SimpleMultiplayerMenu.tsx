@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { ArrowLeft, Users, Plus, LogIn, Home } from 'lucide-react';
+import { ArrowLeft, Users, Plus, LogIn, Home, Gamepad2, KeyRound } from 'lucide-react';
 
 interface SimpleMultiplayerMenuProps {
   onBack: () => void;
@@ -110,7 +110,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Let's set up your game! 🎮
+                  Let's set up your game!
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed">
                   Choose your settings and we'll create a room for you and your friends
@@ -121,7 +121,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
             <div className="space-y-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  What should we call you? 👋
+                  What should we call you?
                 </label>
                 <Input
                   type="text"
@@ -137,7 +137,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-lg font-semibold text-gray-900 mb-3">
-                    Rounds 🔄
+                    Rounds
                   </label>
                   <Input
                     type="number"
@@ -175,7 +175,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                 disabled={isLoading}
                 className="w-full h-16 text-xl font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
-                {isLoading ? 'Creating room...' : 'Create Room 🚀'}
+                {isLoading ? 'Creating room...' : 'Create Room'}
               </Button>
             </div>
           </div>
@@ -218,7 +218,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Ready to join the fun? 🎉
+                  Ready to join the fun?
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed">
                   Enter the room code your friend shared with you
@@ -229,7 +229,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
             <div className="space-y-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  What should we call you? 👋
+                  What should we call you?
                 </label>
                 <Input
                   type="text"
@@ -244,7 +244,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
 
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  Room Code 🔑
+                  Room Code
                 </label>
                 <Input
                   type="text"
@@ -281,7 +281,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
                 disabled={isLoading}
                 className="w-full h-16 text-xl font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
-                {isLoading ? 'Joining room...' : 'Join Room 🎮'}
+                {isLoading ? 'Joining room...' : 'Join Room'}
               </Button>
             </div>
           </div>
@@ -323,7 +323,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
             
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Let's play together! 🌍
+                Let's play together!
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed">
                 Challenge your friends to guess when and where the Smruti photos were taken from around the world
@@ -337,7 +337,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
-                <span className="text-3xl">🎮</span>
+                <Gamepad2 className="w-8 h-8 text-brand shrink-0" />
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Create a Room
@@ -354,7 +354,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
               className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
-                <span className="text-3xl">🔑</span>
+                <KeyRound className="w-8 h-8 text-brand shrink-0" />
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Join a Room
@@ -369,7 +369,7 @@ export const SimpleMultiplayerMenu: React.FC<SimpleMultiplayerMenuProps> = ({
 
           <div className="text-center">
             <p className="text-gray-500 text-sm">
-              💡 Tip: You can play with friends anywhere in the world!
+              Tip: You can play with friends anywhere in the world!
             </p>
           </div>
         </div>

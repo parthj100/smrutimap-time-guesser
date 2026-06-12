@@ -18,14 +18,7 @@ interface MultiplayerFinalStandingsProps {
   getLeaderboard?: () => Array<{ userId: string; totalPoints: number }>;
 }
 
-const getRankIcon = (rank: number): string => {
-  switch (rank) {
-    case 1: return '🥇';
-    case 2: return '🥈';
-    case 3: return '🥉';
-    default: return `#${rank}`;
-  }
-};
+const getRankIcon = (rank: number): string => `#${rank}`;
 
 /**
  * Final standings shown on the multiplayer game-over screen. Extracted verbatim
@@ -93,8 +86,7 @@ export const MultiplayerFinalStandings: React.FC<MultiplayerFinalStandingsProps>
               <div>
                 <div className="text-xl lg:text-2xl font-bold text-gray-800">
                   {player.playerName}
-                  {player.isCurrentUser && <span className="text-blue-600 ml-2">🎯</span>}
-                  {index === 0 && <span className="text-yellow-600 ml-2">👑</span>}
+                  {player.isCurrentUser && <span className="text-blue-600 ml-2 text-base font-semibold">(you)</span>}
                 </div>
                 <div className="text-sm lg:text-base text-gray-600">
                   {index === 0 ? 'Winner!' : `${Math.round(player.totalPoints / totalRounds)} pts/round average`}

@@ -140,7 +140,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
             
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Welcome to your room! 🎮
+                Welcome to your room!
               </h2>
               <p className="text-lg text-gray-600 mb-6">
                 Share the room code with friends to start playing together
@@ -173,7 +173,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
           {/* Players List */}
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900 text-center">
-              Players ({displayedParticipantIds.length}) 👥
+              Players ({displayedParticipantIds.length})
             </h3>
             <div className="space-y-3">
               {displayedParticipantIds.map((participantId, index) => {
@@ -191,7 +191,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
                     <div className="flex-1">
                       <p className="font-semibold text-gray-900">
                         {isCurrentUser ? `You (${displayName})` : displayName}
-                        {isRoomHost && <span className="text-yellow-500 ml-2 text-xl">👑</span>}
+                        {isRoomHost && <Crown className="inline-block h-4 w-4 ml-2 text-yellow-500" />}
                       </p>
                       <p className="text-sm text-gray-600">
                         {isRoomHost ? 'Host' : 'Player'}
@@ -247,7 +247,7 @@ export const SimpleMultiplayerLobby: React.FC<SimpleMultiplayerLobbyProps> = ({
                 ) : (
                   <>
                     <Play className="h-6 w-6 mr-3" />
-                    Start Game! ({displayedParticipantIds.length} players) 🚀
+                    Start Game! ({displayedParticipantIds.length} players)
                   </>
                 )}
               </Button>

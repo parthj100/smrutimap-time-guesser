@@ -18,7 +18,9 @@ import {
   Check,
   XCircle,
   RefreshCw,
-  Shield
+  Shield,
+  Users,
+  Dices
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -57,10 +59,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
 
   // Game mode options
   const gameModeOptions = [
-    { value: 'classic', label: 'Classic Mode', icon: '🎯' },
-    { value: 'daily', label: 'Daily Challenge', icon: '📅' },
-    { value: 'multiplayer', label: 'Multiplayer', icon: '👥' },
-    { value: 'mixed', label: 'Mixed', icon: '🎲' }
+    { value: 'classic', label: 'Classic Mode', icon: Target },
+    { value: 'daily', label: 'Daily Challenge', icon: Calendar },
+    { value: 'multiplayer', label: 'Multiplayer', icon: Users },
+    { value: 'mixed', label: 'Mixed', icon: Dices }
   ];
 
   // Initialize form data when entering edit mode
@@ -456,7 +458,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
                        {gameModeOptions.map((option) => (
                          <SelectItem key={option.value} value={option.value}>
                            <span className="flex items-center gap-2">
-                             <span>{option.icon}</span>
+                             <option.icon className="h-4 w-4 text-gray-600" />
                              <span>{option.label}</span>
                            </span>
                          </SelectItem>
@@ -467,7 +469,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ isOpen, onClose }) => {
                    <p className="text-lg">
                      {selectedGameMode ? (
                        <span className="flex items-center gap-2">
-                         <span>{selectedGameMode.icon}</span>
+                         <selectedGameMode.icon className="h-4 w-4 text-gray-600" />
                          <span>{selectedGameMode.label}</span>
                        </span>
                      ) : (

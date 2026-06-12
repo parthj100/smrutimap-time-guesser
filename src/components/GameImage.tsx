@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { Maximize2, X } from 'lucide-react';
+import { Maximize2, X, ImageOff } from 'lucide-react';
 
 interface GameImageProps {
   imageUrl: string;
@@ -275,7 +275,7 @@ const GameImage: React.FC<GameImageProps> = React.memo(({
       {imageError && (
         <div className="w-full bg-red-50 flex items-center justify-center border-2 border-red-200 transition-all duration-300" style={{ height: '500px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)' }}>
           <div className="text-center text-red-600 p-6">
-            <div className="text-4xl mb-4">📷</div>
+            <ImageOff className="h-10 w-10 mx-auto mb-4" />
             <div className="text-xl font-semibold mb-2">Image Failed to Load</div>
             <div className="text-sm text-gray-600 mb-4">
               {retryCount > 0 ? `Attempted ${retryCount} time${retryCount > 1 ? 's' : ''}` : 'Connection issue or invalid image'}

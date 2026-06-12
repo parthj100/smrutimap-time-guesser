@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Upload, ArrowRight, ArrowLeft, CheckCircle, Camera, Calendar, MapPin, Info, Sparkles, FileImage, Database } from 'lucide-react';
+import { X, Upload, ArrowRight, ArrowLeft, CheckCircle, Camera, Calendar, MapPin, Info, Sparkles, FileImage, Database, Target, CalendarRange, HelpCircle, Clock, type LucideIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { useFocusManagement, useKeyboardNavigation } from '@/hooks/useAccessibility';
 import { 
@@ -17,11 +17,11 @@ interface PhotoSubmissionFormProps {
 
 type FormStep = 'welcome' | 'photo' | 'personal' | 'location' | 'year' | 'details' | 'review' | 'submit' | 'success';
 
-const yearConfidenceOptions: Array<{ value: YearConfidence; label: string; emoji: string; description: string }> = [
-  { value: 'exact', label: 'Exact Year', emoji: '🎯', description: 'I know the exact year this photo was taken' },
-  { value: 'approximate', label: 'Approximate Year', emoji: '📅', description: 'I have a good estimate (within 1-2 years)' },
-  { value: 'decade', label: 'General Decade', emoji: '🗓️', description: 'I know the general decade (e.g., 1980s)' },
-  { value: 'unknown', label: 'Unknown Year', emoji: '❓', description: 'I\'m not sure when this photo was taken' }
+const yearConfidenceOptions: Array<{ value: YearConfidence; label: string; icon: LucideIcon; description: string }> = [
+  { value: 'exact', label: 'Exact Year', icon: Target, description: 'I know the exact year this photo was taken' },
+  { value: 'approximate', label: 'Approximate Year', icon: Calendar, description: 'I have a good estimate (within 1-2 years)' },
+  { value: 'decade', label: 'General Decade', icon: CalendarRange, description: 'I know the general decade (e.g., 1980s)' },
+  { value: 'unknown', label: 'Unknown Year', icon: HelpCircle, description: 'I\'m not sure when this photo was taken' }
 ];
 
 export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen, onClose }) => {
@@ -167,20 +167,20 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  Share Your Photos! 📸
+                  Share Your Photos!
                 </h2>
               </div>
 
               <div className="grid gap-4 max-w-md mx-auto text-left">
                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                  <span className="text-2xl">📍</span>
+                  <MapPin className="h-6 w-6 text-brand shrink-0" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Clear Location</h3>
                     <p className="text-sm text-gray-600">Photos with identifiable landmarks or addresses</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                  <span className="text-2xl">🕐</span>
+                  <Clock className="h-6 w-6 text-brand shrink-0" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Time Clues</h3>
                     <p className="text-sm text-gray-600">Elements that help identify when the photo was taken</p>
@@ -204,7 +204,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Upload Your Photo 📤
+                Upload Your Photo
               </h2>
               <p className="text-lg text-gray-600">
                 Choose a high-quality photo (JPEG, PNG, or WebP)
@@ -298,7 +298,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Tell us about yourself 👋
+                Tell us about yourself
               </h2>
               <p className="text-lg text-gray-600">
                 We'd like to know who's contributing to SmrutiMap
@@ -359,7 +359,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Where was this taken? 📍
+                Where was this taken?
               </h2>
               <p className="text-lg text-gray-600">
                 Describe the location as specifically as possible
@@ -425,7 +425,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                When was this photo taken? 📅
+                When was this photo taken?
               </h2>
               <p className="text-lg text-gray-600">
                 Help us understand the timeframe of your photo
@@ -464,7 +464,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                       }`}
                     >
                       <div className="flex items-center space-x-4">
-                        <span className="text-2xl">{option.emoji}</span>
+                        <option.icon className="h-6 w-6 text-brand shrink-0" />
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{option.label}</h3>
                           <p className="text-sm text-gray-600 mt-1">{option.description}</p>
@@ -501,7 +501,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Additional Details ✨
+                Additional Details
               </h2>
               <p className="text-lg text-gray-600">
                 Share more context about your photo (optional)
@@ -570,7 +570,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Review Your Submission 👀
+                Review Your Submission
               </h2>
               <p className="text-lg text-gray-600">
                 Please review all details before submitting
@@ -613,7 +613,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
                     <p><span className="font-medium">Year:</span> {formData.yearTaken || 'Not specified'}</p>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Confidence:</span>
-                      <span>{selectedConfidence?.emoji}</span>
+                      {selectedConfidence && <selectedConfidence.icon className="h-5 w-5 text-brand" />}
                       <span>{selectedConfidence?.label}</span>
                     </div>
                   </div>
@@ -684,7 +684,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Submitting Your Photo... 🚀
+                  Submitting Your Photo...
                 </h2>
                 <p className="text-lg text-gray-600 max-w-md mx-auto">
                   Please wait while we process your submission. This may take a few moments.
@@ -709,7 +709,7 @@ export const PhotoSubmissionForm: React.FC<PhotoSubmissionFormProps> = ({ isOpen
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Photo Submitted Successfully! 🎉
+                  Photo Submitted Successfully!
                 </h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
                   Thank you for contributing to SmrutiMap! Your photo has been submitted for review. 

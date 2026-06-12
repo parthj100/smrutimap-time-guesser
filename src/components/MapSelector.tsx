@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
-import { GlobeIcon } from 'lucide-react';
+import { GlobeIcon, MapPin } from 'lucide-react';
 import { loadGoogleMapsScript, createOptimizedMap } from '@/utils/mapUtils';
 
 interface MapSelectorProps {
@@ -336,7 +336,7 @@ const MapSelector: React.FC<MapSelectorProps> = ({
         {!isDisabled && cursorPosition && (
           <div className="absolute bottom-4 left-4 z-10 bg-black/75 text-white px-3 py-2 rounded-lg text-sm font-mono shadow-lg backdrop-blur-sm border border-white/20">
             <div className="flex items-center space-x-2">
-              <span className="text-blue-300">📍</span>
+              <MapPin className="h-4 w-4 text-blue-300 shrink-0" />
               <div>
                 <div className="text-xs text-gray-300">Coordinates</div>
                 <div className="font-semibold">
@@ -350,14 +350,14 @@ const MapSelector: React.FC<MapSelectorProps> = ({
         {/* Click instruction overlay — bottom-center, clear of Google's top map controls */}
         {!isDisabled && !guessedLocation && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1.5rem)] text-center bg-brand/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm animate-pulse">
-            🎯 Click anywhere on the map to place your guess
+            Click anywhere on the map to place your guess
           </div>
         )}
 
         {/* Guess confirmation overlay */}
         {!isDisabled && guessedLocation && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1.5rem)] text-center bg-green-500/90 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur-sm border-2 border-white/30">
-            ✅ Location selected! Click elsewhere to move it or press Enter to submit
+            Location selected! Click elsewhere to move it or press Enter to submit
           </div>
         )}
         

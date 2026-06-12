@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Send, MessageSquare, CheckCircle, Database, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { X, Send, MessageSquare, CheckCircle, Database, ArrowRight, ArrowLeft, Sparkles, Bug, Palette, Zap, Map } from 'lucide-react';
 import { toast } from 'sonner';
 import { useFocusManagement, useKeyboardNavigation } from '@/hooks/useAccessibility';
 import { submitFeedback, validateFeedback, type FeedbackCategory } from '@/services/feedbackService';
@@ -13,12 +13,12 @@ interface FeedbackFormProps {
 type FormStep = 'category' | 'message' | 'email' | 'submit' | 'success';
 
 const categoryOptions = [
-  { value: 'general' as FeedbackCategory, label: 'General Feedback', emoji: '💭', description: 'Share your thoughts about SmrutiMap' },
-  { value: 'bug' as FeedbackCategory, label: 'Bug Report', emoji: '🐛', description: 'Report something that isn\'t working' },
-  { value: 'feature' as FeedbackCategory, label: 'Feature Request', emoji: '✨', description: 'Suggest new features or improvements' },
-  { value: 'ui' as FeedbackCategory, label: 'User Interface', emoji: '🎨', description: 'Feedback about the design and layout' },
-  { value: 'performance' as FeedbackCategory, label: 'Performance', emoji: '⚡', description: 'Report speed or performance issues' },
-  { value: 'content' as FeedbackCategory, label: 'Game Content', emoji: '🗺️', description: 'Feedback about photos, locations, or gameplay' },
+  { value: 'general' as FeedbackCategory, label: 'General Feedback', icon: MessageSquare, description: 'Share your thoughts about SmrutiMap' },
+  { value: 'bug' as FeedbackCategory, label: 'Bug Report', icon: Bug, description: 'Report something that isn\'t working' },
+  { value: 'feature' as FeedbackCategory, label: 'Feature Request', icon: Sparkles, description: 'Suggest new features or improvements' },
+  { value: 'ui' as FeedbackCategory, label: 'User Interface', icon: Palette, description: 'Feedback about the design and layout' },
+  { value: 'performance' as FeedbackCategory, label: 'Performance', icon: Zap, description: 'Report speed or performance issues' },
+  { value: 'content' as FeedbackCategory, label: 'Game Content', icon: Map, description: 'Feedback about photos, locations, or gameplay' },
 ];
 
 export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
@@ -129,7 +129,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                What's on your mind? 🤔
+                What's on your mind?
               </h2>
               <p className="text-lg text-gray-600">
                 Choose the category that best describes your feedback
@@ -151,7 +151,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
                   }`}
                 >
                   <div className="flex items-center space-x-4">
-                    <span className="text-3xl">{option.emoji}</span>
+                    <option.icon className="h-7 w-7 text-brand shrink-0" />
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                         {option.label}
@@ -173,7 +173,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Tell us more ✍️
+                Tell us more
               </h2>
               <p className="text-lg text-gray-600">
                 Share your thoughts, ideas, or describe the issue you're experiencing
@@ -222,7 +222,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Want us to follow up? 📧
+                Want us to follow up?
               </h2>
               <p className="text-lg text-gray-600">
                 Leave your email if you'd like us to respond (optional)
@@ -269,7 +269,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Ready to send? 🚀
+                Ready to send?
               </h2>
               <p className="text-lg text-gray-600">
                 Review your feedback before submitting
@@ -281,7 +281,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
                 <div>
                   <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2">Category</h3>
                   <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{selectedCategory?.emoji}</span>
+                    {selectedCategory && <selectedCategory.icon className="h-6 w-6 text-brand" />}
                     <span className="text-lg font-medium">{selectedCategory?.label}</span>
                   </div>
                 </div>
@@ -341,7 +341,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) =
               
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Thank you for your feedback! 🎉
+                  Thank you for your feedback!
                 </h2>
               </div>
             </div>

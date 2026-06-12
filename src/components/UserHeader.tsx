@@ -191,7 +191,7 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ onShowLeaderboard }) => 
           ) : (
             <div className="px-3 py-2 mb-2 bg-gray-50 rounded-lg">
               <div className="text-sm text-gray-600 text-center">
-                {loading ? '🔄 Loading profile...' : '⚠️ Profile data unavailable'}
+                {loading ? 'Loading profile...' : 'Profile data unavailable'}
               </div>
               <div className="text-xs text-gray-500 mt-1 text-center">
                 Game scores will still be saved

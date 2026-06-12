@@ -49,7 +49,7 @@ const DuelGameOverView: React.FC<DuelGameOverViewProps> = ({
   const headline = cancelled
     ? 'Duel cancelled'
     : iWon
-      ? 'Victory! 🏆'
+      ? 'Victory!'
       : iLost
         ? 'Defeat'
         : winner

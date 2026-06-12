@@ -269,7 +269,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               {!isLogin && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                   <p className="text-blue-800 text-xs font-medium">
-                    📝 All fields marked with * are required to create your account
+                    All fields marked with * are required to create your account
                   </p>
                 </div>
               )}
@@ -356,7 +356,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                 <p className="text-blue-800 text-xs font-medium">
-                  📝 All fields marked with * are required to create your account
+                  All fields marked with * are required to create your account
                 </p>
               </div>
             </div>
@@ -413,7 +413,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                 <p className="text-blue-800 text-xs font-medium">
-                  📝 All fields marked with * are required to create your account
+                  All fields marked with * are required to create your account
                 </p>
               </div>
             </div>
@@ -470,7 +470,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                 <p className="text-blue-800 text-xs font-medium">
-                  📝 All fields marked with * are required to create your account
+                  All fields marked with * are required to create your account
                 </p>
               </div>
             </div>

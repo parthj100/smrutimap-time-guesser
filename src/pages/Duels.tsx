@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Home, LogIn, Plus, Swords } from 'lucide-react';
+import { ArrowLeft, Eye, Home, LogIn, Plus, Swords, Target } from 'lucide-react';
 import { createDuel, joinDuel } from '@/services/duelService';
 
 type View = 'menu' | 'create' | 'join';
@@ -128,14 +128,14 @@ const DuelsPage: React.FC = () => {
                 <Plus size={40} className="text-white" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Set up your duel ⚔️
+                Set up your duel
               </h2>
             </div>
 
             <div className="space-y-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  What should we call you? 👋
+                  What should we call you?
                 </label>
                 <Input
                   type="text"
@@ -149,7 +149,7 @@ const DuelsPage: React.FC = () => {
 
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  Health pool ❤️
+                  Health pool
                 </label>
                 <div className="flex gap-3">
                   {HP_OPTIONS.map((o) => (
@@ -171,7 +171,7 @@ const DuelsPage: React.FC = () => {
 
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  Round time ⏱️
+                  Round time
                 </label>
                 <div className="flex gap-3">
                   {ROUND_TIME_OPTIONS.map((s) => (
@@ -188,7 +188,7 @@ const DuelsPage: React.FC = () => {
 
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  Time after first guess ⚡
+                  Time after first guess
                 </label>
                 <div className="flex gap-3">
                   {GUESS_WINDOW_OPTIONS.map((s) => (
@@ -217,7 +217,7 @@ const DuelsPage: React.FC = () => {
                 disabled={isLoading}
                 className="w-full h-16 text-xl font-bold bg-brand hover:bg-brand-dark text-white rounded-2xl shadow-xl transition-all hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:hover:scale-100"
               >
-                {isLoading ? 'Creating duel…' : 'Create Duel ⚔️'}
+                {isLoading ? 'Creating duel…' : 'Create Duel'}
               </Button>
             </div>
           </div>
@@ -237,7 +237,7 @@ const DuelsPage: React.FC = () => {
                 <LogIn size={40} className="text-white" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Join a duel 🎯
+                Join a duel
               </h2>
               <p className="text-lg text-gray-600">
                 Enter the code your opponent shared with you
@@ -247,7 +247,7 @@ const DuelsPage: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-900 mb-3">
-                  Duel code 🔑
+                  Duel code
                 </label>
                 <Input
                   type="text"
@@ -262,7 +262,7 @@ const DuelsPage: React.FC = () => {
               {!spectate && (
                 <div>
                   <label className="block text-lg font-semibold text-gray-900 mb-3">
-                    What should we call you? 👋
+                    What should we call you?
                   </label>
                   <Input
                     type="text"
@@ -302,8 +302,8 @@ const DuelsPage: React.FC = () => {
                 {isLoading
                   ? 'Joining…'
                   : spectate
-                    ? 'Watch Duel 👁️'
-                    : 'Join Duel 🎮'}
+                    ? 'Watch Duel'
+                    : 'Join Duel'}
               </Button>
             </div>
           </div>
@@ -341,7 +341,7 @@ const DuelsPage: React.FC = () => {
               className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
-                <span className="text-3xl">⚔️</span>
+                <Swords className="w-8 h-8 text-brand shrink-0" />
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Create a Duel
@@ -362,7 +362,7 @@ const DuelsPage: React.FC = () => {
               className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
-                <span className="text-3xl">🎯</span>
+                <Target className="w-8 h-8 text-brand shrink-0" />
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Join a Duel
@@ -383,7 +383,7 @@ const DuelsPage: React.FC = () => {
               className="group w-full p-6 rounded-2xl border-2 border-gray-200 bg-white hover:border-brand hover:shadow-lg transition-all duration-200 text-left hover:scale-[1.02]"
             >
               <div className="flex items-center space-x-4">
-                <span className="text-3xl">👁️</span>
+                <Eye className="w-8 h-8 text-brand shrink-0" />
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand transition-colors">
                     Spectate
@@ -398,7 +398,7 @@ const DuelsPage: React.FC = () => {
 
           <div className="text-center">
             <p className="text-gray-500 text-sm">
-              💡 Damage ramps up every round after the 4th — duels always end!
+              Damage ramps up every round after the 4th — duels always end!
             </p>
           </div>
         </div>
